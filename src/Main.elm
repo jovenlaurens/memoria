@@ -1,5 +1,12 @@
 module Main exposing (main)
 
-import Html exposing (text)
+import Browser
+import Browser.Events exposing (onAnimationFrameDelta)
+import Model
 
-main = text "hi"
+
+main =
+    Browser.element
+        { init = Model.initial
+        , update =
+        }
