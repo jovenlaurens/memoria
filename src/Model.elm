@@ -25,12 +25,14 @@ type alias Block =
 
 type alias Model =
     { blockSet : List Block
+    , lastLocation : Location
     }
 
 
 initial : Model
 initial =
     Model initial_block
+        (Location (2 * blockLength + 500.0) 500.0)
 
 
 initial_block : List Block

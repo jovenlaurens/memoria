@@ -4,5 +4,5 @@ import Model exposing (..)
 
 
 type Msg
-    = Success Location
-    | Fail
+    = Fail
+    | DecideLegal Location

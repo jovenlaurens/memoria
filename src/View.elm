@@ -1,12 +1,14 @@
 module View exposing (..)
 
+import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
+import Html.Events exposing (onClick)
 import Message exposing (..)
 import Model exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
-import Debug exposing (toString)
+
 
 view :
     Model
@@ -24,29 +26,63 @@ view model =
             , SvgAttr.height "1000"
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
-            (drawBorder :: (drawball model.ball :: (drawPaddle model.paddle :: drawBricks model.brick)))
+            (draw_block model.blockSet)
         ]
 
-twoOfSquare3: Float
-twoOfSquare3 = (sqrt 3) / 2.0
+
+twoOfSquare3 : Float
+twoOfSquare3 =
+    sqrt 3 / 2.0
+
+
 
 {--
 from left top and clockwise
 need to be rotate
 -}
-get_point: Location->String
+
+
+get_point : Location -> String
 get_point location =
-    toString (location.x - 0.5 * blockLength)++","++ toString (location.y - twoOfSquare3 * blockLength) ++ " "
-    ++ toString (location.x + 0.5 * blockLength)++","++ toString(location.y - twoOfSquare3*blockLength) ++ " "
-    ++ toString (location.x + blockLength)++","++toString( location.y )++" "
-    ++toString (location.x + 0.5 * blockLength) ++"," ++toString(location.y + twoOfSquare3 * blockLength) ++ " "
-    ++ toString (location.x - 0.5 * blockLength)++","++ toString(location.y + twoOfSquare3 * blockLength) ++ " "
-    ++ toString (location.x - blockLength)++","++toString( location.y )
+    toString (location.x - 0.5 * blockLength)
+        ++ ","
+        ++ toString (location.y - twoOfSquare3 * blockLength)
+        ++ " "
+        ++ toString (location.x + 0.5 * blockLength)
+        ++ ","
+        ++ toString (location.y - twoOfSquare3 * blockLength)
+        ++ " "
+        ++ toString (location.x + blockLength)
+        ++ ","
+        ++ toString location.y
+        ++ " "
+        ++ toString (location.x + 0.5 * blockLength)
+        ++ ","
+        ++ toString (location.y + twoOfSquare3 * blockLength)
+        ++ " "
+        ++ toString (location.x - 0.5 * blockLength)
+        ++ ","
+        ++ toString (location.y + twoOfSquare3 * blockLength)
+        ++ " "
+        ++ toString (location.x - blockLength)
+        ++ ","
+        ++ toString location.y
 
-draw_single_block: Block->Svg msg
+
+draw_single_block : Block -> Svg Msg
 draw_single_block block =
-    Svg.polygon [SvgAttr.fill "blue",SvgAttr.strokeWidth "1", SvgAttr.points] []
+    let
+        color =
+            case block.state of
+                Active ->
+                    "white"
 
-draw_block: List Block->List (Svg msg)
+                NonActive ->
+                    "blue"
+    in
+    Svg.polygon [ SvgAttr.fill color, SvgAttr.strokeWidth "1", SvgAttr.points (get_point block.anchor), onClick (DecideLegal block.anchor) ] []
+
+
+draw_block : List Block -> List (Svg Msg)
 draw_block blockSet =
-
+    List.map draw_single_block blockSet
