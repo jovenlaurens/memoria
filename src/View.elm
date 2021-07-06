@@ -10,6 +10,9 @@ import Svg.Attributes exposing (..)
 import Debug exposing (toString)
 import Html exposing (img)
 import Html.Attributes exposing (src)
+import Scene exposing (defaultScene)
+import Object exposing (Object)
+import List exposing (foldr)
 
 style = Html.Attributes.style
 
@@ -21,7 +24,7 @@ view model =
         , style "position" "absolute"
         , style "left" "0"
         , style "top" "0"
-        , style "background-color" "#ffffff"
+        , style "background-color" "#000000"
         ]
         [ let
             ( w, h ) =
@@ -47,6 +50,7 @@ view model =
             , style "position" "absolute"
             , style "left" (String.fromFloat lef ++ "px")
             , style "top" (String.fromFloat to ++ "px")
+            , style "background-color" "#d9abaf"
             ]
             (case model.cstate of
                 98 ->
@@ -68,12 +72,30 @@ view model =
 render_game_setup : Model -> List (Html Msg)
 render_game_setup model =
 
-    [img
+    if model.cscene == 0 then
+      (render_level model)++(render_button model.scenes.objectOrder)
+      else
+        render_button
+    
+
+render_level : Model -> List (Html Msg)
+render_level model =
+    let
+        level = model.clevel
+        currentScene = list_index_scene level model.scenes
+    in
+        [img
         [ style "width" "100%"
         , style "height" "100%"
         , style "position" "absolute"
         , style "left" "0"
         , style "top" "0"
-        , src "assets/mvp.png"]
+        , src currentScene.pictureSrc
+        ]
         []
-    ]
+        ]
+
+
+
+
+

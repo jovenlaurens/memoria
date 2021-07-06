@@ -16,6 +16,9 @@ update msg model =
         EnterState ->
             ( (update_state model 1), Cmd.none )
 
+        ChangeLevel a ->
+            ( {model | clevel = model.clevel + a}, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
