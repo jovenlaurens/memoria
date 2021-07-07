@@ -26,6 +26,7 @@ type alias Block =
 type alias Model =
     { blockSet : List Block
     , lastLocation : Location
+    , size : ( Float, Float )
     }
 
 
@@ -33,6 +34,7 @@ initial : Model
 initial =
     Model initial_block
         (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength))
+        ( 0, 0 )
 
 
 three_block_set : Location -> List Block

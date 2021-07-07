@@ -10,6 +10,21 @@ update msg model =
         Fail ->
             ( initial, Cmd.none )
 
+        GetViewport { viewport } ->
+            ( { model
+                | size =
+                    ( viewport.width
+                    , viewport.height
+                    )
+              }
+            , Cmd.none
+            )
+
+        Resize width height ->
+            ( { model | size = ( toFloat width, toFloat height ) }
+            , Cmd.none
+            )
+
         DecideLegal location ->
             if distance location model.lastLocation > blockLength * 1.1 * sqrt 3 then
                 ( initial, Cmd.none )
