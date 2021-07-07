@@ -72,6 +72,12 @@ get_point location =
 draw_single_block : Block -> Svg Msg
 draw_single_block block =
     let
+        x =
+            block.anchor.x
+
+        y =
+            block.anchor.y
+
         color =
             case block.state of
                 Active ->
@@ -80,7 +86,14 @@ draw_single_block block =
                 NonActive ->
                     "blue"
     in
-    Svg.polygon [ SvgAttr.fill color, SvgAttr.strokeWidth "1", SvgAttr.points (get_point block.anchor), onClick (DecideLegal block.anchor) ] []
+    Svg.polygon
+        [ SvgAttr.fill color
+        , SvgAttr.strokeWidth "1"
+        , SvgAttr.points (get_point block.anchor)
+        , onClick (DecideLegal block.anchor)
+        , SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
+        ]
+        []
 
 
 draw_block : List Block -> List (Svg Msg)

@@ -11,11 +11,11 @@ update msg model =
             ( initial, Cmd.none )
 
         DecideLegal location ->
-            if distance location model.lastLocation > blockLength then
+            if distance location model.lastLocation > blockLength * 1.1 * sqrt 3 then
                 ( initial, Cmd.none )
 
             else
-                ( { model | blockSet = List.map (change_block_state location) model.blockSet }, Cmd.none )
+                ( { model | blockSet = List.map (change_block_state location) model.blockSet, lastLocation = location }, Cmd.none )
 
 
 change_block_state : Location -> Block -> Block
