@@ -14,12 +14,36 @@ view :
     Model
     -> Html Msg
 view model =
+    let
+        ( w, h ) =
+            model.size
+
+        line =
+            Basics.min w h
+
+        max_ =
+            Basics.max w h
+
+        left =
+            if w > h then
+                0.5 * (max_ - line)
+
+            else
+                0
+
+        top =
+            if w > h then
+                0
+
+            else
+                0.5 * (max_ - line)
+    in
     div
-        [ HtmlAttr.style "width" "100%"
-        , HtmlAttr.style "height" "100%"
-        , HtmlAttr.style "position" "fixed"
-        , HtmlAttr.style "left" "0"
-        , HtmlAttr.style "top" "0"
+        [ HtmlAttr.style "width" (String.fromFloat line ++ "px") --how to adjust here?
+        , HtmlAttr.style "height" (String.fromFloat line ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat left ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat top ++ "px")
         ]
         [ Svg.svg
             [ SvgAttr.width "1000"
@@ -27,6 +51,15 @@ view model =
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
             (draw_block model.blockSet)
+
+        --, div
+        --    [ HtmlAttr.style "width" "100%"
+        --    , HtmlAttr.style "height" "100%"
+        --    , HtmlAttr.style "position" "absolute"
+        --    , HtmlAttr.style "left" "0"
+        --    , HtmlAttr.style "top" "0"
+        --    ]
+        --    [ render_button model ]
         ]
 
 
@@ -99,3 +132,15 @@ draw_single_block block =
 draw_block : List Block -> List (Svg Msg)
 draw_block blockSet =
     List.map draw_single_block blockSet
+
+
+render_button : Model -> Html Msg
+render_button state =
+    button
+        [ style "position" "absolute"
+        , style "top" ""
+        , style "left" "2%"
+        , style "height" "6%"
+        , style "width" "10%"
+        ]
+        [ text "start" ]
