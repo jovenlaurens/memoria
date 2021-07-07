@@ -6,15 +6,23 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 
-import Svg.Attributes exposing (..)
+import Svg.Attributes as SvgAttr
 import Debug exposing (toString)
 import Html exposing (img)
 import Html.Attributes exposing (src)
 import Scene exposing (defaultScene)
 import Object exposing (Object)
 import List exposing (foldr)
+import Svg
+import Svg exposing (Svg)
+import Pclock exposing (drawclock)
+import Pclock exposing (drawhourhand)
+import Pclock exposing (drawminutehand)
 
 style = Html.Attributes.style
+
+svgString = "0 0 1600 900"
+
 
 view : Model -> Html Msg
 view model =
@@ -43,6 +51,7 @@ view model =
 
                 else
                     ( 0, 0.5 * (h - het) )
+        
           in
           div
             [ style "width" (String.fromFloat wid ++ "px")
@@ -73,11 +82,12 @@ render_game_setup : Model -> List (Html Msg)
 render_game_setup model =
 
     if model.cscene == 0 then
-      (render_level model)++(render_button model.scenes.objectOrder)
-      else
-        render_button
+        (render_level model)++(render_object model)--++(render_button model)
+    else
+        (render_object model)--++(render_button model)
     
 
+{-|render the background of the screen, if specific, doesnt have this-}
 render_level : Model -> List (Html Msg)
 render_level model =
     let
@@ -94,6 +104,20 @@ render_level model =
         ]
         []
         ]
+
+
+render_object : Model -> List (Svg Msg)
+render_object model =
+    [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.viewBox "0 0 1600 900"
+            ]
+            [ drawclock model
+            , drawhourhand model
+            , drawminutehand model
+            ]
+    ]
 
 
 

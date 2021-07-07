@@ -11,14 +11,20 @@ type alias Model =
     , clevel : Int --
     , cscene : Int
     , objects : List Object --要用到的地方再indexedmap
+    , clock : Clock --need
     , scenes : List Scene
     , size : ( Float, Float )
     }
 
 
+type alias Clock =
+    { hour : Int
+    , minute : Int
+    }
+
 initial : Model
 initial = 
-    Model 98 1 0 initial_objects initial_scene ( 0, 0 )
+    Model 98 1 0 initial_objects (Clock 1 30) initial_scene ( 0, 0 )
 
 
 list_index_object : Int -> List Object -> Object
