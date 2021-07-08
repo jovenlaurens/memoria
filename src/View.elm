@@ -50,17 +50,34 @@ view model =
             , SvgAttr.height "1000"
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
-            (draw_block model.blockSet)
-
-        --, div
-        --    [ HtmlAttr.style "width" "100%"
-        --    , HtmlAttr.style "height" "100%"
-        --    , HtmlAttr.style "position" "absolute"
-        --    , HtmlAttr.style "left" "0"
-        --    , HtmlAttr.style "top" "0"
-        --    ]
-        --    [ render_button model ]
+            (drawpath ++ draw_block model.blockSet)
         ]
+
+
+drawpath : List (Svg Msg)
+drawpath =
+    Svg.path
+        [ SvgAttr.id "lineAB"
+        , SvgAttr.d "M 100 350 q 150 -300 300 0"
+        , SvgAttr.strokeWidth "5"
+        , SvgAttr.stroke "red"
+        , SvgAttr.fill "none"
+        ]
+        []
+        |> List.singleton
+
+
+
+--<path d="M 100 350 q 150 -300 300 0" stroke="blue"
+-- stroke-width="5" fill="none" />
+--, div
+--    [ HtmlAttr.style "width" "100%"
+--    , HtmlAttr.style "height" "100%"
+--    , HtmlAttr.style "position" "absolute"
+--    , HtmlAttr.style "left" "0"
+--    , HtmlAttr.style "top" "0"
+--    ]
+--    [ render_button model ]
 
 
 twoOfSquare3 : Float
