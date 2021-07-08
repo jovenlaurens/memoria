@@ -1,13 +1,13 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta, onResize)
 import Messages exposing (..)
 import Model exposing (..)
-import Update exposing (..)
-import Browser.Dom exposing (getViewport)
-import View exposing (view)
 import Task
+import Update exposing (..)
+import View exposing (view)
 
 
 main =
@@ -17,6 +17,7 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
+
 
 init : () -> ( Model, Cmd Msg )
 init a =
@@ -28,6 +29,7 @@ subscriptions model =
     Sub.batch
         [ if model.cstate == 0 then
             onAnimationFrameDelta Tick
+
           else
             Sub.none
         , onResize Resize
