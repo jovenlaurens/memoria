@@ -1,14 +1,19 @@
 module Button exposing (..)
-import Messages exposing (Msg)
+
+
+import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
-import Debug exposing (toString)
+import Messages exposing (Msg)
 import Svg.Attributes exposing (display)
+
+
 
 --in a word, it's the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
 
-type ButtonStyle 
+
+type ButtonStyle
     = Transparent
     | UiInterface
     | Special
@@ -19,7 +24,6 @@ type alias Button =
     , wid : Float
     , hei : Float
     , content : String
-    , class : ButtonStyle
     , effect : Msg
     , display : String
     }
@@ -27,7 +31,6 @@ type alias Button =
 
 {-| The style of transparent button
 -}
-
 test_button : Button -> Html Msg
 test_button but =
     button
@@ -37,17 +40,17 @@ test_button but =
         , style "height" (toString but.hei ++ "%")
         , style "width" (toString but.wid ++ "%")
         , style "cursor" "pointer"
-        , style "display" but.display
         , style "outline" "none"
         , style "padding" "2"
         , style "position" "absolute"
         , style "background-color" "#123456"
+        , onClick but.effect
         ]
         []
 
 
-trans_button : Button ->Html Msg
-trans_button but=
+trans_button_sq : Button -> Html Msg
+trans_button_sq but =
     button
         [ style "border" "0"
         , style "top" (toString but.to ++ "%")
@@ -55,7 +58,6 @@ trans_button but=
         , style "height" (toString but.hei ++ "%")
         , style "width" (toString but.wid ++ "%")
         , style "cursor" "pointer"
-        , style "display" but.display
         , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"
@@ -63,3 +65,5 @@ trans_button but=
         , onClick but.effect
         ]
         []
+
+--circle?

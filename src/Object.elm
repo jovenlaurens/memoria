@@ -1,32 +1,53 @@
 module Object exposing (..)
+
 import Button exposing (..)
+import Html exposing (Html)
 import List exposing (indexedMap)
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
-import Html exposing (Html)
+import Draggable
 import Svg.Attributes as SvgAttr
 
-type alias Object =--里面到底应该有什么呢
-    { drawButton : List (Html Msg)
-    , drawShow : List (Svg Msg)
-    --补充一些其他的状态/自定义的物件状态need
+
+type Object
+    = Clock ClockModel
+    | Stair StairModel
+    | DragDemo DragModel
+
+
+
+
+type alias ClockModel =
+    { hour : Int
+    , minute : Int
     }
 
---type alias Ojs = { a | rough : List (Html Msg)}
+
+type alias StairModel =
+    {}
+
+
+type alias DragModel =
+    { position : (Int,Int)
+    , drag : Draggable.State String
+    }
+
+
+
 
 initial_objects : List Object
 initial_objects =
-        []
-
-
-
-{-|钟-}
-
-
+    [ Clock (ClockModel 1 30)
+    , Stair StairModel
+    , DragDemo (DragModel ( 0, 0) Draggable.init)
+    ]
 
 
 
 
+
+{-| 钟
+-}
 default_object : Object
 default_object =
-    Object [] []
+    Clock (ClockModel 0 0)
