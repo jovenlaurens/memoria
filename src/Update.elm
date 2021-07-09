@@ -3,6 +3,8 @@ module Update exposing (..)
 import Html.Attributes exposing (dir)
 import Messages exposing (..)
 import Model exposing (..)
+import Object exposing (Object(..))
+import Draggable
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -27,12 +29,57 @@ update msg model =
             ( update_state model 1, Cmd.none )
 
         ChangeLevel a ->
-            ( { model | clevel = model.clevel + a }, Cmd.none )
+            ( { model | clevel = a }, Cmd.none )
         ChangeScene a ->
             ( { model | cscene = a }, Cmd.none )
 
+        
+        OnDragBy ( dx, dy ) ->
+          let
+              ( x, y ) =
+                  model.spcPosition
+          in
+              ( { model | spcPosition = ( (x + dx), (y + dy) ) }, Cmd.none )
+
+        DragMsg dragMsg ->
+          Draggable.update dragConfig dragMsg model
+
         _ ->
             ( model, Cmd.none )
+
+
+get_position_inside : Object -> (Int, Int) -> (Int, Int)
+get_position_inside obj old =
+    case obj of
+        DragDemo a ->
+            a.position
+        _ -> old
+
+update_position : (Int, Int) -> Model -> Model
+update_position new model =
+    let
+        newobjs = List.foldr (update_position_inside new) [] model.objects
+    in
+        {model | objects = newobjs}
+
+update_position_inside : (Int, Int) -> Object -> List Object -> List Object
+update_position_inside repl wait old =
+    let
+        w = (case wait of
+                DragDemo a ->
+                    DragDemo {a | position = repl}
+                _ -> wait
+            )
+    in
+        w::old
+    
+
+    
+
+
+dragConfig : Draggable.Config () Msg
+dragConfig =
+    Draggable.basicConfig OnDragBy
 
 
 {-| change the game state currently.

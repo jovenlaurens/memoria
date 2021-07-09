@@ -8,7 +8,7 @@ import Model exposing (..)
 import Task
 import Update exposing (..)
 import View exposing (view)
-
+import Draggable
 
 main =
     Browser.element
@@ -33,4 +33,5 @@ subscriptions model =
           else
             Sub.none
         , onResize Resize
+        , Draggable.subscriptions DragMsg model.drag
         ]

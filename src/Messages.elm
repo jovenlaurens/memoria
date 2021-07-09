@@ -1,6 +1,7 @@
 module Messages exposing (..)
 
 import Browser.Dom exposing (Viewport)
+import Draggable
 
 
 type Msg
@@ -26,3 +27,5 @@ type Msg
     | GetViewport Viewport
     | Resize Int Int
     | Tick Float
+    | OnDragBy Draggable.Delta
+    | DragMsg (Draggable.Msg ())

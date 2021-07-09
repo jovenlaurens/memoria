@@ -16,7 +16,7 @@ initial_scene =
             Scene [] "assets/basement.png"
 
         scene1 =
-            Scene [ 1 ] "assets/mvp.png"
+            Scene [ 1, 2 ] "assets/mvp.png"
 
         scene2 =
             Scene [] "assets/2f.png"

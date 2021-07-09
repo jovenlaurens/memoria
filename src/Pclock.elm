@@ -170,13 +170,9 @@ drawclockbutton =
    --need to improve
 
 -}
-drawbackbutton : Int -> Html Msg
-drawbackbutton index =
-       case index of
-            0 ->
-               button [ HtmlAttr.style "opacity" "0.0" ] []
-            _ ->
-               button
+drawbackbutton : Html Msg
+drawbackbutton =
+       button
                    [ HtmlAttr.style "position" "absolute"
                    , HtmlAttr.style "top" "80%"
                    , HtmlAttr.style "left" "10%"

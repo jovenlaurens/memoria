@@ -24,7 +24,6 @@ type alias Button =
     , wid : Float
     , hei : Float
     , content : String
-    , class : ButtonStyle
     , effect : Msg
     , display : String
     }
@@ -41,17 +40,17 @@ test_button but =
         , style "height" (toString but.hei ++ "%")
         , style "width" (toString but.wid ++ "%")
         , style "cursor" "pointer"
-        , style "display" but.display
         , style "outline" "none"
         , style "padding" "2"
         , style "position" "absolute"
         , style "background-color" "#123456"
+        , onClick but.effect
         ]
         []
 
 
-trans_button : Button -> Html Msg
-trans_button but =
+trans_button_sq : Button -> Html Msg
+trans_button_sq but =
     button
         [ style "border" "0"
         , style "top" (toString but.to ++ "%")
@@ -59,7 +58,6 @@ trans_button but =
         , style "height" (toString but.hei ++ "%")
         , style "width" (toString but.wid ++ "%")
         , style "cursor" "pointer"
-        , style "display" but.display
         , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"
@@ -67,3 +65,5 @@ trans_button but =
         , onClick but.effect
         ]
         []
+
+--circle?
