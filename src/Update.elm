@@ -1,10 +1,12 @@
 module Update exposing (..)
 
+import Draggable
 import Html.Attributes exposing (dir)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
-import Draggable
+import Browser.Dom exposing (getViewport)
+import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -24,57 +26,82 @@ update msg model =
               }
             , Cmd.none
             )
+        
+        Pause ->
+            ( {model| cstate = model.cstate + 1}, Cmd.none)
+
+        RecallMemory ->
+            ( {model | cstate = model.cstate + 1}, Cmd.none)
+        
+        Back ->
+            ( {model | cstate = model.cstate - 1}, Cmd.none)
+
+        MovePage dir ->
+            ( {model | cstate = model.cstate + dir}, Cmd.none)
+
+        Achievement ->
+            ( {model | cstate = 10}, Cmd.none)
+        
+        BackfromAch ->
+            ({model| cstate = 1}, Cmd.none)
 
         EnterState ->
             ( update_state model 1, Cmd.none )
 
         ChangeLevel a ->
             ( { model | clevel = a }, Cmd.none )
+
         ChangeScene a ->
             ( { model | cscene = a }, Cmd.none )
 
-        
+        Reset ->
+            ( initial, Task.perform GetViewport getViewport )
+
         OnDragBy ( dx, dy ) ->
-          let
-              ( x, y ) =
-                  model.spcPosition
-          in
-              ( { model | spcPosition = ( (x + dx), (y + dy) ) }, Cmd.none )
+            let
+                ( x, y ) =
+                    model.spcPosition
+            in
+            ( { model | spcPosition = ( x + dx, y + dy ) }, Cmd.none )
 
         DragMsg dragMsg ->
-          Draggable.update dragConfig dragMsg model
+            Draggable.update dragConfig dragMsg model
 
         _ ->
             ( model, Cmd.none )
 
 
-get_position_inside : Object -> (Int, Int) -> (Int, Int)
+get_position_inside : Object -> ( Int, Int ) -> ( Int, Int )
 get_position_inside obj old =
     case obj of
         DragDemo a ->
             a.position
-        _ -> old
 
-update_position : (Int, Int) -> Model -> Model
+        _ ->
+            old
+
+
+update_position : ( Int, Int ) -> Model -> Model
 update_position new model =
     let
-        newobjs = List.foldr (update_position_inside new) [] model.objects
+        newobjs =
+            List.foldr (update_position_inside new) [] model.objects
     in
-        {model | objects = newobjs}
+    { model | objects = newobjs }
 
-update_position_inside : (Int, Int) -> Object -> List Object -> List Object
+
+update_position_inside : ( Int, Int ) -> Object -> List Object -> List Object
 update_position_inside repl wait old =
     let
-        w = (case wait of
+        w =
+            case wait of
                 DragDemo a ->
-                    DragDemo {a | position = repl}
-                _ -> wait
-            )
-    in
-        w::old
-    
+                    DragDemo { a | position = repl }
 
-    
+                _ ->
+                    wait
+    in
+    w :: old
 
 
 dragConfig : Draggable.Config () Msg

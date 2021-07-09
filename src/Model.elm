@@ -1,9 +1,10 @@
 module Model exposing (..)
 
+import Draggable
 import Object exposing (..)
 import Scene exposing (Scene, defaultScene, initial_scene)
 import Svg.Attributes exposing (x)
-import Draggable
+
 
 type alias Model =
     { cstate : Int
@@ -12,18 +13,18 @@ type alias Model =
     , objects : List Object --要用到的地方再indexedmap--要不要分level0,1,2
     , scenes : List Scene
     , size : ( Float, Float )
-    , spcPosition : (Float, Float)
+    , spcPosition : ( Float, Float )
     , drag : Draggable.State ()
     }
 
 
-
 initial : Model
 initial =
-    Model 98 1 0 initial_objects initial_scene ( 0, 0 ) (0,0) Draggable.init
+    Model 98 1 0 initial_objects initial_scene ( 0, 0 ) ( 0, 0 ) Draggable.init
 
 
-{-|when using it, index = index - 1. -}
+{-| when using it, index = index - 1.
+-}
 list_index_object : Int -> List Object -> Object
 list_index_object index list =
     if index > List.length list then

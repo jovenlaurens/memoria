@@ -1,6 +1,5 @@
 module Button exposing (..)
 
-
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes exposing (style)
@@ -17,6 +16,7 @@ type ButtonStyle
     = Transparent
     | UiInterface
     | Special
+
 
 type alias Button =
     { lef : Float
@@ -43,10 +43,11 @@ test_button but =
         , style "outline" "none"
         , style "padding" "2"
         , style "position" "absolute"
-        , style "background-color" "#123456"
+        , style "background-color" "#f3e4b0"
         , onClick but.effect
+        , style "font-size" "15px"
         ]
-        []
+        [text but.content]
 
 
 trans_button_sq : Button -> Html Msg
@@ -65,5 +66,7 @@ trans_button_sq but =
         , onClick but.effect
         ]
         []
+
+
 
 --circle?

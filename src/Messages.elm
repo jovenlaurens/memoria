@@ -16,8 +16,11 @@ type Msg
     | Pause --from game to menu, state = 1
     | Reset --back to the beginning of the game, state = 0
     | RecallMemory --state = 2
-    | SelectMemory Int --state = 3
+    | MovePage Int -- 0 for prev, 1 for next
+    | SelectMemory Int --state = 10
     | Back --back one stage (state--)
+    | Achievement
+    | BackfromAch
       --Memory part are below
     | BeginMemory Int --state = 10, a is the order of memory
     | Forward --continue to play the memory

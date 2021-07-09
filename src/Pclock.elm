@@ -1,4 +1,4 @@
-module Pclock exposing (drawclock, drawhourhand, drawminutehand, drawclockbutton, drawbackbutton)
+module Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
 
 import Browser
 import Debug exposing (toString)
@@ -7,11 +7,11 @@ import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Messages exposing (..)
 import Model exposing (..)
+import Object exposing (ClockModel)
 import Platform.Cmd exposing (none)
 import String exposing (toInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Object exposing (ClockModel)
 
 
 
@@ -21,29 +21,28 @@ import Object exposing (ClockModel)
    | Changeminute String
    | Changehour String
 -}
-
-
-{-view : Model -> Html Msg
-view model =
-    div
-        [ HtmlAttr.style "width" "100%"
-        , HtmlAttr.style "height" "100%"
-        , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" "0"
-        , HtmlAttr.style "top" "0"
-        ]
-        [ --drawclockbutton
-          --, drawbackbutton model.scene
-          --,
-          Svg.svg
-            [ SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            ]
-            [ drawclock model
-            , drawhourhand model
-            , drawminutehand model
-            ]
-        ]-}
+{- view : Model -> Html Msg
+   view model =
+       div
+           [ HtmlAttr.style "width" "100%"
+           , HtmlAttr.style "height" "100%"
+           , HtmlAttr.style "position" "absolute"
+           , HtmlAttr.style "left" "0"
+           , HtmlAttr.style "top" "0"
+           ]
+           [ --drawclockbutton
+             --, drawbackbutton model.scene
+             --,
+             Svg.svg
+               [ SvgAttr.width "100%"
+               , SvgAttr.height "100%"
+               ]
+               [ drawclock model
+               , drawhourhand model
+               , drawminutehand model
+               ]
+           ]
+-}
 
 
 drawclock : Int -> Svg Msg
@@ -75,8 +74,8 @@ drawclock cs =
             Debug.todo "branch '_' not implemented"
 
 
-drawhourhand : Int -> ClockModel-> Svg Msg
-drawhourhand cs clock=
+drawhourhand : Int -> ClockModel -> Svg Msg
+drawhourhand cs clock =
     case cs of
         0 ->
             Svg.ellipse
@@ -128,6 +127,7 @@ drawminutehand cs clock =
         _ ->
             Debug.todo "branch '_' not implemented"
 
+
 minuteangle : Int -> Float
 minuteangle minute =
     toFloat minute * 6
@@ -138,21 +138,22 @@ hourangle hour minute =
     toFloat (modBy 12 hour * 30) + (toFloat minute / 2)
 
 
-
 drawclockbutton : Html Msg
 drawclockbutton =
-       button
-           [ HtmlAttr.style "position" "absolute"
-           , HtmlAttr.style "top" "7.78%"
-           , HtmlAttr.style "left" "48.125%"
-           , HtmlAttr.style "height" "60px"
-           , HtmlAttr.style "width" "60px"
-           , HtmlAttr.style "background" "#FFF"
-           , HtmlAttr.style "border-radius" "50%"
-           , HtmlAttr.style "opacity" "0.0"
-           , onClick (ChangeScene 1)
-           ]
-           []
+    button
+        [ HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "top" "7.78%"
+        , HtmlAttr.style "left" "48.125%"
+        , HtmlAttr.style "height" "60px"
+        , HtmlAttr.style "width" "60px"
+        , HtmlAttr.style "background" "#FFF"
+        , HtmlAttr.style "border-radius" "50%"
+        , HtmlAttr.style "opacity" "0.0"
+        , onClick (ChangeScene 1)
+        ]
+        []
+
+
 
 {-
    drawclocknumber : Model -> List (Svg Msg)
@@ -169,18 +170,22 @@ drawclockbutton =
    --need to improve
 
 -}
+
+
 drawbackbutton : Html Msg
 drawbackbutton =
-       button
-                   [ HtmlAttr.style "position" "absolute"
-                   , HtmlAttr.style "top" "80%"
-                   , HtmlAttr.style "left" "10%"
-                   , HtmlAttr.style "height" "30px"
-                   , HtmlAttr.style "width" "60px"
-                   , HtmlAttr.style "background" "red"
-                   , onClick (ChangeScene 0)
-                   ]
-                   []
+    button
+        [ HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "top" "80%"
+        , HtmlAttr.style "left" "10%"
+        , HtmlAttr.style "height" "30px"
+        , HtmlAttr.style "width" "60px"
+        , HtmlAttr.style "background" "red"
+        , onClick (ChangeScene 0)
+        ]
+        []
+
+
 
 {- drawhourinput : Model -> Html Msg
    drawhourinput model =
