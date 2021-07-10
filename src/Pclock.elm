@@ -1,4 +1,4 @@
-module Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
+module Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawhouradjust, drawminuteadjust)
 
 import Browser
 import Debug exposing (toString)
@@ -54,6 +54,7 @@ drawclock cs =
                 , SvgAttr.cy "100"
                 , SvgAttr.r "30"
                 , SvgAttr.fillOpacity "0.0"
+                , SvgAttr.color "#FFF"
                 , SvgAttr.stroke "#000"
                 , SvgAttr.strokeWidth "4px"
                 ]
@@ -65,6 +66,7 @@ drawclock cs =
                 , SvgAttr.cy "400"
                 , SvgAttr.r "300"
                 , SvgAttr.fillOpacity "0.0"
+                , SvgAttr.color "#FFF"
                 , SvgAttr.stroke "#000"
                 , SvgAttr.strokeWidth "4px"
                 ]
@@ -159,6 +161,8 @@ drawclockbutton =
    drawclocknumber : Model -> List (Svg Msg)
    drawclocknumber model =
        case model.scene of
+       .............................................................................................................................................................................................................................................................................................................................................................................................................................
+       .t=]=0]=]`
            2 ->
                []
 
@@ -212,3 +216,33 @@ drawbackbutton =
        Sub.none
 
 -}
+
+drawhouradjust : Html Msg
+drawhouradjust =  
+    button
+        [ HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "top" "50%"
+        , HtmlAttr.style "left" "10%"
+        , HtmlAttr.style "height" "60px"
+        , HtmlAttr.style "width" "60px"
+        , HtmlAttr.style "background" "Blue"
+        , HtmlAttr.style "border-radius" "50%"
+        , HtmlAttr.style "opacity" "1.0"
+        , onClick (OnClickTriggers 1)
+        ]
+        []
+drawminuteadjust : Html Msg
+drawminuteadjust = 
+    button
+        [ HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "top" "50"
+        , HtmlAttr.style "left" "10%"
+        , HtmlAttr.style "height" "60px"
+        , HtmlAttr.style "width" "60px"
+        , HtmlAttr.style "background" "Red"
+        , HtmlAttr.style "border-radius" "50%"
+        , HtmlAttr.style "opacity" "1.0"
+        , onClick (OnClickTriggers 0)
+        ]
+        []
+     

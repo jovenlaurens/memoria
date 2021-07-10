@@ -11,9 +11,8 @@ import List exposing (foldr)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..))
-import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
+import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawminuteadjust, drawhouradjust)
 import Pstair exposing (render_stair_level)
-import Ptable exposing (draw_block, drawpath, render_table_button)
 import Scene exposing (defaultScene)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
@@ -79,37 +78,30 @@ view model =
                             ]
                             [ div
                                 [ style "z-index" "1" ]
-                                (render_level model)
+                                 (render_level model)
                             ]
                         ]
 
-                     else
-                        render_draggable model.spcPosition :: render_object model :: render_button_inside model.cscene model.objects
-                    )
-                        ++ render_ui_button 0
+                    else
+                        render_draggable model.spcPosition :: render_object model :: render_button_inside model.cscene model.objects)
+                        ++ (render_ui_button 0)
 
                 1 ->
                     render_ui_button 1
-                        ++ [ text "this is menu!" ]
-
-                2 ->
-                    --第一页memory
+                    ++[text ("this is menu!")]
+                2 -> --第一页memory
                     render_ui_button 2
-                        ++ [ text "this is memory page 1" ]
-
-                3 ->
-                    --第二页memory
+                    ++[text "this is memory page 1"]
+                3 -> --第二页memory
                     render_ui_button 3
-                        ++ [ text "this is memory page 2" ]
-
-                4 ->
-                    --第三页memory
+                    ++[text "this is memory page 2"]
+                4 -> --第三页memory
                     render_ui_button 4
-                        ++ [ text "this is memory page 3" ]
+                    ++[text "this is memory page 3"]
 
-                10 ->
+                10 -> 
                     render_ui_button 10
-                        ++ [ text "this is Achievement page" ]
+                    ++[text "this is Achievement page"]
 
                 _ ->
                     [ text (toString model.cstate) ]
@@ -154,10 +146,26 @@ render_draggable position =
 
 render_level : Model -> List (Html Msg)
 render_level model =
+    let
+        level =
+            model.clevel
+
+        currentScene =
+            list_index_scene level model.scenes
+    in
     [ text ("This is" ++ toString model.clevel)
     , render_object model
     ]
-    ++ render_button_level model.clevel
+        ++ render_button model
+
+
+render_button : Model -> List (Html Msg)
+render_button model =
+    if model.cscene == 0 then
+        render_button_level model.clevel
+
+    else
+        render_button_inside model.cscene model.objects
 
 
 render_button_level : Int -> List (Html Msg)
@@ -169,8 +177,7 @@ render_button_level level =
 
         1 ->
             render_stair_level level
-                ++ [ drawclockbutton ]
-                ++ [ render_table_button ]
+            ++ [ drawclockbutton]
 
         _ ->
             render_stair_level level
@@ -185,13 +192,13 @@ render_button_inside cs objs =
     case tar of
         Clock a ->
             [ drawbackbutton
-            ]
-
-        Table a ->
-            [ drawbackbutton
+            , drawhouradjust
+            , drawminuteadjust
             ]
 
         --inside button should be put in the pclock
+        _ ->
+            []
 
 
 render_object : Model -> Svg Msg
@@ -204,11 +211,9 @@ render_object model =
         (if model.cscene == 0 then
             if model.clevel == 1 then
                 List.foldr (render_object_inside model.cscene) [] model.objects
-                    ++ level_1_furniture
-
+             ++ (drawWindow ++ drawTable ++ drawFloor ++ drawLeftChair ++ drawRightChair ++ drawLamps ++ drawCeiling ++ drawStair ++ drawDoor ++ drawSofa ++ drawLamp ++ drawDrawer ++ drawPhotos)
             else
-                List.foldr (render_object_inside model.cscene) [] model.objects
-
+                List.foldr (render_object_inside model.cscene) [] model.objects            
          else
             render_object_only model.cscene model.objects
         )
@@ -237,6 +242,9 @@ render_object_inside scne obj old =
                     ]
 
                 --三层楼都需要，所以不加level判定
+                Stair _ ->
+                    []
+
                 _ ->
                     []
     in
@@ -256,67 +264,51 @@ render_object_only cs objects =
             , drawminutehand cs a
             ]
 
-        Table a ->
-            (drawpath ++ draw_block a.blockSet)
+        Stair _ ->
+            []
+
+        _ ->
+            []
 
 
 render_ui_button : Int -> List (Html Msg)
 render_ui_button cstate =
     let
-        pause =
-            Button 2 2 4 4 "Pause" Pause "block"
-
-        back =
-            Button 2 2 4 4 "Back" Back "block"
-
-        reset =
-            Button 8 2 4 4 "Reset" Reset "block"
-
-        enterMemory =
-            Button 40 20 20 10 "Memory" RecallMemory "block"
-
-        next =
-            Button 90 90 4 4 "Next" (MovePage 1) "block"
-
-        prev =
-            Button 84 90 4 4 "Prev" (MovePage -1) "block"
-
-        achieve =
-            Button 40 50 20 10 "Achievement" Achievement "block"
-
-        backAchi =
-            Button 2 2 4 4 "Back" BackfromAch "block"
+        pause = Button 2 2 4 4 "Pause" Pause "block"
+        back = Button 2 2 4 4 "Back" Back "block"
+        reset = Button 8 2 4 4 "Reset" Reset "block"
+        enterMemory = Button 40 20 20 10 "Memory" RecallMemory "block"
+        next = Button 90 90 4 4 "Next" (MovePage 1) "block"
+        prev = Button 84 90 4 4 "Prev" (MovePage (-1)) "block"
+        achieve = Button 40 50 20 10 "Achievement" Achievement "block"
+        backAchi = Button 2 2 4 4 "Back" BackfromAch "block"
+        
     in
-    case cstate of
-        0 ->
-            [ test_button pause
-            , test_button reset
-            ]
+        case cstate of
+            0 ->
+                [ test_button pause
+                , test_button reset
+                ]
+            1 ->
+                [ test_button back
+                , test_button reset
+                , test_button enterMemory
+                , test_button achieve
+                ]
+            2 ->
+                [ test_button back
+                , test_button next
+                ]
 
-        1 ->
-            [ test_button back
-            , test_button reset
-            , test_button enterMemory
-            , test_button achieve
-            ]
-
-        2 ->
-            [ test_button back
-            , test_button next
-            ]
-
-        3 ->
-            [ test_button next
-            , test_button prev
-            ]
-
-        4 ->
-            [ test_button prev
-            ]
-
-        10 ->
-            [ test_button backAchi
-            ]
-
-        _ ->
-            []
+            3 ->
+                [ test_button next
+                , test_button prev
+                ]
+            4 ->
+                [ test_button prev
+                ]
+            10 ->
+                [ test_button backAchi
+                ]
+            _ ->
+                []
