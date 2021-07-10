@@ -1,11 +1,11 @@
 module Update exposing (..)
 
+import Browser.Dom exposing (getViewport)
 import Draggable
 import Html.Attributes exposing (dir)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (Object(..))
-import Browser.Dom exposing (getViewport)
+import Object exposing (Object(..), test_table)
 import Task
 
 
@@ -26,24 +26,24 @@ update msg model =
               }
             , Cmd.none
             )
-        
+
         Pause ->
-            ( {model| cstate = model.cstate + 1}, Cmd.none)
+            ( { model | cstate = model.cstate + 1 }, Cmd.none )
 
         RecallMemory ->
-            ( {model | cstate = model.cstate + 1}, Cmd.none)
-        
+            ( { model | cstate = model.cstate + 1 }, Cmd.none )
+
         Back ->
-            ( {model | cstate = model.cstate - 1}, Cmd.none)
+            ( { model | cstate = model.cstate - 1 }, Cmd.none )
 
         MovePage dir ->
-            ( {model | cstate = model.cstate + dir}, Cmd.none)
+            ( { model | cstate = model.cstate + dir }, Cmd.none )
 
         Achievement ->
-            ( {model | cstate = 10}, Cmd.none)
-        
+            ( { model | cstate = 10 }, Cmd.none )
+
         BackfromAch ->
-            ({model| cstate = 1}, Cmd.none)
+            ( { model | cstate = 1 }, Cmd.none )
 
         EnterState ->
             ( update_state model 1, Cmd.none )
@@ -52,10 +52,15 @@ update msg model =
             ( { model | clevel = a }, Cmd.none )
 
         ChangeScene a ->
-            ( { model | cscene = a }, Cmd.none )
+            ( { model | cscene = a }, Cmd.none ) --cscene = 1代表 object 的index是0
 
         Reset ->
             ( initial, Task.perform GetViewport getViewport )
+
+
+        DecideLegal location -> --for table only
+            ( {model | objects = List.map (test_table location) (model.objects)}, Cmd.none)
+
 
         OnDragBy ( dx, dy ) ->
             let
@@ -71,42 +76,12 @@ update msg model =
             ( model, Cmd.none )
 
 
-get_position_inside : Object -> ( Int, Int ) -> ( Int, Int )
-get_position_inside obj old =
-    case obj of
-        DragDemo a ->
-            a.position
-
-        _ ->
-            old
-
-
-update_position : ( Int, Int ) -> Model -> Model
-update_position new model =
-    let
-        newobjs =
-            List.foldr (update_position_inside new) [] model.objects
-    in
-    { model | objects = newobjs }
-
-
-update_position_inside : ( Int, Int ) -> Object -> List Object -> List Object
-update_position_inside repl wait old =
-    let
-        w =
-            case wait of
-                DragDemo a ->
-                    DragDemo { a | position = repl }
-
-                _ ->
-                    wait
-    in
-    w :: old
-
-
 dragConfig : Draggable.Config () Msg
 dragConfig =
     Draggable.basicConfig OnDragBy
+
+
+
 
 
 {-| change the game state currently.

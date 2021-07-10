@@ -47,7 +47,7 @@ test_button but =
         , onClick but.effect
         , style "font-size" "15px"
         ]
-        [text but.content]
+        [ text but.content ]
 
 
 trans_button_sq : Button -> Html Msg

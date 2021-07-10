@@ -9,6 +9,25 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 
 
+{-| level 1 furniture
+-}
+level_1_furniture : List (Svg Msg)
+level_1_furniture =
+    drawWindow
+        ++ drawTable
+        ++ drawFloor
+        ++ drawLeftChair
+        ++ drawRightChair
+        ++ drawLamps
+        ++ drawCeiling
+        ++ drawStair
+        ++ drawDoor
+        ++ drawSofa
+        ++ drawLamp
+        ++ drawDrawer
+        ++ drawPhotos
+
+
 drawTable : List (Svg msg)
 drawTable =
     [ Svg.polygon

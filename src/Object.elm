@@ -1,18 +1,12 @@
 module Object exposing (..)
 
-import Button exposing (..)
-import Draggable
-import Html exposing (Html)
-import List exposing (indexedMap)
-import Messages exposing (Msg(..))
-import Svg exposing (Svg)
-import Svg.Attributes as SvgAttr
+import Messages exposing (Location)
+import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 
 
 type Object
     = Clock ClockModel
-    | Stair StairModel
-    | DragDemo DragModel
+    | Table TableModel
 
 
 type alias ClockModel =
@@ -20,23 +14,23 @@ type alias ClockModel =
     , minute : Int
     }
 
+test_table : Location ->  Object -> Object
+test_table loca pre =
+    case pre of
+        Table tm ->
+            if distance loca tm.lastLocation > blockLength * 1.1 * sqrt 3 then
+                Table initial_table
 
-type alias StairModel =
-    {}
-
-
-type alias DragModel =
-    { position : ( Int, Int )
-    , drag : Draggable.State String
-    }
-
+            else
+                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca }
+        _ ->
+            pre
 
 
 initial_objects : List Object
 initial_objects =
     [ Clock (ClockModel 1 30)
-    , Stair StairModel
-    , DragDemo (DragModel ( 0, 0 ) Draggable.init)
+    , Table (initial_table)
     ]
 
 

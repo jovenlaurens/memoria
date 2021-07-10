@@ -3,6 +3,10 @@ module Messages exposing (..)
 import Browser.Dom exposing (Viewport)
 import Draggable
 
+type alias Location =
+    { x : Float
+    , y : Float
+    }
 
 type Msg
     = EnterState --from cover to intro, from intro to the game (state++ until 0, cover 100, intro 101)
@@ -12,6 +16,8 @@ type Msg
     | OnClickObjects Int --OnClick a : a is the list number of the object
     | OnClickTriggers Int --OnClickTriggers a :  a is the list number of the buttons on the object (regulations in details should be included in the design of obejcts)
     | OnClickItem Int --OnClickItem
+    | Fail Int --对应的是object的index(0->clock,1->table这样)
+    | DecideLegal Location
       --Menu part are below
     | Pause --from game to menu, state = 1
     | Reset --back to the beginning of the game, state = 0
