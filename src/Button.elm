@@ -12,10 +12,7 @@ import Svg.Attributes exposing (display)
 --in a word, it's the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
 
 
-type ButtonStyle
-    = Transparent
-    | UiInterface
-    | Special
+
 
 
 type alias Button =

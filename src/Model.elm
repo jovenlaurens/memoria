@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Draggable
 import Object exposing (..)
+import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 import Svg.Attributes exposing (x)
 
@@ -15,12 +16,15 @@ type alias Model =
     , size : ( Float, Float )
     , spcPosition : ( Float, Float )
     , drag : Draggable.State ()
+    , pictures : List Picture
     }
+
+
 
 
 initial : Model
 initial =
-    Model 98 1 0 initial_objects initial_scene ( 0, 0 ) ( 0, 0 ) Draggable.init
+    Model 98 1 0 initial_objects initial_scene ( 0, 0 ) ( 0, 0 ) Draggable.init initial_pictures
 
 
 {-| when using it, index = index - 1.

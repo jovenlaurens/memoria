@@ -4,8 +4,10 @@ import Draggable
 import Html.Attributes exposing (dir)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (Object(..))
+import Object exposing (Object(..), default_object, test_table)
 import Browser.Dom exposing (getViewport)
+import Picture exposing (ShowState(..), show_index_picture)
+import Ptable exposing (BlockState(..))
 import Task
 import Object exposing (ClockModel)
 import Task
@@ -29,24 +31,24 @@ update msg model =
               }
             , Cmd.none
             )
-        
+
         Pause ->
-            ( {model| cstate = model.cstate + 1}, Cmd.none)
+            ( { model | cstate = model.cstate + 1 }, Cmd.none )
 
         RecallMemory ->
-            ( {model | cstate = model.cstate + 1}, Cmd.none)
-        
+            ( { model | cstate = model.cstate + 1 }, Cmd.none )
+
         Back ->
-            ( {model | cstate = model.cstate - 1}, Cmd.none)
+            ( { model | cstate = model.cstate - 1 }, Cmd.none )
 
         MovePage dir ->
-            ( {model | cstate = model.cstate + dir}, Cmd.none)
+            ( { model | cstate = model.cstate + dir }, Cmd.none )
 
         Achievement ->
-            ( {model | cstate = 10}, Cmd.none)
-        
+            ( { model | cstate = 10 }, Cmd.none )
+
         BackfromAch ->
-            ({model| cstate = 1}, Cmd.none)
+            ( { model | cstate = 1 }, Cmd.none )
 
         EnterState ->
             ( update_state model 1, Cmd.none )
@@ -55,10 +57,30 @@ update msg model =
             ( { model | clevel = a }, Cmd.none )
 
         ChangeScene a ->
-            ( { model | cscene = a }, Cmd.none )
+            ( { model | cscene = a }, Cmd.none ) --cscene = 1代表 object 的index是0
 
         Reset ->
             ( initial, Task.perform GetViewport getViewport )
+
+
+        DecideLegal location -> --for table only
+            let
+                cur = list_index_object 1 model.objects
+                mod =
+                    case cur of
+                        Table a ->
+                            a
+                        _ -> (Ptable.TableModel [] (Location 0 0) (0,0))
+                sta = List.all (\x -> x.state == Active) mod.blockSet
+            in
+
+            if sta == False then
+                ( {model | objects = List.map (test_table location) (model.objects)}
+                    |> (\x -> List.foldr test_table_win x x.objects)
+                , Cmd.none)
+            else
+                ( model, Cmd.none)
+
 
         OnDragBy ( dx, dy ) ->
             let
@@ -73,41 +95,35 @@ update msg model =
         OnClickTriggers number ->
             (update_onclicktrigger model number, Cmd.none)
 
+        OnClickItem index ->
+            ( (pickup_item index model), Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
 
-get_position_inside : Object -> ( Int, Int ) -> ( Int, Int )
-get_position_inside obj old =
+test_table_win : Object -> Model -> Model
+test_table_win obj model =
     case obj of
-        DragDemo a ->
-            a.position
-
+        Table a ->
+            if List.all (\x -> x.state == Active) a.blockSet then
+                {model | pictures = ( show_index_picture 0 model.pictures) }
+            else
+                model
         _ ->
-            old
+            model
 
 
-update_position : ( Int, Int ) -> Model -> Model
-update_position new model =
+pickup_item : Int -> Model -> Model
+pickup_item index model =
     let
-        newobjs =
-            List.foldr (update_position_inside new) [] model.objects
+        f = (\x -> if x.index == index then
+                       { x | state = Picked }
+                   else
+                       x
+            )
     in
-    { model | objects = newobjs }
-
-
-update_position_inside : ( Int, Int ) -> Object -> List Object -> List Object
-update_position_inside repl wait old =
-    let
-        w =
-            case wait of
-                DragDemo a ->
-                    DragDemo { a | position = repl }
-
-                _ ->
-                    wait
-    in
-    w :: old
+        {model | pictures = (List.map f model.pictures) }
 
 
 dragConfig : Draggable.Config () Msg

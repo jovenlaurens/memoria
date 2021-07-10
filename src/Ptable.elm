@@ -8,6 +8,7 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events exposing (onClick)
 
+
 type BlockState
     = Active
     | NonActive
@@ -71,7 +72,7 @@ render_table_button : Html Msg
 render_table_button =
     let
         enter =
-            Button.Button 75 55.5 12.5 2.22 "" (ChangeScene 2) "block"
+            Button.Button 75 53.33 12.5 2.22 "" (ChangeScene 2) "block"
     in
     test_button enter
 

@@ -1,9 +1,6 @@
 module Furnitures exposing (..)
 
-import Debug exposing (toString)
-import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
+
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
