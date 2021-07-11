@@ -89,18 +89,3 @@ render_button state =
         , style "width" "10%"
         ]
         [ text "start" ]
-
-
-
---test : List (Svg Msg)
---test =
---    Svg.rect
---        [ SvgAttr.width (toString (100 - 4))
---        , SvgAttr.height (toString (100 - 4))
---        , SvgAttr.fill "Green"
---        , SvgAttr.x "20"
---        , SvgAttr.y "20"
---        , SvgAttr.opacity "0.9"
---        ]
---        []
---        |> List.singleton
