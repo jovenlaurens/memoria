@@ -5,7 +5,7 @@ import Html.Attributes exposing (dir)
 import Inventory exposing (Grid(..))
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (Object(..), default_object, test_table)
+import Object exposing (Object(..), default_object, get_time, test_table)
 import Browser.Dom exposing (getViewport)
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ptable exposing (BlockState(..))
@@ -94,7 +94,9 @@ update msg model =
             Draggable.update dragConfig dragMsg model
 
         OnClickTriggers number ->
-            (update_onclicktrigger model number, Cmd.none)
+            (update_onclicktrigger model number
+                |> check_clock_picture
+            , Cmd.none)
 
         OnClickItem index kind ->
             case kind of
@@ -121,6 +123,18 @@ test_table_win obj model =
                 model
         _ ->
             model
+
+check_clock_picture : Model -> Model
+check_clock_picture model =
+    let
+        clock = list_index_object 0 model.objects
+        (hour, min) = get_time clock
+    in
+        if hour == 2 && min == 35 then
+            show_index_picture
+
+
+
 
 
 pickup_picture : Int -> Model -> Model
@@ -183,10 +197,14 @@ update_onclicktrigger : Model -> Int -> Model
 update_onclicktrigger model number= 
     case model.cscene of 
         1 -> 
-            updateclock model number 
+            updateclock model number
+
         _ -> 
             model 
         --can be supplemented
+
+
+
 
 updatetime : Int -> ClockModel -> Object
 updatetime number clock= 

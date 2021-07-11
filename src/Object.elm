@@ -14,6 +14,14 @@ type alias ClockModel =
     , minute : Int
     }
 
+get_time : Object -> (Int, Int)
+get_time obj =
+    case obj of
+        Clock a ->
+            (a.hour, a.minute)
+        _ ->
+            Debug.todo "abab"
+
 test_table : Location ->  Object -> Object
 test_table loca pre =
 

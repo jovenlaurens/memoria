@@ -45,11 +45,7 @@ render_inventory_inside grid lef=
         , SvgAttr.fill "red"
         , Svg.Events.onClick (OnClickItem index typeid)
         ]
-        [ case typeid of
-            0 ->
-                text "picture 0"
-            _ ->
-                Debug.todo "branch '_' not implemented"
+        [
         ]
 
 

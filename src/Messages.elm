@@ -13,7 +13,7 @@ type Msg
     | ChangeScene Int --ChangeScene a : a is the direction of the scene change;
     | ChangeLevel Int --ChangeLevel a : a: 1 for going upwards, and -1 for going downwards
     | OnClickTriggers Int --OnClickTriggers a :  a is the list number of the buttons on the object (regulations in details should be included in the design of obejcts)
-    | OnClickItem Int Int --OnClickItem,第一个int是index,第二个是种类,第三个是在哪里使用
+    | OnClickItem Int Int --OnClickItem,第一个int是index,第二个是种类
     | DecideLegal Location
       --Menu part are below
     | Pause --from game to menu, state = 1

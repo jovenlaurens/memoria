@@ -79,9 +79,8 @@ view model =
                         (render_level model)
 
                     else
-                        render_object model :: {-render_draggable model.spcPosition ::-}render_button_inside model.cscene model.objects
-                        ++ (render_ui_button 0))
-                    ++ render_inventory model.inventory
+                        render_object model :: {-render_draggable model.spcPosition ::-}render_button_inside model.cscene model.objects)
+                    ++ (render_ui_button 0)
 
                 1 ->
                     render_ui_button 1
@@ -192,7 +191,7 @@ render_object model =
         , SvgAttr.height "100%"
         , SvgAttr.viewBox "0 0 1600 900"
         ]
-        (if model.cscene == 0 then
+        ((if model.cscene == 0 then
             if model.clevel == 1 then
                 List.foldr (render_object_inside model.cscene) [] model.objects
                     ++ level_1_furniture
@@ -204,6 +203,7 @@ render_object model =
             (render_picutre_index 0 model.pictures )
             :: render_object_only model.cscene model.objects
         )
+        ++(render_inventory model.inventory))
 
 
 render_picutre_index : Int -> List Picture -> Svg Msg
