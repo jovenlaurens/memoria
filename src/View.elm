@@ -18,32 +18,26 @@ view model =
         ( w, h ) =
             model.size
 
-        line =
-            Basics.min w h
-
-        max_ =
-            Basics.max w h
-
-        left =
-            if w > h then
-                0.5 * (max_ - line)
+        ( wid, het ) =
+            if (9 / 16 * w) >= h then
+                ( 16 / 9 * h, h )
 
             else
-                0
+                ( w, 9 / 16 * w )
 
-        top =
-            if w > h then
-                0
+        ( lef, to ) =
+            if (9 / 16 * w) >= h then
+                ( 0.5 * (w - wid), 0 )
 
             else
-                0.5 * (max_ - line)
+                ( 0, 0.5 * (h - het) )
     in
     div
-        [ HtmlAttr.style "width" (String.fromFloat line ++ "px") --how to adjust here?
-        , HtmlAttr.style "height" (String.fromFloat line ++ "px")
+        [ HtmlAttr.style "width" (String.fromFloat wid ++ "px") --how to adjust here?
+        , HtmlAttr.style "height" (String.fromFloat het ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (String.fromFloat left ++ "px")
-        , HtmlAttr.style "top" (String.fromFloat top ++ "px")
+        , HtmlAttr.style "left" (String.fromFloat lef ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat to ++ "px")
         ]
         [ Svg.svg
             [ SvgAttr.width "1000"
