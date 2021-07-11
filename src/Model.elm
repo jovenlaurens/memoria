@@ -1,7 +1,10 @@
 module Model exposing (..)
 
 import Draggable
+<<<<<<< HEAD
 import Inventory exposing (Grid(..), Inventory, initial_inventory)
+=======
+>>>>>>> basicStructure
 import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
