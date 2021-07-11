@@ -44,105 +44,39 @@ view model =
             , SvgAttr.height "1000"
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
-            (drawpath ++ draw_block model.blockSet)
+            (draw_frame model.frame)
         ]
+
+
+draw_frame : List Location -> List (Svg Msg)
+draw_frame locationList =
+    List.map draw_single_frame locationList
+
+
+draw_single_frame : Location -> Svg Msg
+draw_single_frame location =
+    Svg.rect
+        [ SvgAttr.width (toString (100 - 4))
+        , SvgAttr.height (toString (100 - 4))
+        , SvgAttr.fill "Blue"
+        , SvgAttr.x (toString location.x)
+        , SvgAttr.y (toString location.y)
+        , SvgAttr.opacity "0.1"
+        ]
+        []
 
 
 drawpath : List (Svg Msg)
 drawpath =
     Svg.path
         [ SvgAttr.id "lineAB"
-        , SvgAttr.d "M 100 350 q 150 -300 300 0"
+        , SvgAttr.d "M 100 350 l 150 300 l 300 0"
         , SvgAttr.strokeWidth "5"
         , SvgAttr.stroke "red"
         , SvgAttr.fill "none"
         ]
         []
         |> List.singleton
-
-
-
---<path d="M 100 350 q 150 -300 300 0" stroke="blue"
--- stroke-width="5" fill="none" />
---, div
---    [ HtmlAttr.style "width" "100%"
---    , HtmlAttr.style "height" "100%"
---    , HtmlAttr.style "position" "absolute"
---    , HtmlAttr.style "left" "0"
---    , HtmlAttr.style "top" "0"
---    ]
---    [ render_button model ]
-
-
-twoOfSquare3 : Float
-twoOfSquare3 =
-    sqrt 3 / 2.0
-
-
-
-{--
-from left top and clockwise
-need to be rotate
--}
-
-
-get_point : Location -> String
-get_point location =
-    toString (location.x - 0.5 * blockLength)
-        ++ ","
-        ++ toString (location.y - twoOfSquare3 * blockLength)
-        ++ " "
-        ++ toString (location.x + 0.5 * blockLength)
-        ++ ","
-        ++ toString (location.y - twoOfSquare3 * blockLength)
-        ++ " "
-        ++ toString (location.x + blockLength)
-        ++ ","
-        ++ toString location.y
-        ++ " "
-        ++ toString (location.x + 0.5 * blockLength)
-        ++ ","
-        ++ toString (location.y + twoOfSquare3 * blockLength)
-        ++ " "
-        ++ toString (location.x - 0.5 * blockLength)
-        ++ ","
-        ++ toString (location.y + twoOfSquare3 * blockLength)
-        ++ " "
-        ++ toString (location.x - blockLength)
-        ++ ","
-        ++ toString location.y
-
-
-draw_single_block : Block -> Svg Msg
-draw_single_block block =
-    let
-        x =
-            block.anchor.x
-
-        y =
-            block.anchor.y
-
-        color =
-            case block.state of
-                Active ->
-                    "white"
-
-                NonActive ->
-                    "blue"
-    in
-    Svg.polygon
-        [ SvgAttr.fill color
-        , SvgAttr.strokeWidth "1"
-        , SvgAttr.points (get_point block.anchor)
-        , onClick (DecideLegal block.anchor)
-        , SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
-        ]
-        []
-
-
-draw_block : List Block -> List (Svg Msg)
-draw_block blockSet =
-    List.map draw_single_block blockSet
 
 
 render_button : Model -> Html Msg
@@ -155,3 +89,18 @@ render_button state =
         , style "width" "10%"
         ]
         [ text "start" ]
+
+
+
+--test : List (Svg Msg)
+--test =
+--    Svg.rect
+--        [ SvgAttr.width (toString (100 - 4))
+--        , SvgAttr.height (toString (100 - 4))
+--        , SvgAttr.fill "Green"
+--        , SvgAttr.x "20"
+--        , SvgAttr.y "20"
+--        , SvgAttr.opacity "0.9"
+--        ]
+--        []
+--        |> List.singleton
