@@ -131,7 +131,9 @@ check_clock_picture model =
         (hour, min) = get_time clock
     in
         if hour == 2 && min == 35 then
-            show_index_picture
+            { model | pictures = show_index_picture 1 model.pictures }
+        else
+            model
 
 
 

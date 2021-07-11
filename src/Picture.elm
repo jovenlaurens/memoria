@@ -48,6 +48,7 @@ list_index_picture index list =
 initial_pictures : List Picture
 initial_pictures =
     [ Picture NotShow 0
+    , Picture NotShow 1
     ]
 
 default_picture : Picture

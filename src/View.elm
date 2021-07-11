@@ -7,10 +7,7 @@ import Furnitures exposing (..)
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
-<<<<<<< HEAD
 import Inventory exposing (render_inventory)
-=======
->>>>>>> basicStructure
 import List exposing (foldr)
 import Messages exposing (..)
 import Model exposing (..)
