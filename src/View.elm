@@ -7,13 +7,13 @@ import Furnitures exposing (..)
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
-import Inventory exposing (render_inventory)
+import Inventory exposing (Grid(..), render_inventory)
 import List exposing (foldr)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawminuteadjust, drawhouradjust)
-import Picture exposing (Picture, ShowState(..), list_index_picture)
+import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Scene exposing (defaultScene)
@@ -179,6 +179,9 @@ render_button_inside cs objs =
             Table a ->
                 [ drawbackbutton
                 ]
+            Frame a ->
+                [ drawbackbutton
+                ]
 
 
         --inside button should be put in the pclock
@@ -195,6 +198,7 @@ render_object model =
             if model.clevel == 1 then
                 List.foldr (render_object_inside model.cscene) [] model.objects
                     ++ level_1_furniture
+                    ++ [render_picture_button]
 
             else
                 List.foldr (render_object_inside model.cscene) [] model.objects
@@ -202,8 +206,26 @@ render_object model =
          else
             (render_picture model.pictures )
             ++ render_object_only model.cscene model.objects
+            ++ render_test_information model
         )
         ++(render_inventory model.inventory))
+
+
+render_test_information : Model -> List (Svg Msg)
+render_test_information model =
+    let
+        under = if model.underUse == Blank then
+                    "Blank"
+                else
+                    "Have"
+    in
+    [Svg.text_
+        [ SvgAttr.x "100"
+        , SvgAttr.y "200"
+        ]
+        [ Svg.text under
+        ]
+    ]
 
 
 render_picture : List Picture -> List (Svg Msg)
@@ -291,19 +313,18 @@ render_object_only cs objects =
             [ drawclock cs
             , drawhourhand cs a
             , drawminutehand cs a
-            , Svg.text_
-                [ SvgAttr.x "0"
-                , SvgAttr.y "100"
-                , SvgAttr.width "100"
-                , SvgAttr.height "100"
-                ]
-                [ Svg.text (toString (get_time tar |> Tuple.first))
-                , Svg.text (toString (get_time tar |> Tuple.second))
-                ]
             ]
 
         Table a ->
             (drawpath ++ draw_block a.blockSet)
+        Frame a ->
+            [ Svg.text_
+                []
+                [Svg.text "this is frames"]
+            ]
+
+
+
 
 
 render_ui_button : Int -> List (Html Msg)

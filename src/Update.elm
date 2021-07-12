@@ -145,10 +145,10 @@ pickup_picture index model =
         f = (\x -> if x.index == index then
                         if x.state == Show then
                             { x | state = Picked }
-                        else if x.state == Picked then
+                        else if x.state == Stored then
                             { x | state = UnderUse }
                         else if x.state == UnderUse then
-                            { x | state = Picked }
+                            { x | state = Stored }
                         else
                             x
                    else
@@ -243,7 +243,15 @@ updateclock model number =
 
 check_pict_state : Model -> Model
 check_pict_state model =
-    List.foldr (check_use_picture) model model.pictures
+    let
+        refresh_underuse mod =
+            if List.all (\x -> x.state /= UnderUse ) model.pictures == True then
+                {mod | underUse = Blank }
+            else
+                mod
+    in
+        List.foldr (check_use_picture) model model.pictures
+            |> refresh_underuse
 
 
 
@@ -259,7 +267,7 @@ check_use_picture pict model =
         if pict.state == UnderUse && model.underUse == Blank then
             {model | underUse = Pict (Picture pict.state pict.index)}
         else if pict.state == Picked then
-            {model | inventory = insert_new_item (Pict (Picture pict.state pict.index)) model.inventory
+            {model | inventory = insert_new_item (Pict (Picture Stored pict.index)) model.inventory
                    , pictures = List.map (from_picked_to_stored pict.index) model.pictures
             }
         else

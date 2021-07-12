@@ -1,7 +1,12 @@
 module Picture exposing (..)
 
-import Messages exposing (Msg)
+import Html exposing (Html)
+import Messages exposing (Msg(..))
+import Button exposing (Button, test_button)
 import Svg exposing (Svg)
+import Svg.Attributes as SvgAttr
+import Svg.Events
+
 type alias Picture =
     { state : ShowState
     , index : Int
@@ -55,3 +60,17 @@ initial_pictures =
 default_picture : Picture
 default_picture =
     Picture NotShow 0
+
+
+render_picture_button : Svg Msg
+render_picture_button =
+    Svg.rect
+        [ SvgAttr.x "200"
+        , SvgAttr.y "270"
+        , SvgAttr.width "410"
+        , SvgAttr.height "180"
+        , SvgAttr.fill "red"
+        , SvgAttr.fillOpacity "0"
+        , Svg.Events.onClick (ChangeScene 3)
+        ]
+        []

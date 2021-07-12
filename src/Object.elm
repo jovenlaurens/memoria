@@ -1,5 +1,6 @@
 module Object exposing (..)
 
+import Memory exposing (Memory)
 import Messages exposing (Location)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 
@@ -7,11 +8,17 @@ import Ptable exposing (TableModel, blockLength, change_block_state, distance, i
 type Object
     = Clock ClockModel
     | Table TableModel
+    | Frame FrameModel
 
 
 type alias ClockModel =
     { hour : Int
     , minute : Int
+    }
+
+
+type alias FrameModel =
+    { index : List Int
     }
 
 get_time : Object -> (Int, Int)
@@ -46,6 +53,7 @@ initial_objects : List Object
 initial_objects =
     [ Clock (ClockModel 1 30)
     , Table (initial_table)
+    , Frame (FrameModel [0])
     ]
 
 
