@@ -85,3 +85,19 @@ getLine pos angle =
                 y - a * x
         in
         ( a, b, c )
+
+
+
+{- by default the mirror is line segement-}
+
+
+rotate_mirror : List Mirror -> Int -> List Mirror
+rotate_mirror mirrorSet index =
+    mirrorSet
+
+rotate_single_mirror : Mirror->Int->List Mirror
+rotate_single_mirror mirror index =
+    case mirror.index of
+        index->
+            case
+        _-> mirror

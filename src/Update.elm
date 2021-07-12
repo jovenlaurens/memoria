@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import Geometry exposing (..)
 import Message exposing (..)
 import Model exposing (..)
 
@@ -7,6 +8,11 @@ import Model exposing (..)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        RotateMirror index ->
+            ( { model | mirrorSet = change_mirror model.mirrorSet index }
+            , Cmd.none
+            )
+
         Fail ->
             ( initial, Cmd.none )
 
@@ -31,6 +37,10 @@ update msg model =
 
             else
                 ( { model | blockSet = List.map (change_block_state location) model.blockSet, lastLocation = location }, Cmd.none )
+
+
+
+{- rotate 45 degree counter-clockwise -}
 
 
 change_block_state : Location -> Block -> Block
