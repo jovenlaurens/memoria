@@ -13,6 +13,7 @@ type ShowState
     = NotShow
     | Show
     | Picked
+    | Stored
     | UnderUse
     | Consumed
 

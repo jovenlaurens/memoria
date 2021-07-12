@@ -11,21 +11,42 @@ import Svg.Events
 type alias Inventory =
     { own : List Grid
     , locaLeft : List Int
+    , num : Int
     }
 
 type Grid
     = Blank
-    | Pict Picture Int
+    | Pict Picture
 
 
 initial_inventory : Inventory
 initial_inventory =
-    Inventory (List.repeat 8 Blank) [50, 250, 450, 650, 850, 1050, 1250, 1450, 1650]
+    Inventory (List.repeat 8 Blank) [50, 250, 450, 650, 850, 1050, 1250, 1450, 1650] 0
+
+
+insert_new_item : Grid -> Inventory -> Inventory
+insert_new_item grid old =
+    let
+        new_num = old.num + 1
+        pre = if old.num == 0 then
+                    []
+              else
+                    List.take old.num old.own
+        now = [grid]
+        nex = if old.num == 7 then
+                    []
+              else
+                    List.drop (new_num) old.own
+    in
+        Inventory (pre++now++nex) old.locaLeft new_num
+
 
 
 render_inventory : Inventory -> List (Svg Msg)
 render_inventory invent =
     List.map2 render_inventory_inside invent.own invent.locaLeft
+  ++List.map2 render_inventory_inside_item invent.own invent.locaLeft
+
 
 
 render_inventory_inside : Grid -> Int -> Svg Msg
@@ -34,7 +55,7 @@ render_inventory_inside grid lef=
         (index, typeid) =
             case grid of
                 Blank -> (-1, -1)
-                Pict a ind -> (ind, 0)
+                Pict a -> (a.index, 0)
     in
     Svg.rect
         [ SvgAttr.x (toString lef)
@@ -45,7 +66,28 @@ render_inventory_inside grid lef=
         , SvgAttr.fill "red"
         , Svg.Events.onClick (OnClickItem index typeid)
         ]
-        [
+        [ Svg.text_
+            [SvgAttr.width "100"
+            , SvgAttr.height "100"
+            ]
+            [Svg.text "test"]
         ]
 
 
+render_inventory_inside_item : Grid -> Int -> Svg Msg
+render_inventory_inside_item grid lef =
+    let
+        (show1, show2) =
+            case grid of
+                Blank -> ("Nothing", "")
+                Pict a -> ( "Pict ", (toString a.index))
+        show = show1 ++ show2
+    in
+    Svg.text_
+        [ SvgAttr.x (toString lef)
+        , SvgAttr.y "800"
+        , SvgAttr.width "100"
+        , SvgAttr.height "100"
+        ]
+        [ Svg.text show
+        ]

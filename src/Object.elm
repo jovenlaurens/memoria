@@ -16,11 +16,15 @@ type alias ClockModel =
 
 get_time : Object -> (Int, Int)
 get_time obj =
-    case obj of
-        Clock a ->
-            (a.hour, a.minute)
-        _ ->
-            Debug.todo "abab"
+    let
+        (orihour, oriminute) =
+            case obj of
+                Clock a ->
+                    (a.hour, a.minute)
+                _ ->
+                    Debug.todo "abab"
+    in
+        (modBy 12 orihour, modBy 60 oriminute)
 
 test_table : Location ->  Object -> Object
 test_table loca pre =

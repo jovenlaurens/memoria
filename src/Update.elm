@@ -2,7 +2,7 @@ module Update exposing (..)
 
 import Draggable
 import Html.Attributes exposing (dir)
-import Inventory exposing (Grid(..))
+import Inventory exposing (Grid(..), insert_new_item)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..), default_object, get_time, test_table)
@@ -95,14 +95,14 @@ update msg model =
 
         OnClickTriggers number ->
             (update_onclicktrigger model number
-                |> check_clock_picture
+                |> test_clock_win
             , Cmd.none)
 
         OnClickItem index kind ->
             case kind of
                 0 ->
                     ( (pickup_picture index model)
-                        |> check_underuse
+                        |> check_pict_state
                     , Cmd.none )
 
                 _ ->
@@ -124,13 +124,13 @@ test_table_win obj model =
         _ ->
             model
 
-check_clock_picture : Model -> Model
-check_clock_picture model =
+test_clock_win : Model -> Model
+test_clock_win model =
     let
-        clock = list_index_object 0 model.objects
-        (hour, min) = get_time clock
+        cloc = list_index_object 0 model.objects
+        (hour, min) = get_time cloc
     in
-        if hour == 2 && min == 35 then
+        if hour == 2 && min == 30 then
             { model | pictures = show_index_picture 1 model.pictures }
         else
             model
@@ -147,6 +147,8 @@ pickup_picture index model =
                             { x | state = Picked }
                         else if x.state == Picked then
                             { x | state = UnderUse }
+                        else if x.state == UnderUse then
+                            { x | state = Picked }
                         else
                             x
                    else
@@ -237,15 +239,28 @@ updateclock model number =
     { model | objects =  (List.map toggle model.objects )}
 
 
-check_underuse : Model -> Model
-check_underuse model =
+
+
+check_pict_state : Model -> Model
+check_pict_state model =
     List.foldr (check_use_picture) model model.pictures
 
 
 
 check_use_picture : Picture -> Model -> Model
 check_use_picture pict model =
-    if pict.state == UnderUse then
-        {model | underUse = Pict (Picture pict.state pict.index) pict.index }
-    else
-        model
+    let
+        from_picked_to_stored  index pic =
+            if pic.index == index then
+                {pic | state = Stored}
+            else
+                pic
+    in
+        if pict.state == UnderUse && model.underUse == Blank then
+            {model | underUse = Pict (Picture pict.state pict.index)}
+        else if pict.state == Picked then
+            {model | inventory = insert_new_item (Pict (Picture pict.state pict.index)) model.inventory
+                   , pictures = List.map (from_picked_to_stored pict.index) model.pictures
+            }
+        else
+            model

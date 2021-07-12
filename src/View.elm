@@ -11,7 +11,7 @@ import Inventory exposing (render_inventory)
 import List exposing (foldr)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..))
+import Object exposing (ClockModel, Object(..), get_time)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawminuteadjust, drawhouradjust)
 import Picture exposing (Picture, ShowState(..), list_index_picture)
 import Pstair exposing (render_stair_level)
@@ -200,32 +200,55 @@ render_object model =
                 List.foldr (render_object_inside model.cscene) [] model.objects
 
          else
-            (render_picutre_index 0 model.pictures )
-            :: render_object_only model.cscene model.objects
+            (render_picture model.pictures )
+            ++ render_object_only model.cscene model.objects
         )
         ++(render_inventory model.inventory))
 
 
-render_picutre_index : Int -> List Picture -> Svg Msg
-render_picutre_index index list =
+render_picture : List Picture -> List (Svg Msg)
+render_picture list =
     let
-        tar = list_index_picture index list
-        sta = tar.state
+        render_pict_inside pict =
+            if pict.state == Show then
+                render_picture_index pict.index
+            else
+                Svg.rect
+                    []
+                    []
     in
-        if sta == Show then
-            Svg.rect
-                [ SvgAttr.x "1300"
-                , SvgAttr.y "400"
-                , SvgAttr.width "100"
-                , SvgAttr.height "30"
-                , SvgAttr.color "red"
-                , Svg.Events.onClick ( OnClickItem index 0)
-                ]
-                []
-        else
-            Svg.rect
-                []
-                []
+        List.map render_pict_inside list
+
+
+render_picture_index : Int -> Svg Msg
+render_picture_index index =
+            case index of
+                0 ->
+                    Svg.rect
+                        [ SvgAttr.x "1300"
+                        , SvgAttr.y "400"
+                        , SvgAttr.width "100"
+                        , SvgAttr.height "30"
+                        , SvgAttr.fill "red"
+                        , Svg.Events.onClick ( OnClickItem 0 0)
+                        ]
+                        []
+
+                1 ->
+                    Svg.rect
+                        [ SvgAttr.x "1400"
+                        , SvgAttr.y "600"
+                        , SvgAttr.width "100"
+                        , SvgAttr.height "30"
+                        , SvgAttr.fill "red"
+                        , Svg.Events.onClick ( OnClickItem 1 0)
+                        ]
+                        []
+                _ ->
+                    Svg.rect
+                        []
+                        []
+
 
 
 {- [
@@ -247,6 +270,7 @@ render_object_inside scne obj old =
                     [ drawclock scne
                     , drawhourhand scne a
                     , drawminutehand scne a
+
                     ]
 
                 --三层楼都需要，所以不加level判定
@@ -267,6 +291,15 @@ render_object_only cs objects =
             [ drawclock cs
             , drawhourhand cs a
             , drawminutehand cs a
+            , Svg.text_
+                [ SvgAttr.x "0"
+                , SvgAttr.y "100"
+                , SvgAttr.width "100"
+                , SvgAttr.height "100"
+                ]
+                [ Svg.text (toString (get_time tar |> Tuple.first))
+                , Svg.text (toString (get_time tar |> Tuple.second))
+                ]
             ]
 
         Table a ->
