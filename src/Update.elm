@@ -9,7 +9,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RotateMirror index ->
-            ( { model | mirrorSet = change_mirror model.mirrorSet index }
+            ( { model | mirrorSet = rotate_mirror model.mirrorSet index }
             , Cmd.none
             )
 

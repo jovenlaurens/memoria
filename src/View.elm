@@ -49,148 +49,20 @@ view model =
         ]
 
 
-get_point_from_line : Line -> Int -> String
-get_point_from_line line choice =
-    let
-        a =
-            line.xco
-
-        b =
-            line.yco
-
-        c =
-            line.c
-
-        end1 =
-            line.interval.left_or_buttom
-
-        end2 =
-            line.interval.right_or_top
-
-        x1 =
-            case line.interval.intervalType of
-                X ->
-                    case end1 of
-                        Regular number ->
-                            number
-
-                        PosInf ->
-                            999
-
-                        NegInf ->
-                            -999
-
-                Y ->
-                    case end1 of
-                        Regular number ->
-                            (-c - b * number) / a
-
-                        PosInf ->
-                            (-c - b * 100) / a
-
-                        NegInf ->
-                            (-c + b * 100) / a
-
-        x2 =
-            case line.interval.intervalType of
-                X ->
-                    case end2 of
-                        Regular number ->
-                            number
-
-                        PosInf ->
-                            999
-
-                        NegInf ->
-                            -999
-
-                Y ->
-                    case end2 of
-                        Regular number ->
-                            (-c - b * number) / a
-
-                        PosInf ->
-                            (-c - b * 100) / a
-
-                        NegInf ->
-                            (-c + b * 100) / a
-
-        y1 =
-            case line.interval.intervalType of
-                Y ->
-                    case end1 of
-                        Regular number ->
-                            number
-
-                        PosInf ->
-                            999
-
-                        NegInf ->
-                            -999
-
-                X ->
-                    case end1 of
-                        Regular number ->
-                            (-c - a * number) / b
-
-                        PosInf ->
-                            (-c - a * 100) / b
-
-                        NegInf ->
-                            (-c + a * 100) / b
-
-        y2 =
-            case line.interval.intervalType of
-                Y ->
-                    case end1 of
-                        Regular number ->
-                            number
-
-                        PosInf ->
-                            999
-
-                        NegInf ->
-                            -999
-
-                X ->
-                    case end1 of
-                        Regular number ->
-                            (-c - a * number) / b
-
-                        PosInf ->
-                            (-c - a * 100) / b
-
-                        NegInf ->
-                            (-c + a * 100) / b
-    in
-    case choice of
-        1 ->
-            String.fromFloat x1
-
-        2 ->
-            String.fromFloat x2
-
-        3 ->
-            String.fromFloat y1
-
-        4 ->
-            String.fromFloat y2
-
-
 draw_single_mirror : Mirror -> Svg Msg
 draw_single_mirror mirror =
     let
         x1 =
-            get_point_from_line mirror.body 1
+            mirror.body.firstPoint.x |> String.fromFloat
 
         x2 =
-            get_point_from_line mirror.body 2
+            mirror.body.secondPoint.x |> String.fromFloat
 
         y1 =
-            get_point_from_line mirror.body 3
+            mirror.body.firstPoint.y |> String.fromFloat
 
         y2 =
-            get_point_from_line mirror.body 4
+            mirror.body.secondPoint.y |> String.fromFloat
     in
     Svg.line
         [ SvgAttr.x1 x1
