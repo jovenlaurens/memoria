@@ -7,5 +7,6 @@ import Model exposing (..)
 type Msg
     = Fail
     | DecideLegal Location
+    | RotateMirror Int
     | GetViewport Viewport
     | Resize Int Int

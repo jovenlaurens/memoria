@@ -11,6 +11,12 @@ type alias Location =
 {- co stand for coefficient -}
 
 
+type alias Mirror =
+    { body : Line
+    , index : Int
+    }
+
+
 type alias Line =
     { xco : Float
     , yco : Float
@@ -25,21 +31,20 @@ type IntervalEndpoint
     | NegInf
 
 
-type alias XInterval =
-    { left : IntervalEndpoint
-    , right : IntervalEndpoint
+type alias Interval =
+    { left_or_buttom : IntervalEndpoint
+    , right_or_top : IntervalEndpoint
+    , intervalType : IntervalType
     }
 
 
-type alias YInterval =
-    { left : IntervalEndpoint
-    , right : IntervalEndpoint
-    }
+
+{- In aid for vertical and horizontal lines -}
 
 
-type Interval
-    = XInterval
-    | YInterval
+type IntervalType
+    = X
+    | Y
 
 
 dotLineDistance : Location -> Float -> Float -> Float -> Float

@@ -1,5 +1,7 @@
 module Model exposing (..)
 
+import Geometry exposing (..)
+
 
 blockLength : Float
 blockLength =
@@ -28,6 +30,8 @@ type alias Model =
     , lastLocation : Location
     , size : ( Float, Float )
     , frame : List Location
+    , lightSet : List Line
+    , mirrorSet : List Mirror
     }
 
 
@@ -37,6 +41,8 @@ initial =
         (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength))
         ( 0, 0 )
         (generate_frames ( 4, 4 ))
+        (List.singleton (Line 1 2 3 (Interval (Regular 0) (Regular 2) X)))
+        (List.singleton (Mirror (Line 1 2 3 (Interval (Regular 0) (Regular 2) X)) 1))
 
 
 three_block_set : Location -> List Block
