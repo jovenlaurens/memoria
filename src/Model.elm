@@ -35,8 +35,10 @@ initial =
         (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength))
         ( 0, 0 )
         (generate_frames ( 4, 4 ))
-        (List.singleton (Line (Location 100 100) (Location 0 100)))
-        (List.singleton (Mirror (Line (Location 100 100) (Location 0 100)) 1))
+        (List.singleton (Line (Location 400 350) (Location 0 350)) ++ List.singleton (Line (Location 0 350) (Location 0 0)))
+        [ Mirror (Line (Location 350 300) (Location 350 400)) 1
+        , Mirror (Line (Location 350 0) (Location 350 100)) 2
+        ]
 
 
 three_block_set : Location -> List Block
@@ -79,11 +81,7 @@ toFloatPoint ( x, y ) =
 
 generate_one_frame : ( Float, Float ) -> Location
 generate_one_frame position =
-    let
-        pos =
-            Location (frameWidth * Tuple.first position + 1) (frameHeight * Tuple.second position - 1)
-    in
-    pos
+    Location (frameWidth * Tuple.first position + 1) (frameHeight * Tuple.second position - 1)
 
 
 

@@ -46,7 +46,7 @@ update_light_mirror index model =
             rotate_mirror model.mirrorSet index
 
         newLightSet =
-            refresh_lightSet (List.singleton (Line (Location 100 100) (Location 0 100))) newMirrorSet
+            refresh_lightSet (List.singleton (Line (Location 400 350) (Location 0 350))) newMirrorSet
     in
     { model | mirrorSet = newMirrorSet, lightSet = newLightSet }
 

@@ -49,6 +49,18 @@ view model =
         ]
 
 
+
+--, div
+--    [ HtmlAttr.style "width" "100%"
+--    , HtmlAttr.style "height" "100%"
+--    , HtmlAttr.style "position" "absolute"
+--    , HtmlAttr.style "left" "0"
+--    , HtmlAttr.style "top" "0"
+--    ]
+--    [ Html.text (Debug.toString model.lightSet) ]
+--]
+
+
 drawpath : List (Svg Msg)
 drawpath =
     Svg.path
@@ -60,6 +72,44 @@ drawpath =
         ]
         []
         |> List.singleton
+
+
+test_light : List Line -> Html msg
+test_light lightSet =
+    let
+        x =
+            lightSet
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
+                |> (\line -> line.secondPoint.x |> String.fromFloat)
+                |> List.singleton
+                |> List.append (List.map (\line -> line.firstPoint.x |> String.fromFloat) lightSet)
+
+        y =
+            lightSet
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
+                |> (\line -> line.secondPoint.y |> String.fromFloat)
+                |> List.singleton
+                |> List.append (List.map (\line -> line.firstPoint.y |> String.fromFloat) lightSet)
+
+        command =
+            List.append [ "M " ] (List.repeat (List.length lightSet) "l")
+
+        path_argument =
+            List.map3 (\a b c -> a ++ " " ++ b ++ " " ++ c ++ " ") command x y
+                |> List.foldr (++) ""
+    in
+    div
+        [ HtmlAttr.style "width" "100%"
+        , HtmlAttr.style "height" "100%"
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" "0"
+        , HtmlAttr.style "top" "0"
+        ]
+        [ Html.text (Debug.toString path_argument) ]
 
 
 draw_light : List Line -> List (Svg msg)
@@ -84,7 +134,7 @@ draw_light lightSet =
                 |> List.append (List.map (\line -> line.firstPoint.y |> String.fromFloat) lightSet)
 
         command =
-            List.append [ "M " ] (List.repeat (List.length lightSet) "l")
+            List.append [ "M " ] (List.repeat (List.length lightSet) "L")
 
         path_argument =
             List.map3 (\a b c -> a ++ " " ++ b ++ " " ++ c ++ " ") command x y
@@ -122,7 +172,7 @@ draw_single_mirror mirror =
         , SvgAttr.y1 y1
         , SvgAttr.y2 y2
         , SvgAttr.stroke "blue"
-        , SvgAttr.strokeWidth "3"
+        , SvgAttr.strokeWidth "10"
         , onClick (RotateMirror mirror.index)
         ]
         []

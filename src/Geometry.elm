@@ -109,13 +109,15 @@ rotate_mirror mirrorSet index =
     List.map (rotate_single_mirror index) mirrorSet
 
 
+{-| there may be bug because the range of atan function
+-}
 get_angle_from_line : Line -> Float
 get_angle_from_line line =
     if line.firstPoint.x == line.secondPoint.x then
-        0.0
+        pi / 2
 
     else if line.firstPoint.y == line.secondPoint.y then
-        pi / 2
+        0.0
 
     else
         atan ((line.secondPoint.y - line.firstPoint.y) / (line.secondPoint.x - line.firstPoint.x))
@@ -133,19 +135,19 @@ rotate_single_mirror index mirror =
                 Location (0.5 * (mirror.body.firstPoint.x + mirror.body.secondPoint.x)) ((mirror.body.secondPoint.y + mirror.body.firstPoint.y) * 0.5)
 
             halfLength =
-                distance mirror.body.secondPoint mirror.body.firstPoint
+                distance mirror.body.secondPoint mirror.body.firstPoint * 0.5
 
             x1 =
-                centerPoint.x + halfLength * cos (pi / 4 + angle)
-
-            x2 =
                 centerPoint.x - halfLength * cos (pi / 4 + angle)
 
+            x2 =
+                centerPoint.x + halfLength * cos (pi / 4 + angle)
+
             y1 =
-                centerPoint.y + halfLength * sin (pi / 4 + angle)
+                centerPoint.y - halfLength * sin (pi / 4 + angle)
 
             y2 =
-                centerPoint.y - halfLength * sin (pi / 4 + angle)
+                centerPoint.y + halfLength * sin (pi / 4 + angle)
         in
         { mirror | body = Line (Location x1 y1) (Location x2 y2) }
 
