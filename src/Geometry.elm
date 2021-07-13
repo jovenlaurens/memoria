@@ -91,17 +91,18 @@ reflect_light mirror light =
         newLineAngle =
             2 * (normalAngle - get_angle_from_line light) + get_angle_from_line light
 
+        -- the newFirstPoint also is the center of the mirror
         newFirstPoint =
             Location (0.5 * (mirror.body.firstPoint.x + mirror.body.secondPoint.x)) ((mirror.body.secondPoint.y + mirror.body.firstPoint.y) * 0.5)
 
         newSecondPoint =
-            Location (newFirstPoint.x + 300 * cos newLineAngle) (newFirstPoint.y + 300 * sin newLineAngle)
+            Location (newFirstPoint.x + 500 * cos newLineAngle) (newFirstPoint.y + 500 * sin newLineAngle)
     in
-    if d1 * d2 >= 0 then
-        light
+    if d1 * d2 < 0 && light.firstPoint /= newFirstPoint then
+        Line newFirstPoint newSecondPoint
 
     else
-        Line newFirstPoint newSecondPoint
+        light
 
 
 rotate_mirror : List Mirror -> Int -> List Mirror

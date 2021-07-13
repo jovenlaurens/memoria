@@ -36,11 +36,7 @@ initial =
         ( 0, 0 )
         (generate_frames ( 4, 4 ))
         (List.singleton (Line (Location 400 350) (Location 0 350)) ++ List.singleton (Line (Location 0 350) (Location 0 0)))
-        [ Mirror (Line (Location 350 300) (Location 350 400)) 1 ]
-
-
-
---, Mirror (Line (Location 350 0) (Location 350 100)) 2
+        [ Mirror (Line (Location 350 300) (Location 350 400)) 1, Mirror (Line (Location 350 0) (Location 350 100)) 2 ]
 
 
 three_block_set : Location -> List Block
