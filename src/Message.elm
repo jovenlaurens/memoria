@@ -1,6 +1,7 @@
 module Message exposing (..)
 
 import Browser.Dom exposing (Viewport)
+import Geometry exposing (Location)
 import Model exposing (..)
 
 

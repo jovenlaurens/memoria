@@ -45,8 +45,60 @@ view model =
             , SvgAttr.height "1000"
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
-            (draw_frame model.frame)
+            (draw_frame model.frame ++ draw_mirror model.mirrorSet ++ draw_light model.lightSet)
         ]
+
+
+drawpath : List (Svg Msg)
+drawpath =
+    Svg.path
+        [ SvgAttr.id "lineAB"
+        , SvgAttr.d "M 100 350 l 150 300 l 300 0 "
+        , SvgAttr.strokeWidth "5"
+        , SvgAttr.stroke "red"
+        , SvgAttr.fill "none"
+        ]
+        []
+        |> List.singleton
+
+
+draw_light : List Line -> List (Svg msg)
+draw_light lightSet =
+    let
+        x =
+            lightSet
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
+                |> (\line -> line.secondPoint.x |> String.fromFloat)
+                |> List.singleton
+                |> List.append (List.map (\line -> line.firstPoint.x |> String.fromFloat) lightSet)
+
+        y =
+            lightSet
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
+                |> (\line -> line.secondPoint.y |> String.fromFloat)
+                |> List.singleton
+                |> List.append (List.map (\line -> line.firstPoint.y |> String.fromFloat) lightSet)
+
+        command =
+            List.append [ "M " ] (List.repeat (List.length lightSet) "l")
+
+        path_argument =
+            List.map3 (\a b c -> a ++ " " ++ b ++ " " ++ c ++ " ") command x y
+                |> List.foldr (++) ""
+    in
+    Svg.path
+        [ SvgAttr.id "light"
+        , SvgAttr.d path_argument
+        , SvgAttr.strokeWidth "5"
+        , SvgAttr.stroke "blue"
+        , SvgAttr.fill "none"
+        ]
+        []
+        |> List.singleton
 
 
 draw_single_mirror : Mirror -> Svg Msg
@@ -97,19 +149,6 @@ draw_frame locationList =
                 []
     in
     List.map draw_single_frame locationList
-
-
-drawpath : List (Svg Msg)
-drawpath =
-    Svg.path
-        [ SvgAttr.id "lineAB"
-        , SvgAttr.d "M 100 350 l 150 300 l 300 0"
-        , SvgAttr.strokeWidth "5"
-        , SvgAttr.stroke "red"
-        , SvgAttr.fill "none"
-        ]
-        []
-        |> List.singleton
 
 
 render_button : Model -> Html Msg

@@ -13,12 +13,6 @@ type BlockState
     | NonActive
 
 
-type alias Location =
-    { x : Float
-    , y : Float
-    }
-
-
 type alias Block =
     { anchor : Location
     , state : BlockState

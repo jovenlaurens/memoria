@@ -9,7 +9,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RotateMirror index ->
-            ( { model | mirrorSet = rotate_mirror model.mirrorSet index }
+            ( model |> update_light_mirror index
             , Cmd.none
             )
 
@@ -39,8 +39,16 @@ update msg model =
                 ( { model | blockSet = List.map (change_block_state location) model.blockSet, lastLocation = location }, Cmd.none )
 
 
+update_light_mirror : Int -> Model -> Model
+update_light_mirror index model =
+    let
+        newMirrorSet =
+            rotate_mirror model.mirrorSet index
 
-{- rotate 45 degree counter-clockwise -}
+        newLightSet =
+            refresh_lightSet (List.singleton (Line (Location 100 100) (Location 0 100))) newMirrorSet
+    in
+    { model | mirrorSet = newMirrorSet, lightSet = newLightSet }
 
 
 change_block_state : Location -> Block -> Block

@@ -23,35 +23,7 @@ type alias Line =
     }
 
 
-getLine : Location -> Float -> ( Float, Float, Float )
-getLine pos angle =
-    if angle == 0 || angle == pi then
-        ( 1, 0, -pos.x )
-
-    else if angle == (pi * 1 / 2) || angle == (pi * 3 / 2) then
-        ( 0, 1, -pos.y )
-
-    else
-        let
-            x =
-                pos.x
-
-            y =
-                pos.y
-
-            a =
-                -(x - 0) / (y - 0)
-
-            b =
-                -1
-
-            c =
-                y - a * x
-        in
-        ( a, b, c )
-
-
-get_new_light_help : List Line -> List Line -> List Line
+get_new_light_help : List Line -> List Mirror -> List Line
 get_new_light_help lightSet mirrorSet =
     let
         light_tail =
@@ -67,11 +39,9 @@ get_new_light_help lightSet mirrorSet =
         new_light |> List.singleton |> List.append lightSet
 
 
-
-{- top hierarchy -}
-
-
-refresh_lightSet : List Line -> List Line -> List Line
+{-| top hierarchy.
+-}
+refresh_lightSet : List Line -> List Mirror -> List Line
 refresh_lightSet lightSet mirrorSet =
     let
         len =
@@ -103,26 +73,26 @@ get_coefficient line =
         ( a, -1, c )
 
 
-reflect_light : Line -> Line -> Line
-reflect_light light mirror =
+reflect_light : Mirror -> Line -> Line
+reflect_light mirror light =
     let
         ( a, b, c ) =
-            get_coefficient mirror
+            get_coefficient light
 
         d1 =
-            a * light.firstPoint.x + b * light.firstPoint.y + c
+            a * mirror.body.firstPoint.x + b * mirror.body.firstPoint.y + c
 
         d2 =
-            a * light.secondPoint.x + b * light.secondPoint.y + c
+            a * mirror.body.secondPoint.x + b * mirror.body.secondPoint.y + c
 
         normalAngle =
-            pi / 2 + get_angle_from_line mirror
+            pi / 2 + get_angle_from_line mirror.body
 
         newLineAngle =
             2 * (normalAngle - get_angle_from_line light) + get_angle_from_line light
 
         newFirstPoint =
-            Location (0.5 * (mirror.firstPoint.x + mirror.secondPoint.x)) ((mirror.secondPoint.y + mirror.firstPoint.y) * 0.5)
+            Location (0.5 * (mirror.body.firstPoint.x + mirror.body.secondPoint.x)) ((mirror.body.secondPoint.y + mirror.body.firstPoint.y) * 0.5)
 
         newSecondPoint =
             Location (newFirstPoint.x + 300 * cos newLineAngle) (newFirstPoint.y + 300 * sin newLineAngle)
@@ -199,15 +169,3 @@ distance pa pb =
             pb.y
     in
     sqrt ((ax - bx) ^ 2 + (ay - by) ^ 2)
-
-
-dotLineDistance : Location -> Float -> Float -> Float -> Float
-dotLineDistance location a b c =
-    let
-        x =
-            location.x
-
-        y =
-            location.y
-    in
-    abs (a * x + b * y + c) / sqrt (a ^ 2 + b ^ 2)
