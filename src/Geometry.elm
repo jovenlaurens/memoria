@@ -67,8 +67,12 @@ get_new_light_help lightSet mirrorSet =
         new_light |> List.singleton |> List.append lightSet
 
 
-get_new_lightSet : List Line -> List Line -> List Line
-get_new_lightSet lightSet mirrorSet =
+
+{- top hierarchy -}
+
+
+refresh_lightSet : List Line -> List Line -> List Line
+refresh_lightSet lightSet mirrorSet =
     let
         len =
             List.length lightSet
@@ -77,12 +81,57 @@ get_new_lightSet lightSet mirrorSet =
         get_new_light_help lightSet mirrorSet
 
     else
-        get_new_lightSet (get_new_light_help lightSet mirrorSet) mirrorSet
+        refresh_lightSet (get_new_light_help lightSet mirrorSet) mirrorSet
+
+
+get_coefficient : Line -> ( Float, Float, Float )
+get_coefficient line =
+    if line.firstPoint.y == line.secondPoint.y then
+        ( 0, 1, -line.firstPoint.y )
+
+    else if line.firstPoint.x == line.secondPoint.x then
+        ( 1, 0, -line.firstPoint.x )
+
+    else
+        let
+            a =
+                (line.secondPoint.y - line.firstPoint.y) / (line.secondPoint.x - line.firstPoint.x)
+
+            c =
+                -a * line.firstPoint.x + line.firstPoint.y
+        in
+        ( a, -1, c )
 
 
 reflect_light : Line -> Line -> Line
 reflect_light light mirror =
-    light
+    let
+        ( a, b, c ) =
+            get_coefficient mirror
+
+        d1 =
+            a * light.firstPoint.x + b * light.firstPoint.y + c
+
+        d2 =
+            a * light.secondPoint.x + b * light.secondPoint.y + c
+
+        normalAngle =
+            pi / 2 + get_angle_from_line mirror
+
+        newLineAngle =
+            2 * (normalAngle - get_angle_from_line light) + get_angle_from_line light
+
+        newFirstPoint =
+            Location (0.5 * (mirror.firstPoint.x + mirror.secondPoint.x)) ((mirror.secondPoint.y + mirror.firstPoint.y) * 0.5)
+
+        newSecondPoint =
+            Location (newFirstPoint.x + 300 * cos newLineAngle) (newFirstPoint.y + 300 * sin newLineAngle)
+    in
+    if d1 * d2 >= 0 then
+        light
+
+    else
+        Line newFirstPoint newSecondPoint
 
 
 rotate_mirror : List Mirror -> Int -> List Mirror
