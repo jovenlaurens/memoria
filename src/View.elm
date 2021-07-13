@@ -46,19 +46,23 @@ view model =
             , SvgAttr.viewBox "0 0 1000 1000"
             ]
             (draw_frame model.frame ++ draw_mirror model.mirrorSet ++ draw_light model.lightSet)
+        , div
+            [ HtmlAttr.style "width" "100%"
+            , HtmlAttr.style "height" "100%"
+            , HtmlAttr.style "position" "absolute"
+            , HtmlAttr.style "left" "300px"
+            , HtmlAttr.style "top" "400px"
+            ]
+            [ Html.text (Debug.toString model.lightSet) ]
+        , div
+            [ HtmlAttr.style "width" "100%"
+            , HtmlAttr.style "height" "100%"
+            , HtmlAttr.style "position" "absolute"
+            , HtmlAttr.style "left" "300px"
+            , HtmlAttr.style "top" "450px"
+            ]
+            [ Html.text (Debug.toString model.mirrorSet) ]
         ]
-
-
-
---, div
---    [ HtmlAttr.style "width" "100%"
---    , HtmlAttr.style "height" "100%"
---    , HtmlAttr.style "position" "absolute"
---    , HtmlAttr.style "left" "0"
---    , HtmlAttr.style "top" "0"
---    ]
---    [ Html.text (Debug.toString model.lightSet) ]
---]
 
 
 drawpath : List (Svg Msg)
