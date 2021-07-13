@@ -1,4 +1,4 @@
-module Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawhouradjust, drawminuteadjust)
+module Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
 
 import Browser
 import Debug exposing (toString)
@@ -220,25 +220,28 @@ drawbackbutton =
 
 -}
 
+
 drawhouradjust : Html Msg
 drawhouradjust =
     button
-            [ style "border" "0"
-            , style "top" "30%"
-            , style "left" "41.8%"
-            , style "height" "28.8%"
-            , style "width" "16.2%"
-            , style "cursor" "pointer"
-            , style "outline" "none"
-            , style "padding" "0"
-            , style "position" "absolute"
-            , style "background-color" "transparent"
-            , style "border-radius" "50%"
-            , onClick (OnClickTriggers 1)
-            ]
-            []
+        [ style "border" "0"
+        , style "top" "30%"
+        , style "left" "41.8%"
+        , style "height" "28.8%"
+        , style "width" "16.2%"
+        , style "cursor" "pointer"
+        , style "outline" "none"
+        , style "padding" "0"
+        , style "position" "absolute"
+        , style "background-color" "transparent"
+        , style "border-radius" "50%"
+        , onClick (OnClickTriggers 1)
+        ]
+        []
+
+
 drawminuteadjust : Html Msg
-drawminuteadjust = 
+drawminuteadjust =
     button
         [ HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "top" "17%"
@@ -254,4 +257,3 @@ drawminuteadjust =
         , onClick (OnClickTriggers 0)
         ]
         []
-     

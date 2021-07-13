@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Draggable
 import Inventory exposing (Grid(..), Inventory, initial_inventory)
+import Memory exposing (Memory, initial_memory)
 import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
@@ -20,9 +21,8 @@ type alias Model =
     , pictures : List Picture
     , inventory : Inventory
     , underUse : Grid
+    , memory : List Memory
     }
-
-
 
 
 initial : Model
@@ -39,6 +39,7 @@ initial =
         initial_pictures
         initial_inventory
         Blank
+        initial_memory
 
 
 {-| when using it, index = index - 1.

@@ -7,13 +7,13 @@ import Furnitures exposing (..)
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
-import Inventory exposing (render_inventory)
+import Inventory exposing (Grid(..), render_inventory)
 import List exposing (foldr)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..))
-import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand, drawminuteadjust, drawhouradjust)
-import Picture exposing (Picture, ShowState(..), list_index_picture)
+import Object exposing (ClockModel, Object(..), get_time)
+import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
+import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Scene exposing (defaultScene)
@@ -76,28 +76,35 @@ view model =
 
                 0 ->
                     (if model.cscene == 0 then
-                        (render_level model)
+                        render_level model
 
-                    else
-                        render_object model :: {-render_draggable model.spcPosition ::-}render_button_inside model.cscene model.objects)
-                    ++ (render_ui_button 0)
+                     else
+                        render_object model :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
+                    )
+                        ++ render_ui_button 0
 
                 1 ->
                     render_ui_button 1
-                    ++[text ("this is menu!")]
-                2 -> --第一页memory
-                    render_ui_button 2
-                    ++[text "this is memory page 1"]
-                3 -> --第二页memory
-                    render_ui_button 3
-                    ++[text "this is memory page 2"]
-                4 -> --第三页memory
-                    render_ui_button 4
-                    ++[text "this is memory page 3"]
+                        ++ [ text "this is menu!" ]
 
-                10 -> 
+                2 ->
+                    --第一页memory
+                    render_ui_button 2
+                        ++ [ text "this is memory page 1" ]
+
+                3 ->
+                    --第二页memory
+                    render_ui_button 3
+                        ++ [ text "this is memory page 2" ]
+
+                4 ->
+                    --第三页memory
+                    render_ui_button 4
+                        ++ [ text "this is memory page 3" ]
+
+                10 ->
                     render_ui_button 10
-                    ++[text "this is Achievement page"]
+                        ++ [ text "this is Achievement page" ]
 
                 _ ->
                     [ text (toString model.cstate) ]
@@ -119,9 +126,6 @@ view model =
            (render_object model)--++(render_button model)
 -}
 {- render the background of the screen, if specific, doesnt have this -}
-
-
-
 
 
 render_draggable : ( Float, Float ) -> Html Msg
@@ -147,7 +151,7 @@ render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
     ]
-    ++ render_button_level model.clevel
+        ++ render_button_level model.clevel
 
 
 render_button_level : Int -> List (Html Msg)
@@ -172,16 +176,22 @@ render_button_inside cs objs =
         tar =
             list_index_object (cs - 1) objs
     in
-        case tar of
-            Clock a ->
-                [ drawbackbutton
-                ]
-            Table a ->
-                [ drawbackbutton
-                ]
+    case tar of
+        Clock a ->
+            [ drawbackbutton
+            ]
+
+        Table a ->
+            [ drawbackbutton
+            ]
+
+        Frame a ->
+            [ drawbackbutton
+            ]
 
 
-        --inside button should be put in the pclock
+
+--inside button should be put in the pclock
 
 
 render_object : Model -> Svg Msg
@@ -193,39 +203,85 @@ render_object model =
         ]
         ((if model.cscene == 0 then
             if model.clevel == 1 then
-                List.foldr (render_object_inside model.cscene) [] model.objects
-                    ++ level_1_furniture
+                level_1_furniture
+                    ++ List.foldr (render_object_inside model.cscene) [] model.objects
 
             else
                 List.foldr (render_object_inside model.cscene) [] model.objects
 
-         else
-            (render_picutre_index 0 model.pictures )
-            :: render_object_only model.cscene model.objects
+          else
+            render_picture model.pictures
+                ++ render_object_only model.cscene model.objects
+                ++ render_test_information model
+         )
+            ++ render_inventory model.inventory
         )
-        ++(render_inventory model.inventory))
 
 
-render_picutre_index : Int -> List Picture -> Svg Msg
-render_picutre_index index list =
+render_test_information : Model -> List (Svg Msg)
+render_test_information model =
     let
-        tar = list_index_picture index list
-        sta = tar.state
+        under =
+            if model.underUse == Blank then
+                "Blank"
+
+            else
+                "Have"
     in
-        if sta == Show then
+    [ Svg.text_
+        [ SvgAttr.x "100"
+        , SvgAttr.y "200"
+        ]
+        [ Svg.text under
+        ]
+    ]
+
+
+render_picture : List Picture -> List (Svg Msg)
+render_picture list =
+    let
+        render_pict_inside pict =
+            if pict.state == Show then
+                render_picture_index pict.index
+
+            else
+                Svg.rect
+                    []
+                    []
+    in
+    List.map render_pict_inside list
+
+
+render_picture_index : Int -> Svg Msg
+render_picture_index index =
+    case index of
+        0 ->
             Svg.rect
                 [ SvgAttr.x "1300"
                 , SvgAttr.y "400"
                 , SvgAttr.width "100"
                 , SvgAttr.height "30"
-                , SvgAttr.color "red"
-                , Svg.Events.onClick ( OnClickItem index 0)
+                , SvgAttr.fill "red"
+                , Svg.Events.onClick (OnClickItem 0 0)
                 ]
                 []
-        else
+
+        1 ->
+            Svg.rect
+                [ SvgAttr.x "1400"
+                , SvgAttr.y "600"
+                , SvgAttr.width "100"
+                , SvgAttr.height "30"
+                , SvgAttr.fill "red"
+                , Svg.Events.onClick (OnClickItem 1 0)
+                ]
+                []
+
+        _ ->
             Svg.rect
                 []
                 []
+
 
 
 {- [
@@ -249,6 +305,10 @@ render_object_inside scne obj old =
                     , drawminutehand scne a
                     ]
 
+                Frame a ->
+                    [ render_picture_button
+                    ]
+
                 --三层楼都需要，所以不加level判定
                 _ ->
                     []
@@ -270,7 +330,30 @@ render_object_only cs objects =
             ]
 
         Table a ->
-            (drawpath ++ draw_block a.blockSet)
+            drawpath ++ draw_block a.blockSet
+
+        Frame a ->
+            [ Svg.rect
+                [ SvgAttr.x "100"
+                , SvgAttr.y "200"
+                , SvgAttr.width "200"
+                , SvgAttr.height "200"
+                , SvgAttr.fill "red"
+                , SvgAttr.fillOpacity "0.2"
+                , SvgAttr.stroke "red"
+                ]
+                []
+            , Svg.rect
+                [ SvgAttr.x "100"
+                , SvgAttr.y "200"
+                , SvgAttr.width "100"
+                , SvgAttr.height "200"
+                , SvgAttr.fill "red"
+                , SvgAttr.fillOpacity "0.2"
+                , SvgAttr.stroke "red"
+                ]
+                []
+            ]
 
 
 render_ui_button : Int -> List (Html Msg)

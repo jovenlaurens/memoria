@@ -3,10 +3,12 @@ module Messages exposing (..)
 import Browser.Dom exposing (Viewport)
 import Draggable
 
+
 type alias Location =
     { x : Float
     , y : Float
     }
+
 
 type Msg
     = EnterState --from cover to intro, from intro to the game (state++ until 0, cover 100, intro 101)

@@ -13,12 +13,10 @@ type BlockState
     = Active
     | NonActive
 
+
 blockLength : Float
 blockLength =
     40.0
-
-
-
 
 
 type alias Block =
@@ -32,6 +30,7 @@ type alias TableModel =
     , lastLocation : Location
     , size : ( Float, Float )
     }
+
 
 initial_table : TableModel
 initial_table =
@@ -63,9 +62,6 @@ initial_block =
         ++ three_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength))
         ++ two_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength * 2))
         ++ three_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength * 3))
-
-
-
 
 
 render_table_button : Html Msg
@@ -168,12 +164,10 @@ draw_single_block block =
         ]
         []
 
+
 draw_block : List Block -> List (Svg Msg)
 draw_block blockSet =
     List.map draw_single_block blockSet
-
-
-
 
 
 change_block_state : Location -> Block -> Block
