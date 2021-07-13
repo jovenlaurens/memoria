@@ -21,39 +21,40 @@ type alias FrameModel =
     { index : List Int
     }
 
-get_time : Object -> (Int, Int)
+
+get_time : Object -> ( Int, Int )
 get_time obj =
     let
-        (orihour, oriminute) =
+        ( orihour, oriminute ) =
             case obj of
                 Clock a ->
-                    (a.hour, a.minute)
+                    ( a.hour, a.minute )
+
                 _ ->
                     Debug.todo "abab"
     in
-        (modBy 12 orihour, modBy 60 oriminute)
+    ( modBy 12 orihour, modBy 60 oriminute )
 
-test_table : Location ->  Object -> Object
+
+test_table : Location -> Object -> Object
 test_table loca pre =
+    case pre of
+        Table tm ->
+            if distance loca tm.lastLocation > blockLength * 1.1 * sqrt 3 then
+                Table initial_table
 
-            case pre of
-                Table tm ->
-                    if distance loca tm.lastLocation > blockLength * 1.1 * sqrt 3 then
-                        Table initial_table
+            else
+                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca }
 
-                    else
-                        Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca }
-
-                _ ->
-                    pre
-
+        _ ->
+            pre
 
 
 initial_objects : List Object
-initial_objects =
-    [ Clock (ClockModel 1 30)
-    , Table (initial_table)
-    , Frame (FrameModel [0])
+initial_objects = --cscene = 0,   -|obj |cscene|所在楼层|描述
+    [ Clock (ClockModel 1 30)      --0    1        1
+    , Table initial_table          --1    2        1
+    , Frame (FrameModel [ 0 ])     --2    3        1
     ]
 
 

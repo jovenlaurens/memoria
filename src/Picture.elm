@@ -1,17 +1,17 @@
 module Picture exposing (..)
 
+import Button exposing (Button, test_button)
 import Html exposing (Html)
 import Messages exposing (Msg(..))
-import Button exposing (Button, test_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+
 
 type alias Picture =
     { state : ShowState
     , index : Int
     }
-
 
 
 type ShowState
@@ -26,22 +26,25 @@ type ShowState
 show_index_picture : Int -> List Picture -> List Picture
 show_index_picture index list =
     let
-        f = (\x -> if x.index == index then
-                        {x | state = Show}
-                   else
-                        x
-            )
+        f =
+            \x ->
+                if x.index == index then
+                    { x | state = Show }
+
+                else
+                    x
     in
-        List.map f list
+    List.map f list
 
 
-{-render_index_picture : Int -> Svg Msg
-render_index_picture index =
-    case index of
-        0 -> Svg.rect
-                []
-                []-}
 
+{- render_index_picture : Int -> Svg Msg
+   render_index_picture index =
+       case index of
+           0 -> Svg.rect
+                   []
+                   []
+-}
 
 
 list_index_picture : Int -> List Picture -> Picture
@@ -56,6 +59,7 @@ initial_pictures =
     [ Picture NotShow 0
     , Picture NotShow 1
     ]
+
 
 default_picture : Picture
 default_picture =
@@ -74,3 +78,5 @@ render_picture_button =
         , Svg.Events.onClick (ChangeScene 3)
         ]
         []
+
+draw_picture_1

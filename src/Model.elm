@@ -25,8 +25,6 @@ type alias Model =
     }
 
 
-
-
 initial : Model
 initial =
     Model

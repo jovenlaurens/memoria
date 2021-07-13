@@ -1,6 +1,5 @@
 module Furnitures exposing (..)
 
-
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
