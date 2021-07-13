@@ -94,6 +94,8 @@ draw_frame_and_memory list =
                             ]
                             []
                          ]
+                    _ ->
+                        []
 
 
 

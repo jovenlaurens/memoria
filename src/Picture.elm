@@ -79,4 +79,3 @@ render_picture_button =
         ]
         []
 
-draw_picture_1
