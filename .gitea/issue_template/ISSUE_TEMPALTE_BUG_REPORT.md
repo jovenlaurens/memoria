@@ -1,5 +1,7 @@
-# Description
-
+---
+name: bug report
+about: issue template for bug report
+---
 ___
 Reported by :
 
