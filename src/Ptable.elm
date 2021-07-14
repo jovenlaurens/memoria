@@ -39,14 +39,21 @@ initial_table =
         ( 0, 0 )
 
 
+{-| generate three block horizontally
+-}
 three_block_set : Location -> List Block
 three_block_set center =
-    [ Block center NonActive, Block { center | x = center.x - blockLength * sqrt 3 } NonActive, Block { center | x = center.x + blockLength * sqrt 3 } NonActive ]
+    [ Block center NonActive, Block { center | y = center.y - blockLength * sqrt 3 } NonActive, Block { center | y = center.y + blockLength * sqrt 3 } NonActive ]
 
 
-two_block_set : Location -> List Block
-two_block_set center =
-    [ Block { center | x = center.x - twoOfSquare3_help * blockLength } NonActive, Block { center | x = center.x + twoOfSquare3_help * blockLength } NonActive ]
+{-| center is set as the button of the u-shape
+-}
+ushape_block_set : Location -> List Block
+ushape_block_set center =
+    [ Block center NonActive
+    , Block { center | x = center.x + blockLength * 1.5, y = center.y - twoOfSquare3 * blockLength } NonActive
+    , Block { center | x = center.x - blockLength * 1.5, y = center.y - twoOfSquare3 * blockLength } NonActive
+    ]
 
 
 twoOfSquare3_help : Float
@@ -56,12 +63,11 @@ twoOfSquare3_help =
 
 initial_block : List Block
 initial_block =
-    two_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) 500.0)
-        ++ three_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength))
-        ++ two_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength * 2))
-        ++ three_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength))
-        ++ two_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength * 2))
-        ++ three_block_set (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 + 1.5 * blockLength * 3))
+    three_block_set (Location 500.0 500.0)
+        ++ three_block_set (Location (500.0 - 3 * blockLength) 500.0)
+        ++ three_block_set (Location (500.0 + 3 * blockLength) 500.0)
+        ++ ushape_block_set (Location 500.0 (500.0 + 2 * blockLength * sqrt 3))
+        ++ ushape_block_set (Location 500.0 (500.0 - blockLength * sqrt 3))
 
 
 render_table_button : Html Msg
@@ -157,10 +163,11 @@ draw_single_block block =
     in
     Svg.polygon
         [ SvgAttr.fill color
-        , SvgAttr.strokeWidth "1"
+        , SvgAttr.strokeWidth "5"
         , SvgAttr.points (get_point block.anchor)
         , onClick (DecideLegal block.anchor)
-        , SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
+
+        --, SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
         ]
         []
 

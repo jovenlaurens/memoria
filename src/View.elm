@@ -330,7 +330,7 @@ render_object_only cs objects =
             ]
 
         Table a ->
-            drawpath ++ draw_block a.blockSet
+            draw_block a.blockSet
 
         Frame a ->
             [ Svg.rect
