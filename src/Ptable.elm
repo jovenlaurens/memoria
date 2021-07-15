@@ -2,6 +2,7 @@ module Ptable exposing (..)
 
 import Button exposing (test_button)
 import Debug exposing (toString)
+import Geometry exposing (Location)
 import Html exposing (Html)
 import Messages exposing (..)
 import Svg exposing (Svg)

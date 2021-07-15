@@ -2,12 +2,7 @@ module Messages exposing (..)
 
 import Browser.Dom exposing (Viewport)
 import Draggable
-
-
-type alias Location =
-    { x : Float
-    , y : Float
-    }
+import Geometry exposing (Location)
 
 
 type Msg

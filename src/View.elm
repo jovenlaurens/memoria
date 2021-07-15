@@ -14,6 +14,7 @@ import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
+import Pmirror exposing (draw_frame, draw_light, draw_mirror)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Scene exposing (defaultScene)
@@ -166,8 +167,21 @@ render_button_level level =
                 ++ [ drawclockbutton ]
                 ++ [ render_table_button ]
 
+        2 ->
+            render_stair_level level ++ render_mirror_button
+
         _ ->
             render_stair_level level
+
+
+render_mirror_button : List (Html Msg)
+render_mirror_button =
+    let
+        but =
+            Button.Button 10 10 10 10 "" (ChangeScene 4) ""
+    in
+    test_button but
+        |> List.singleton
 
 
 render_button_inside : Int -> List Object -> List (Html Msg)
@@ -188,6 +202,9 @@ render_button_inside cs objs =
         Frame a ->
             [ drawbackbutton
             ]
+
+        _ ->
+            []
 
 
 
@@ -323,6 +340,9 @@ render_object_only cs objects =
             list_index_object (cs - 1) objects
     in
     case tar of
+        Mirror a ->
+            draw_frame a.frame ++ draw_mirror a.mirrorSet ++ draw_light a.lightSet
+
         Clock a ->
             [ drawclock cs
             , drawhourhand cs a

@@ -2,6 +2,7 @@ module Update exposing (..)
 
 import Browser.Dom exposing (getViewport)
 import Draggable
+import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
 import Inventory exposing (Grid(..), insert_new_item)
@@ -223,6 +224,9 @@ update_onclicktrigger model number =
         3 ->
             try_to_unlock_picture model number
 
+        4 ->
+            { model | objects = update_light_mirror_set number model.objects }
+
         --number是frame的序号(0-4)
         _ ->
             model
@@ -323,3 +327,25 @@ check_use_picture pict model =
 
     else
         model
+
+
+update_light_mirror_set : Int -> List Object -> List Object
+update_light_mirror_set index objectSet =
+    List.map (update_light_mirror index) objectSet
+
+
+update_light_mirror : Int -> Object -> Object
+update_light_mirror index object =
+    case object of
+        Mirror a ->
+            let
+                newMirrorSet =
+                    rotate_mirror a.mirrorSet index
+
+                newLightSet =
+                    refresh_lightSet (List.singleton (Line (Location 400 350) (Location 0 350))) newMirrorSet
+            in
+            Mirror { a | mirrorSet = newMirrorSet, lightSet = newLightSet }
+
+        _ ->
+            object

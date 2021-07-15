@@ -5253,13 +5253,114 @@ var $author$project$Object$Frame = function (a) {
 var $author$project$Object$FrameModel = function (index) {
 	return {index: index};
 };
+var $author$project$Object$Mirror = function (a) {
+	return {$: 'Mirror', a: a};
+};
 var $author$project$Object$Table = function (a) {
 	return {$: 'Table', a: a};
 };
-var $author$project$Messages$Location = F2(
+var $author$project$Geometry$Line = F2(
+	function (firstPoint, secondPoint) {
+		return {firstPoint: firstPoint, secondPoint: secondPoint};
+	});
+var $author$project$Geometry$Location = F2(
 	function (x, y) {
 		return {x: x, y: y};
 	});
+var $author$project$Geometry$Mirror = F2(
+	function (body, index) {
+		return {body: body, index: index};
+	});
+var $author$project$Pmirror$MirrorModel = F3(
+	function (frame, lightSet, mirrorSet) {
+		return {frame: frame, lightSet: lightSet, mirrorSet: mirrorSet};
+	});
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $author$project$Pmirror$frameHeight = 100.0;
+var $author$project$Pmirror$frameWidth = 100.0;
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $author$project$Pmirror$generate_one_frame = function (position) {
+	return A2($author$project$Geometry$Location, ($author$project$Pmirror$frameWidth * position.a) + 1, ($author$project$Pmirror$frameHeight * position.b) - 1);
+};
+var $elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var $author$project$Pmirror$toFloatPoint = function (_v0) {
+	var x = _v0.a;
+	var y = _v0.b;
+	return _Utils_Tuple2(x, y);
+};
+var $author$project$Pmirror$generate_frames = function (size) {
+	var rangey = A2($elm$core$List$range, 0, size.b - 1);
+	var rangex = A2($elm$core$List$range, 0, size.a - 1);
+	var line = function (y) {
+		return A2(
+			$elm$core$List$map,
+			function (x) {
+				return A2($elm$core$Tuple$pair, x, y);
+			},
+			rangex);
+	};
+	return A2(
+		$elm$core$List$map,
+		$author$project$Pmirror$generate_one_frame,
+		A2(
+			$elm$core$List$map,
+			$author$project$Pmirror$toFloatPoint,
+			$elm$core$List$concat(
+				A2($elm$core$List$map, line, rangey))));
+};
+var $elm$core$List$singleton = function (value) {
+	return _List_fromArray(
+		[value]);
+};
+var $author$project$Pmirror$initialMirror = A3(
+	$author$project$Pmirror$MirrorModel,
+	$author$project$Pmirror$generate_frames(
+		_Utils_Tuple2(4, 4)),
+	$elm$core$List$singleton(
+		A2(
+			$author$project$Geometry$Line,
+			A2($author$project$Geometry$Location, 400, 350),
+			A2($author$project$Geometry$Location, 0, 350))),
+	_List_fromArray(
+		[
+			A2(
+			$author$project$Geometry$Mirror,
+			A2(
+				$author$project$Geometry$Line,
+				A2($author$project$Geometry$Location, 300, 350),
+				A2($author$project$Geometry$Location, 400, 350)),
+			1),
+			A2(
+			$author$project$Geometry$Mirror,
+			A2(
+				$author$project$Geometry$Line,
+				A2($author$project$Geometry$Location, 350, 100),
+				A2($author$project$Geometry$Location, 350, 0)),
+			2),
+			A2(
+			$author$project$Geometry$Mirror,
+			A2(
+				$author$project$Geometry$Line,
+				A2($author$project$Geometry$Location, 50, 100),
+				A2($author$project$Geometry$Location, 50, 0)),
+			3)
+		]));
 var $author$project$Ptable$TableModel = F3(
 	function (blockSet, lastLocation, size) {
 		return {blockSet: blockSet, lastLocation: lastLocation, size: size};
@@ -5314,29 +5415,29 @@ var $author$project$Ptable$ushape_block_set = function (center) {
 };
 var $author$project$Ptable$initial_block = _Utils_ap(
 	$author$project$Ptable$three_block_set(
-		A2($author$project$Messages$Location, 500.0, 500.0)),
+		A2($author$project$Geometry$Location, 500.0, 500.0)),
 	_Utils_ap(
 		$author$project$Ptable$three_block_set(
-			A2($author$project$Messages$Location, 500.0 - (3 * $author$project$Ptable$blockLength), 500.0)),
+			A2($author$project$Geometry$Location, 500.0 - (3 * $author$project$Ptable$blockLength), 500.0)),
 		_Utils_ap(
 			$author$project$Ptable$three_block_set(
-				A2($author$project$Messages$Location, 500.0 + (3 * $author$project$Ptable$blockLength), 500.0)),
+				A2($author$project$Geometry$Location, 500.0 + (3 * $author$project$Ptable$blockLength), 500.0)),
 			_Utils_ap(
 				$author$project$Ptable$ushape_block_set(
 					A2(
-						$author$project$Messages$Location,
+						$author$project$Geometry$Location,
 						500.0,
 						500.0 + ((2 * $author$project$Ptable$blockLength) * $elm$core$Basics$sqrt(3)))),
 				$author$project$Ptable$ushape_block_set(
 					A2(
-						$author$project$Messages$Location,
+						$author$project$Geometry$Location,
 						500.0,
 						500.0 - ($author$project$Ptable$blockLength * $elm$core$Basics$sqrt(3))))))));
 var $author$project$Ptable$twoOfSquare3_help = $elm$core$Basics$sqrt(3) / 2.0;
 var $author$project$Ptable$initial_table = A3(
 	$author$project$Ptable$TableModel,
 	$author$project$Ptable$initial_block,
-	A2($author$project$Messages$Location, 500.0 + (($author$project$Ptable$twoOfSquare3_help * 3) / 2), 500.0 - (1.5 * $author$project$Ptable$blockLength)),
+	A2($author$project$Geometry$Location, 500.0 + (($author$project$Ptable$twoOfSquare3_help * 3) / 2), 500.0 - (1.5 * $author$project$Ptable$blockLength)),
 	_Utils_Tuple2(0, 0));
 var $author$project$Object$initial_objects = _List_fromArray(
 	[
@@ -5346,7 +5447,8 @@ var $author$project$Object$initial_objects = _List_fromArray(
 		$author$project$Object$Frame(
 		$author$project$Object$FrameModel(
 			_List_fromArray(
-				[0])))
+				[0]))),
+		$author$project$Object$Mirror($author$project$Pmirror$initialMirror)
 	]);
 var $author$project$Picture$NotShow = {$: 'NotShow'};
 var $author$project$Picture$Picture = F2(
@@ -5356,7 +5458,8 @@ var $author$project$Picture$Picture = F2(
 var $author$project$Picture$initial_pictures = _List_fromArray(
 	[
 		A2($author$project$Picture$Picture, $author$project$Picture$NotShow, 0),
-		A2($author$project$Picture$Picture, $author$project$Picture$NotShow, 1)
+		A2($author$project$Picture$Picture, $author$project$Picture$NotShow, 1),
+		A2($author$project$Picture$Picture, $author$project$Picture$NotShow, 2)
 	]);
 var $author$project$Scene$Scene = F2(
 	function (objectOrder, pictureSrc) {
@@ -6328,8 +6431,8 @@ var $author$project$Object$get_time = function (obj) {
 			return _Debug_todo(
 				'Object',
 				{
-					start: {line: 34, column: 21},
-					end: {line: 34, column: 31}
+					start: {line: 36, column: 21},
+					end: {line: 36, column: 31}
 				})('abab');
 		}
 	}();
@@ -6605,6 +6708,171 @@ var $author$project$Update$try_to_unlock_picture = F2(
 				memory: A3($author$project$Memory$unlock_cor_memory, number, pict_num, model.memory)
 			}) : model);
 	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $elm$core$Basics$cos = _Basics_cos;
+var $elm$core$Basics$atan = _Basics_atan;
+var $elm$core$Basics$pi = _Basics_pi;
+var $author$project$Geometry$get_angle_from_line = function (line) {
+	return _Utils_eq(line.firstPoint.x, line.secondPoint.x) ? ((_Utils_cmp(line.firstPoint.y, line.secondPoint.y) > 0) ? ($elm$core$Basics$pi / 2) : ((3 * $elm$core$Basics$pi) / 2)) : (_Utils_eq(line.firstPoint.y, line.secondPoint.y) ? ((_Utils_cmp(line.firstPoint.x, line.secondPoint.x) > 0) ? 0.0 : $elm$core$Basics$pi) : ((line.firstPoint.y !== 100000) ? ((_Utils_cmp(line.firstPoint.x, line.secondPoint.x) > 0) ? $elm$core$Basics$atan((line.firstPoint.y - line.secondPoint.y) / (line.firstPoint.x - line.secondPoint.x)) : ($elm$core$Basics$pi + $elm$core$Basics$atan((line.firstPoint.y - line.secondPoint.y) / (line.firstPoint.x - line.secondPoint.x)))) : 0.2));
+};
+var $author$project$Geometry$get_coefficient = function (line) {
+	if (_Utils_eq(line.firstPoint.y, line.secondPoint.y)) {
+		return _Utils_Tuple3(0, 1, -line.firstPoint.y);
+	} else {
+		if (_Utils_eq(line.firstPoint.x, line.secondPoint.x)) {
+			return _Utils_Tuple3(1, 0, -line.firstPoint.x);
+		} else {
+			var a = (line.secondPoint.y - line.firstPoint.y) / (line.secondPoint.x - line.firstPoint.x);
+			var c = ((-a) * line.firstPoint.x) + line.firstPoint.y;
+			return _Utils_Tuple3(a, -1, c);
+		}
+	}
+};
+var $elm$core$Basics$sin = _Basics_sin;
+var $author$project$Geometry$reflect_light = F2(
+	function (mirror, light) {
+		var normalAngle = ($elm$core$Basics$pi / 2) + $author$project$Geometry$get_angle_from_line(mirror.body);
+		var newLineAngle = (2 * (normalAngle - $author$project$Geometry$get_angle_from_line(light))) + $author$project$Geometry$get_angle_from_line(light);
+		var newFirstPoint = A2($author$project$Geometry$Location, 0.5 * (mirror.body.firstPoint.x + mirror.body.secondPoint.x), (mirror.body.secondPoint.y + mirror.body.firstPoint.y) * 0.5);
+		var newSecondPoint = A2(
+			$author$project$Geometry$Location,
+			newFirstPoint.x + (500 * $elm$core$Basics$cos(newLineAngle)),
+			newFirstPoint.y + (500 * $elm$core$Basics$sin(newLineAngle)));
+		var _v0 = $author$project$Geometry$get_coefficient(light);
+		var a = _v0.a;
+		var b = _v0.b;
+		var c = _v0.c;
+		var d1 = ((a * mirror.body.firstPoint.x) + (b * mirror.body.firstPoint.y)) + c;
+		var d2 = ((a * mirror.body.secondPoint.x) + (b * mirror.body.secondPoint.y)) + c;
+		return (((d1 * d2) < 0) && (!_Utils_eq(light.firstPoint, newFirstPoint))) ? A2($author$project$Geometry$Line, newFirstPoint, newSecondPoint) : light;
+	});
+var $author$project$Geometry$get_new_light_help = F2(
+	function (lightSet, mirrorSet) {
+		var shortenedLightSet = A2(
+			$elm$core$List$take,
+			$elm$core$List$length(lightSet) - 1,
+			lightSet);
+		var light_tail = A2(
+			$elm$core$Maybe$withDefault,
+			A2(
+				$author$project$Geometry$Line,
+				A2($author$project$Geometry$Location, 100, 100),
+				A2($author$project$Geometry$Location, 0, 100)),
+			$elm$core$List$head(
+				$elm$core$List$reverse(lightSet)));
+		var new_light = A3($elm$core$List$foldr, $author$project$Geometry$reflect_light, light_tail, mirrorSet);
+		var new_lightset_before_append = A2(
+			$elm$core$List$append,
+			shortenedLightSet,
+			$elm$core$List$singleton(
+				A2($author$project$Geometry$Line, light_tail.firstPoint, new_light.firstPoint)));
+		return A2($elm$core$List$member, new_light, lightSet) ? lightSet : A2(
+			$elm$core$List$append,
+			new_lightset_before_append,
+			$elm$core$List$singleton(new_light));
+	});
+var $author$project$Geometry$refresh_lightSet = F2(
+	function (lightSet, mirrorSet) {
+		refresh_lightSet:
+		while (true) {
+			var len = $elm$core$List$length(lightSet);
+			if (_Utils_eq(
+				$elm$core$List$length(
+					A2($author$project$Geometry$get_new_light_help, lightSet, mirrorSet)),
+				len)) {
+				return A2($author$project$Geometry$get_new_light_help, lightSet, mirrorSet);
+			} else {
+				var $temp$lightSet = A2($author$project$Geometry$get_new_light_help, lightSet, mirrorSet),
+					$temp$mirrorSet = mirrorSet;
+				lightSet = $temp$lightSet;
+				mirrorSet = $temp$mirrorSet;
+				continue refresh_lightSet;
+			}
+		}
+	});
+var $author$project$Geometry$distance = F2(
+	function (pa, pb) {
+		var by = pb.y;
+		var bx = pb.x;
+		var ay = pa.y;
+		var ax = pa.x;
+		return $elm$core$Basics$sqrt(
+			A2($elm$core$Basics$pow, ax - bx, 2) + A2($elm$core$Basics$pow, ay - by, 2));
+	});
+var $author$project$Geometry$rotate_single_mirror = F2(
+	function (index, mirror) {
+		if (_Utils_eq(mirror.index, index)) {
+			var halfLength = A2($author$project$Geometry$distance, mirror.body.secondPoint, mirror.body.firstPoint) * 0.5;
+			var centerPoint = A2($author$project$Geometry$Location, 0.5 * (mirror.body.firstPoint.x + mirror.body.secondPoint.x), (mirror.body.secondPoint.y + mirror.body.firstPoint.y) * 0.5);
+			var angle = $author$project$Geometry$get_angle_from_line(mirror.body);
+			var x1 = centerPoint.x - (halfLength * $elm$core$Basics$cos(($elm$core$Basics$pi / 4) + angle));
+			var x2 = centerPoint.x + (halfLength * $elm$core$Basics$cos(($elm$core$Basics$pi / 4) + angle));
+			var y1 = centerPoint.y - (halfLength * $elm$core$Basics$sin(($elm$core$Basics$pi / 4) + angle));
+			var y2 = centerPoint.y + (halfLength * $elm$core$Basics$sin(($elm$core$Basics$pi / 4) + angle));
+			return _Utils_update(
+				mirror,
+				{
+					body: A2(
+						$author$project$Geometry$Line,
+						A2($author$project$Geometry$Location, x1, y1),
+						A2($author$project$Geometry$Location, x2, y2))
+				});
+		} else {
+			return mirror;
+		}
+	});
+var $author$project$Geometry$rotate_mirror = F2(
+	function (mirrorSet, index) {
+		return A2(
+			$elm$core$List$map,
+			$author$project$Geometry$rotate_single_mirror(index),
+			mirrorSet);
+	});
+var $author$project$Update$update_light_mirror = F2(
+	function (index, object) {
+		if (object.$ === 'Mirror') {
+			var a = object.a;
+			var newMirrorSet = A2($author$project$Geometry$rotate_mirror, a.mirrorSet, index);
+			var newLightSet = A2(
+				$author$project$Geometry$refresh_lightSet,
+				$elm$core$List$singleton(
+					A2(
+						$author$project$Geometry$Line,
+						A2($author$project$Geometry$Location, 400, 350),
+						A2($author$project$Geometry$Location, 0, 350))),
+				newMirrorSet);
+			return $author$project$Object$Mirror(
+				_Utils_update(
+					a,
+					{lightSet: newLightSet, mirrorSet: newMirrorSet}));
+		} else {
+			return object;
+		}
+	});
+var $author$project$Update$update_light_mirror_set = F2(
+	function (index, objectSet) {
+		return A2(
+			$elm$core$List$map,
+			$author$project$Update$update_light_mirror(index),
+			objectSet);
+	});
 var $author$project$Update$updatetime = F2(
 	function (number, clock) {
 		switch (number) {
@@ -6619,8 +6887,8 @@ var $author$project$Update$updatetime = F2(
 				return _Debug_todo(
 					'Update',
 					{
-						start: {line: 274, column: 13},
-						end: {line: 274, column: 23}
+						start: {line: 278, column: 13},
+						end: {line: 278, column: 23}
 					})('branch \'_\' not implemented');
 		}
 	});
@@ -6648,6 +6916,12 @@ var $author$project$Update$update_onclicktrigger = F2(
 				return A2($author$project$Update$updateclock, model, number);
 			case 3:
 				return A2($author$project$Update$try_to_unlock_picture, model, number);
+			case 4:
+				return _Utils_update(
+					model,
+					{
+						objects: A2($author$project$Update$update_light_mirror_set, number, model.objects)
+					});
 			default:
 				return model;
 		}
@@ -6754,7 +7028,7 @@ var $author$project$Update$update = F2(
 						return A3(
 							$author$project$Ptable$TableModel,
 							_List_Nil,
-							A2($author$project$Messages$Location, 0, 0),
+							A2($author$project$Geometry$Location, 0, 0),
 							_Utils_Tuple2(0, 0));
 					}
 				}();
@@ -6868,10 +7142,12 @@ var $author$project$View$render_button_inside = F2(
 				var a = tar.a;
 				return _List_fromArray(
 					[$author$project$Pclock$drawbackbutton]);
-			default:
+			case 'Frame':
 				var a = tar.a;
 				return _List_fromArray(
 					[$author$project$Pclock$drawbackbutton]);
+			default:
+				return _List_Nil;
 		}
 	});
 var $author$project$Pclock$drawclockbutton = A2(
@@ -6894,6 +7170,57 @@ var $author$project$Button$Button = F7(
 	function (lef, to, wid, hei, content, effect, display) {
 		return {content: content, display: display, effect: effect, hei: hei, lef: lef, to: to, wid: wid};
 	});
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$core$Debug$toString = _Debug_toString;
+var $author$project$Button$test_button = function (but) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'border', '0'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'top',
+				$elm$core$Debug$toString(but.to) + '%'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'left',
+				$elm$core$Debug$toString(but.lef) + '%'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'height',
+				$elm$core$Debug$toString(but.hei) + '%'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'width',
+				$elm$core$Debug$toString(but.wid) + '%'),
+				A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+				A2($elm$html$Html$Attributes$style, 'outline', 'none'),
+				A2($elm$html$Html$Attributes$style, 'padding', '2'),
+				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#f3e4b0'),
+				$elm$html$Html$Events$onClick(but.effect),
+				A2($elm$html$Html$Attributes$style, 'font-size', '15px')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(but.content)
+			]));
+};
+var $author$project$View$render_mirror_button = function () {
+	var but = A7(
+		$author$project$Button$Button,
+		10,
+		10,
+		10,
+		10,
+		'',
+		$author$project$Messages$ChangeScene(4),
+		'');
+	return $elm$core$List$singleton(
+		$author$project$Button$test_button(but));
+}();
 var $author$project$Messages$ChangeLevel = function (a) {
 	return {$: 'ChangeLevel', a: a};
 };
@@ -6933,44 +7260,6 @@ var $author$project$Pstair$stair_button_level_2 = A7(
 	'',
 	$author$project$Messages$ChangeLevel(1),
 	'block');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$core$Debug$toString = _Debug_toString;
-var $author$project$Button$test_button = function (but) {
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'border', '0'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'top',
-				$elm$core$Debug$toString(but.to) + '%'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'left',
-				$elm$core$Debug$toString(but.lef) + '%'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'height',
-				$elm$core$Debug$toString(but.hei) + '%'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'width',
-				$elm$core$Debug$toString(but.wid) + '%'),
-				A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-				A2($elm$html$Html$Attributes$style, 'outline', 'none'),
-				A2($elm$html$Html$Attributes$style, 'padding', '2'),
-				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-				A2($elm$html$Html$Attributes$style, 'background-color', '#f3e4b0'),
-				$elm$html$Html$Events$onClick(but.effect),
-				A2($elm$html$Html$Attributes$style, 'font-size', '15px')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(but.content)
-			]));
-};
 var $author$project$Button$trans_button_sq = function (but) {
 	return A2(
 		$elm$html$Html$button,
@@ -7046,6 +7335,10 @@ var $author$project$View$render_button_level = function (level) {
 						[$author$project$Pclock$drawclockbutton]),
 					_List_fromArray(
 						[$author$project$Ptable$render_table_button])));
+		case 2:
+			return _Utils_ap(
+				$author$project$Pstair$render_stair_level(level),
+				$author$project$View$render_mirror_button);
 		default:
 			return $author$project$Pstair$render_stair_level(level);
 	}
@@ -8130,10 +8423,127 @@ var $author$project$Ptable$draw_single_block = function (block) {
 var $author$project$Ptable$draw_block = function (blockSet) {
 	return A2($elm$core$List$map, $author$project$Ptable$draw_single_block, blockSet);
 };
+var $elm$svg$Svg$Attributes$opacity = _VirtualDom_attribute('opacity');
+var $author$project$Pmirror$draw_frame = function (locationList) {
+	var draw_single_frame = function (location) {
+		return A2(
+			$elm$svg$Svg$rect,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$width(
+					$elm$core$Debug$toString(100 - 4)),
+					$elm$svg$Svg$Attributes$height(
+					$elm$core$Debug$toString(100 - 4)),
+					$elm$svg$Svg$Attributes$fill('Blue'),
+					$elm$svg$Svg$Attributes$x(
+					$elm$core$Debug$toString(location.x)),
+					$elm$svg$Svg$Attributes$y(
+					$elm$core$Debug$toString(location.y)),
+					$elm$svg$Svg$Attributes$opacity('0.1')
+				]),
+			_List_Nil);
+	};
+	return A2($elm$core$List$map, draw_single_frame, locationList);
+};
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
+var $elm$core$List$map5 = _List_map5;
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $author$project$Pmirror$draw_light = function (lightSet) {
+	var y2 = A2(
+		$elm$core$List$map,
+		function (line) {
+			return $elm$core$String$fromFloat(line.secondPoint.y);
+		},
+		lightSet);
+	var y1 = A2(
+		$elm$core$List$map,
+		function (line) {
+			return $elm$core$String$fromFloat(line.firstPoint.y);
+		},
+		lightSet);
+	var x2 = A2(
+		$elm$core$List$map,
+		function (line) {
+			return $elm$core$String$fromFloat(line.secondPoint.x);
+		},
+		lightSet);
+	var x1 = A2(
+		$elm$core$List$map,
+		function (line) {
+			return $elm$core$String$fromFloat(line.firstPoint.x);
+		},
+		lightSet);
+	var command = A2(
+		$elm$core$List$append,
+		_List_fromArray(
+			['M ']),
+		A2(
+			$elm$core$List$repeat,
+			(-1) + $elm$core$List$length(lightSet),
+			'L'));
+	var path_argument = A3(
+		$elm$core$List$foldr,
+		$elm$core$Basics$append,
+		'',
+		A6(
+			$elm$core$List$map5,
+			F5(
+				function (a, b, c, d, e) {
+					return a + (' ' + (b + (' ' + (c + (' ' + ('L ' + (d + (' ' + (e + ' ')))))))));
+				}),
+			command,
+			x1,
+			y1,
+			x2,
+			y2));
+	return $elm$core$List$singleton(
+		A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$id('light'),
+					$elm$svg$Svg$Attributes$d(path_argument),
+					$elm$svg$Svg$Attributes$strokeWidth('2'),
+					$elm$svg$Svg$Attributes$stroke('blue'),
+					$elm$svg$Svg$Attributes$fill('none')
+				]),
+			_List_Nil));
+};
+var $author$project$Pmirror$draw_single_mirror = function (mirror) {
+	var y2 = $elm$core$String$fromFloat(mirror.body.secondPoint.y);
+	var y1 = $elm$core$String$fromFloat(mirror.body.firstPoint.y);
+	var x2 = $elm$core$String$fromFloat(mirror.body.secondPoint.x);
+	var x1 = $elm$core$String$fromFloat(mirror.body.firstPoint.x);
+	return A2(
+		$elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x1(x1),
+				$elm$svg$Svg$Attributes$x2(x2),
+				$elm$svg$Svg$Attributes$y1(y1),
+				$elm$svg$Svg$Attributes$y2(y2),
+				$elm$svg$Svg$Attributes$stroke('blue'),
+				$elm$svg$Svg$Attributes$strokeWidth('10'),
+				$elm$html$Html$Events$onClick(
+				$author$project$Messages$OnClickTriggers(mirror.index))
+			]),
+		_List_Nil);
+};
+var $author$project$Pmirror$draw_mirror = function (mirrorSet) {
+	return A2($elm$core$List$map, $author$project$Pmirror$draw_single_mirror, mirrorSet);
+};
 var $author$project$View$render_object_only = F2(
 	function (cs, objects) {
 		var tar = A2($author$project$Model$list_index_object, cs - 1, objects);
 		switch (tar.$) {
+			case 'Mirror':
+				var a = tar.a;
+				return _Utils_ap(
+					$author$project$Pmirror$draw_frame(a.frame),
+					_Utils_ap(
+						$author$project$Pmirror$draw_mirror(a.mirrorSet),
+						$author$project$Pmirror$draw_light(a.lightSet)));
 			case 'Clock':
 				var a = tar.a;
 				return _List_fromArray(
