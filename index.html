@@ -6462,6 +6462,22 @@ var $author$project$Update$test_clock_win = function (model) {
 			pictures: A2($author$project$Picture$show_index_picture, 1, model.pictures)
 		}) : model;
 };
+var $author$project$Update$test_mirror_win_help = function (object) {
+	if (object.$ === 'Mirror') {
+		var a = object.a;
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Update$test_mirror_win = function (model) {
+	var flag = A2($elm$core$List$any, $author$project$Update$test_mirror_win_help, model.objects);
+	return flag ? _Utils_update(
+		model,
+		{
+			pictures: A2($author$project$Picture$show_index_picture, 2, model.pictures)
+		}) : model;
+};
 var $author$project$Ptable$change_block_state = F2(
 	function (location, block) {
 		return _Utils_eq(block.anchor, location) ? _Utils_update(
@@ -6887,8 +6903,8 @@ var $author$project$Update$updatetime = F2(
 				return _Debug_todo(
 					'Update',
 					{
-						start: {line: 278, column: 13},
-						end: {line: 278, column: 23}
+						start: {line: 306, column: 13},
+						end: {line: 306, column: 23}
 					})('branch \'_\' not implemented');
 		}
 	});
@@ -7071,8 +7087,9 @@ var $author$project$Update$update = F2(
 			case 'OnClickTriggers':
 				var number = msg.a;
 				return _Utils_Tuple2(
-					$author$project$Update$test_clock_win(
-						A2($author$project$Update$update_onclicktrigger, model, number)),
+					$author$project$Update$test_mirror_win(
+						$author$project$Update$test_clock_win(
+							A2($author$project$Update$update_onclicktrigger, model, number))),
 					$elm$core$Platform$Cmd$none);
 			case 'OnClickItem':
 				var index = msg.a;
