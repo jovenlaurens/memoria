@@ -294,6 +294,17 @@ render_picture_index index =
                 ]
                 []
 
+        2 ->
+            Svg.rect
+                [ SvgAttr.x "1400"
+                , SvgAttr.y "600"
+                , SvgAttr.width "100"
+                , SvgAttr.height "30"
+                , SvgAttr.fill "red"
+                , Svg.Events.onClick (OnClickItem 1 0)
+                ]
+                []
+
         _ ->
             Svg.rect
                 []

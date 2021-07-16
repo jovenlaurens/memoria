@@ -151,31 +151,38 @@ test_clock_win model =
     else
         model
 
-test_mirror_win : Model-> Model
+
+{-| the any should be replaced by custom type because if clock win the mirror will also show the picture
+-}
+test_mirror_win : Model -> Model
 test_mirror_win model =
-    let flag =
-            List.any  test_mirror_win_help   model.objects
+    let
+        flag =
+            List.any test_mirror_win_help model.objects
     in
     if flag then
         { model | pictures = show_index_picture 2 model.pictures }
+
     else
         model
+
 
 test_mirror_win_help : Object -> Bool
 test_mirror_win_help object =
     case object of
         Mirror a ->
-           let tail =
-                   a.lightSet |> List.reverse |> List.head |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
-           in
-           if tail.secondPoint.x == 50 && tail.secondPoint.y > 350 then
+            let
+                tail =
+                    a.lightSet |> List.reverse |> List.head |> Maybe.withDefault (Line (Location 100 100) (Location 0 100))
+            in
+            if tail.secondPoint.x > 49 && tail.secondPoint.x < 51 && tail.secondPoint.y > 350 then
                 True
+
             else
                 False
+
         _ ->
-           False
-
-
+            False
 
 
 pickup_picture : Int -> Model -> Model
