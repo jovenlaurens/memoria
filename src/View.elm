@@ -10,7 +10,7 @@ import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Inventory exposing (Grid(..), render_inventory)
 import List exposing (foldr)
-import Memory exposing (draw_frame_and_memory)
+import Memory exposing (MeState(..), draw_frame_and_memory, initial_memory, list_index_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
@@ -24,6 +24,7 @@ import Scene exposing (defaultScene)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Ppower exposing (drawpowersupply)
 
 
 style =
@@ -153,8 +154,9 @@ render_draggable position =
 
 render_level : Model -> List (Html Msg)
 render_level model =
-   
-         render_button_level model.clevel ++ [ render_object model]
+    [ render_object model
+    ]
+        ++ render_button_level model.clevel
 
 
 render_button_level : Int -> List (Html Msg)
@@ -233,12 +235,23 @@ render_test_information model =
 
             else
                 "Have"
+
+        show3 =
+            toString (model.cscene)
+        fram =
+           list_index_memory 0 model.memory
+        show2 = if fram.state == Locked then
+                    "Locked"
+                else
+                    "Unlocked"
+        show4 = toString (model.inventory.num)
+
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text under
+        [ Svg.text (under ++ " " ++ show2 ++ " "++ show3 ++ " "++ show4)
         ]
     ]
 
@@ -330,6 +343,9 @@ render_object_inside scne cle obj old =
                 Computer a ->
                     draw_computer a 0 cle
                 --三层楼都需要，所以不加level判定
+
+                Power a ->
+                    drawpowersupply a 0 cle
                 _ ->
                     []
     in
@@ -362,6 +378,9 @@ render_object_only model cs objects =
         Computer a ->
             draw_computer a 5 model.clevel
 
+        Power a ->
+            drawpowersupply a 6 model.clevel
+
 
 
 render_frame_outline : Int -> List (Svg Msg)
@@ -369,17 +388,17 @@ render_frame_outline index =
     case index of
         0 ->
                 [ Svg.rect
-                                              [ SvgAttr.x "100"
-                                              , SvgAttr.y "200"
-                                              , SvgAttr.width "200"
-                                              , SvgAttr.height "200"
-                                              , SvgAttr.fill "red"
-                                              , SvgAttr.fillOpacity "0.2"
-                                              , SvgAttr.stroke "red"
-                                              , Svg.Events.onClick (OnClickTriggers 0)
-                                              ]
-                                              []
-                                          ]
+                    [ SvgAttr.x "100"
+                    , SvgAttr.y "200"
+                    , SvgAttr.width "200"
+                    , SvgAttr.height "200"
+                    , SvgAttr.fill "red"
+                    , SvgAttr.fillOpacity "0.2"
+                    , SvgAttr.stroke "red"
+                    , Svg.Events.onClick (OnClickTriggers 0)
+                    ]
+                    []
+                ]
         _ ->
             []
 

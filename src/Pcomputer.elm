@@ -140,14 +140,6 @@ draw_computer commodel cs cle=
                         ,SvgAttr.fillOpacity "0.0"
                         , Svg.Events.onClick (ChangeScene 5)
                         ][]
-                        ,Svg.rect
-                            [ SvgAttr.x "1500"
-                            , SvgAttr.y "100"
-                            , SvgAttr.width "50"
-                            , SvgAttr.height "50"
-                            , SvgAttr.fill "yellow"
-                            , SvgAttr.rx "15"
-                            , Svg.Events.onClick (Charge 0)][]
                         ]
                 else
                     []
