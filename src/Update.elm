@@ -10,6 +10,7 @@ import Memory exposing (find_cor_pict, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
+import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ptable exposing (BlockState(..))
 import Task
@@ -118,8 +119,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+
+        Charge a ->
+            ( charge_computer model a, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
+
+
 
 
 test_table_win : Object -> Model -> Model
@@ -261,20 +268,71 @@ update_onclicktrigger model number =
         4 ->
             { model | objects = update_light_mirror_set number model.objects }
 
+        5 ->
+            try_to_update_computer model number
+
+        0 ->
+            case model.clevel of
+                0 ->
+                    charge_computer model number
+                _ ->
+                    model
         --number是frame的序号(0-4)
         _ ->
             model
 
 
+try_to_update_computer : Model -> Int -> Model
+try_to_update_computer model number =
+    let
+            toggle computer =
+                case computer of
+                    Computer cpt ->
+                        Computer (Pcomputer.updatetrigger number cpt)
+
+                    _ ->
+                        computer
+    in
+        { model | objects = List.map toggle model.objects }
+
+--need
+
+charge_computer : Model -> Int -> Model
+charge_computer model number =
+    let
+            toggle computer =
+                case computer of
+                    Computer cpt ->
+                        Computer { cpt | state = Charged number }
+
+                    _ ->
+                        computer
+    in
+        { model | objects = List.map toggle model.objects }
+
+
+
+updateclock : Model -> Int -> Model
+updateclock model number =
+    let
+        toggle clock =
+            case clock of
+                Clock clk ->
+                    updatetime number clk
+
+                _ ->
+                    clock
+    in
+    { model | objects = List.map toggle model.objects }
 
 --can be supplemented
 
 
 try_to_unlock_picture : Model -> Int -> Model
-try_to_unlock_picture model number =
+try_to_unlock_picture model number = --number是memory的index
     --number从0到4代表5段记忆
     let
-        pict_num =
+        pict_num = --照片的index
             case model.underUse of
                 Blank ->
                     -1
@@ -288,7 +346,7 @@ try_to_unlock_picture model number =
     if pict_num == -1 then
         model
 
-    else if List.any (\x -> x == pict_num) need then
+    else if List.any (\x -> x == pict_num ) need then
         { model | memory = unlock_cor_memory number pict_num model.memory }
 
     else
@@ -312,18 +370,6 @@ updatetime number clock =
             Debug.todo "branch '_' not implemented"
 
 
-updateclock : Model -> Int -> Model
-updateclock model number =
-    let
-        toggle clock =
-            case clock of
-                Clock clk ->
-                    updatetime number clk
-
-                _ ->
-                    clock
-    in
-    { model | objects = List.map toggle model.objects }
 
 
 check_pict_state : Model -> Model
