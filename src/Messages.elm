@@ -32,3 +32,4 @@ type Msg
     | Tick Float
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
+    | Charge Int
