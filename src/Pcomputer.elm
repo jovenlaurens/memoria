@@ -36,6 +36,10 @@ type State
     | Charge Int
     | Password Int-}
 
+
+
+
+
 initial_computer : ComputerModel
 initial_computer =
     ComputerModel Lowpower 0 []

@@ -5,8 +5,8 @@ import Draggable
 import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
-import Inventory exposing (Grid(..), insert_new_item)
-import Memory exposing (find_cor_pict, unlock_cor_memory)
+import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_new_item)
+import Memory exposing (find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
@@ -205,7 +205,7 @@ pickup_picture index model =
                     if x.state == Show then
                         { x | state = Picked }
 
-                    else if x.state == Stored then
+                    else if x.state == Stored && model.underUse == Blank then
                         { x | state = UnderUse }
 
                     else if x.state == UnderUse then
@@ -279,7 +279,11 @@ update_onclicktrigger model number =
             try_to_update_power model number
 
         0 ->
-            model
+            case model.clevel of
+                0 ->
+                    charge_computer model number
+                _ ->
+                    model
         --number是frame的序号(0-4)
         _ ->
             model
@@ -359,6 +363,8 @@ try_to_unlock_picture : Model -> Int -> Model
 try_to_unlock_picture model number = --number是memory的index
     --number从0到4代表5段记忆
     let
+        target_memory = list_index_memory number model.memory
+        target_invent = find_the_grid model.inventory.own model.underUse
         pict_num = --照片的index
             case model.underUse of
                 Blank ->
@@ -369,16 +375,39 @@ try_to_unlock_picture model number = --number是memory的index
 
         need =
             find_cor_pict number
+
+        new =
+            unlock_cor_memory number pict_num model.memory
+
     in
     if pict_num == -1 then
         model
 
     else if List.any (\x -> x == pict_num ) need then
-        { model | memory = unlock_cor_memory number pict_num model.memory }
+
+        { model | memory = Tuple.first new
+                , underUse = (if Tuple.second new == True then Blank else model.underUse)
+                , pictures = consume_picture model.pictures pict_num (Tuple.second new)
+                , inventory = eliminate_old_item target_invent model.inventory
+        }
 
     else
         model
 
+
+consume_picture : List Picture -> Int -> Bool -> List Picture
+consume_picture list index whe =
+    if whe == False then
+        list
+    else
+        let
+            consume id pic =
+                if pic.index == id then
+                    {pic | state = Consumed }
+                else
+                    pic
+        in
+            List.map (consume index) list
 
 updatetime : Int -> ClockModel -> Object
 updatetime number clock =

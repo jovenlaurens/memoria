@@ -10,7 +10,7 @@ import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Inventory exposing (Grid(..), render_inventory)
 import List exposing (foldr)
-import Memory exposing (draw_frame_and_memory)
+import Memory exposing (MeState(..), draw_frame_and_memory, initial_memory, list_index_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
@@ -154,8 +154,9 @@ render_draggable position =
 
 render_level : Model -> List (Html Msg)
 render_level model =
-   
-         render_button_level model.clevel ++ [ render_object model]
+    [ render_object model
+    ]
+        ++ render_button_level model.clevel
 
 
 render_button_level : Int -> List (Html Msg)
@@ -234,12 +235,23 @@ render_test_information model =
 
             else
                 "Have"
+
+        show3 =
+            toString (model.cscene)
+        fram =
+           list_index_memory 0 model.memory
+        show2 = if fram.state == Locked then
+                    "Locked"
+                else
+                    "Unlocked"
+        show4 = toString (model.inventory.num)
+
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text under
+        [ Svg.text (under ++ " " ++ show2 ++ " "++ show3 ++ " "++ show4)
         ]
     ]
 
