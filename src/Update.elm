@@ -13,7 +13,9 @@ import Object exposing (ClockModel, Object(..), default_object, get_time, test_t
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ptable exposing (BlockState(..))
+import Ppower exposing(PowerState(..))
 import Task
+import Ppower exposing (updatekey)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -121,7 +123,9 @@ update msg model =
 
 
         Charge a ->
-            ( charge_computer model a, Cmd.none )
+            ( charge_computer model a
+            |> charge_power 
+            , Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -271,15 +275,27 @@ update_onclicktrigger model number =
         5 ->
             try_to_update_computer model number
 
+        6 ->
+            try_to_update_power model number
+
         0 ->
-            case model.clevel of
-                0 ->
-                    charge_computer model number
-                _ ->
-                    model
+            model
         --number是frame的序号(0-4)
         _ ->
             model
+
+
+try_to_update_power : Model -> Int -> Model
+try_to_update_power model index = 
+    let
+        toggle power = 
+            case power of
+                Power a ->
+                    Power (Ppower.updatetrigger index a)
+                _   ->
+                    power       
+    in
+        { model | objects = List.map toggle model.objects }
 
 
 try_to_update_computer : Model -> Int -> Model
@@ -303,14 +319,25 @@ charge_computer model number =
             toggle computer =
                 case computer of
                     Computer cpt ->
-                        Computer { cpt | state = Charged number }
+                        Computer { cpt | state = Charged number}
 
                     _ ->
                         computer
     in
         { model | objects = List.map toggle model.objects }
 
+charge_power : Model  -> Model
+charge_power model  =
+    let
+            toggle power =
+                case power of
+                    Power a ->
+                        Power { a | state = High}
 
+                    _ ->
+                        power
+    in
+        { model | objects = List.map toggle model.objects }
 
 updateclock : Model -> Int -> Model
 updateclock model number =
