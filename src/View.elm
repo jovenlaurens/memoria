@@ -4,16 +4,20 @@ import Button exposing (Button, test_button)
 import Debug exposing (toString)
 import Draggable
 import Furnitures exposing (..)
+import Level0 exposing (..)
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Inventory exposing (Grid(..), render_inventory)
 import List exposing (foldr)
+import Memory exposing (draw_frame_and_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
+import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
+import Pmirror exposing (draw_frame, draw_light, draw_mirror)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Scene exposing (defaultScene)
@@ -149,9 +153,8 @@ render_draggable position =
 
 render_level : Model -> List (Html Msg)
 render_level model =
-    [ render_object model
-    ]
-        ++ render_button_level model.clevel
+   
+         render_button_level model.clevel ++ [ render_object model]
 
 
 render_button_level : Int -> List (Html Msg)
@@ -166,28 +169,26 @@ render_button_level level =
                 ++ [ drawclockbutton ]
                 ++ [ render_table_button ]
 
+        2 ->
+            render_stair_level level ++ render_mirror_button
+
         _ ->
             render_stair_level level
 
 
+render_mirror_button : List (Html Msg)
+render_mirror_button =
+    let
+        but =
+            Button.Button 10 10 10 10 "" (ChangeScene 4) ""
+    in
+    test_button but
+        |> List.singleton
+
+
 render_button_inside : Int -> List Object -> List (Html Msg)
 render_button_inside cs objs =
-    let
-        tar =
-            list_index_object (cs - 1) objs
-    in
-    case tar of
-        Clock a ->
-            [ drawbackbutton
-            ]
-
-        Table a ->
-            [ drawbackbutton
-            ]
-
-        Frame a ->
-            [ drawbackbutton
-            ]
+    [drawbackbutton]
 
 
 
@@ -202,16 +203,21 @@ render_object model =
         , SvgAttr.viewBox "0 0 1600 900"
         ]
         ((if model.cscene == 0 then
-            if model.clevel == 1 then
-                level_1_furniture
-                    ++ List.foldr (render_object_inside model.cscene) [] model.objects
+                case model.clevel of
+                0 ->
+                    level_0_furniture
+                        ++ List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
 
-            else
-                List.foldr (render_object_inside model.cscene) [] model.objects
+                1 ->
+                    level_1_furniture
+                        ++ List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
+
+                _ ->
+                    List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
 
           else
             render_picture model.pictures
-                ++ render_object_only model.cscene model.objects
+                ++ render_object_only model model.cscene model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory
@@ -277,6 +283,17 @@ render_picture_index index =
                 ]
                 []
 
+        2 ->
+            Svg.rect
+                [ SvgAttr.x "1400"
+                , SvgAttr.y "600"
+                , SvgAttr.width "100"
+                , SvgAttr.height "30"
+                , SvgAttr.fill "red"
+                , Svg.Events.onClick (OnClickItem 2 0)
+                ]
+                []
+
         _ ->
             Svg.rect
                 []
@@ -294,8 +311,8 @@ render_picture_index index =
 
 {-| 把
 -}
-render_object_inside : Int -> Object -> List (Svg Msg) -> List (Svg Msg)
-render_object_inside scne obj old =
+render_object_inside : Int -> Int -> Object -> List (Svg Msg) -> List (Svg Msg)
+render_object_inside scne cle obj old =
     let
         new =
             case obj of
@@ -306,9 +323,12 @@ render_object_inside scne obj old =
                     ]
 
                 Frame a ->
-                    [ render_picture_button
-                    ]
-
+                    if (cle == 1) then
+                        [render_picture_button]
+                    else
+                        []
+                Computer a ->
+                    draw_computer a 0 cle
                 --三层楼都需要，所以不加level判定
                 _ ->
                     []
@@ -316,13 +336,16 @@ render_object_inside scne obj old =
     old ++ new
 
 
-render_object_only : Int -> List Object -> List (Svg Msg)
-render_object_only cs objects =
+render_object_only : Model -> Int -> List Object -> List (Svg Msg)
+render_object_only model cs objects =
     let
         tar =
             list_index_object (cs - 1) objects
     in
     case tar of
+        Mirror a ->
+            draw_frame a.frame ++ draw_mirror a.mirrorSet ++ draw_light a.lightSet
+
         Clock a ->
             [ drawclock cs
             , drawhourhand cs a
@@ -330,30 +353,36 @@ render_object_only cs objects =
             ]
 
         Table a ->
-            drawpath ++ draw_block a.blockSet
+            draw_block a.blockSet
 
         Frame a ->
-            [ Svg.rect
-                [ SvgAttr.x "100"
-                , SvgAttr.y "200"
-                , SvgAttr.width "200"
-                , SvgAttr.height "200"
-                , SvgAttr.fill "red"
-                , SvgAttr.fillOpacity "0.2"
-                , SvgAttr.stroke "red"
-                ]
-                []
-            , Svg.rect
-                [ SvgAttr.x "100"
-                , SvgAttr.y "200"
-                , SvgAttr.width "100"
-                , SvgAttr.height "200"
-                , SvgAttr.fill "red"
-                , SvgAttr.fillOpacity "0.2"
-                , SvgAttr.stroke "red"
-                ]
-                []
-            ]
+            draw_frame_and_memory model.memory
+            ++ render_frame_outline 0--回头再加1,2,3,4
+
+        Computer a ->
+            draw_computer a 5 model.clevel
+
+
+
+render_frame_outline : Int -> List (Svg Msg)
+render_frame_outline index =
+    case index of
+        0 ->
+                [ Svg.rect
+                                              [ SvgAttr.x "100"
+                                              , SvgAttr.y "200"
+                                              , SvgAttr.width "200"
+                                              , SvgAttr.height "200"
+                                              , SvgAttr.fill "red"
+                                              , SvgAttr.fillOpacity "0.2"
+                                              , SvgAttr.stroke "red"
+                                              , Svg.Events.onClick (OnClickTriggers 0)
+                                              ]
+                                              []
+                                          ]
+        _ ->
+            []
+
 
 
 render_ui_button : Int -> List (Html Msg)

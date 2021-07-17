@@ -25,11 +25,14 @@ initial_memory =
     ]
 
 
+
+{-|for each memory, list the needed picture id-}
 find_cor_pict : Int -> List Int
 find_cor_pict index =
     case index of
         0 ->
             [ 0, 1 ]
+        
 
         _ ->
             []
@@ -53,7 +56,7 @@ unlock_cor_memory index pict_index old =
                 memory
 
         unlock_memory_final pi =
-            if List.all (\x -> x == Unlocked) pi.frag && pi.state == Locked then
+            if (List.all (\x -> x == Unlocked) pi.frag ) && pi.state == Locked then
                 { pi | state = Unlocked }
 
             else
@@ -66,18 +69,6 @@ unlock_cor_memory index pict_index old =
 draw_frame_and_memory : List Memory -> List (Svg Msg)
 draw_frame_and_memory list =
     let
-        outline =
-            [ Svg.rect
-                [ SvgAttr.x "100"
-                , SvgAttr.y "200"
-                , SvgAttr.width "200"
-                , SvgAttr.height "200"
-                , SvgAttr.fill "red"
-                , SvgAttr.fillOpacity "0.2"
-                , SvgAttr.stroke "red"
-                ]
-                []
-            ]
         draw_every_frag id sta =
             if sta == Locked then
                 []
@@ -85,6 +76,18 @@ draw_frame_and_memory list =
                 case id of
                     0 -> [ Svg.rect
                             [ SvgAttr.x "100"
+                            , SvgAttr.y "200"
+                            , SvgAttr.width "100"
+                            , SvgAttr.height "200"
+                            , SvgAttr.fill "red"
+                            , SvgAttr.fillOpacity "0.2"
+                            , SvgAttr.stroke "red"
+                            ]
+                            []
+                         ]
+
+                    1 -> [ Svg.rect
+                            [ SvgAttr.x "200"
                             , SvgAttr.y "200"
                             , SvgAttr.width "100"
                             , SvgAttr.height "200"
@@ -103,7 +106,6 @@ draw_frame_and_memory list =
         draw_every_memory memory =
             List.map (draw_every_frag memory.index) memory.frag |> List.concat
     in
-    outline
-    ++ (List.map draw_every_memory list |> List.concat)
+    (List.map draw_every_memory list |> List.concat)
 
 

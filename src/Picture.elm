@@ -58,6 +58,7 @@ initial_pictures : List Picture
 initial_pictures =
     [ Picture NotShow 0
     , Picture NotShow 1
+    , Picture NotShow 2
     ]
 
 
@@ -78,4 +79,3 @@ render_picture_button =
         , Svg.Events.onClick (ChangeScene 3)
         ]
         []
-
