@@ -5,7 +5,7 @@ import Pcomputer exposing (ComputerModel, initial_computer)
 import Memory exposing (Memory)
 import Pmirror exposing (MirrorModel, initialMirror)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-
+import Ppower exposing (PowerModel, initPowerModel)
 
 type Object
     = Clock ClockModel
@@ -13,6 +13,7 @@ type Object
     | Frame FrameModel
     | Mirror MirrorModel
     | Computer ComputerModel
+    | Power PowerModel
 
 
 type alias ClockModel =
@@ -65,6 +66,7 @@ initial_objects =
     , Frame (FrameModel [ 0 ]) --2    3        1
     , Mirror initialMirror     --3    4        1
     , Computer initial_computer--4    5        0
+    , Power initPowerModel 
     ]
 
 
