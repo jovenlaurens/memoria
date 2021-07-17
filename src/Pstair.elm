@@ -10,7 +10,7 @@ render_stair_level : Int -> List (Html Msg)
 render_stair_level cl =
     case cl of
         0 ->
-            [ test_button stair_button_level_0 ]
+            [ trans_button_sq stair_button_level_0 ]
 
         1 ->
             [ trans_button_sq stair_button_level_1l
