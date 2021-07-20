@@ -15,6 +15,7 @@ import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppower exposing (PowerState(..), updatekey)
 import Ptable exposing (BlockState(..))
 import Task
+import Document exposing (unlock_cor_docu)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -42,7 +43,14 @@ update msg model =
             ( { model | cstate = 2 }, Cmd.none )
 
         Back ->
-            ( { model | cstate = model.cstate - 1 }, Cmd.none )
+            let
+                new = 
+                    if model.cstate == 11 then
+                        0
+                    else
+                        model.cstate - 1
+            in
+                ( { model | cstate = new }, Cmd.none )
 
         MovePage dir ->
             ( { model | cstate = model.cstate + dir }, Cmd.none )
@@ -123,6 +131,14 @@ update msg model =
                     , Cmd.none
                     )
 
+                1 ->
+                    ( { model | cstate = 11
+                              , docu =  unlock_cor_docu index model.docu
+                              , cdocu = index
+                      }
+                    , Cmd.none
+                    )
+            
                 _ ->
                     ( model, Cmd.none )
 

@@ -24,6 +24,11 @@ import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Button exposing (trans_button_sq)
+import Document exposing (render_newspaper_index)
+import Document exposing (Document)
+import Document exposing (render_document_detail)
+import Document exposing (render_docu_list)
 
 
 style =
@@ -94,6 +99,7 @@ view model =
 
                      else
                         render_object model :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
+                        ++ render_documents model.docu model.cscene
                     )
                         ++ render_ui_button 0
 
@@ -102,23 +108,75 @@ view model =
                         ++ [ text "this is menu!" ]
 
                 2 ->
-                    --第一页memory
-                    render_ui_button 2
-                        ++ [ text "this is memory page 1" ]
+                    [ render_wall_1
+                    ,    Html.embed
+                                [ Html.Attributes.type_ "image/png"
+                                , src "assets/memory_menu1.png"
+                                , style "top" "0%"
+                                , style "left" "0%"
+                                , style "width" "15%"
+                                , style "height" "100%"
+                                , style "position" "absolute"
+                                ]
+                                [] 
+                    ]
+                        ++ render_docu_list 0 model.docu
+                        ++ render_ui_button 2
 
                 3 ->
                     --第二页memory
-                    render_ui_button 3
-                        ++ [ text "this is memory page 2" ]
+                    [ render_wall_1 
+                    ,    Html.embed
+                                [ Html.Attributes.type_ "image/png"
+                                , src "assets/memory_menu2.png"
+                                , style "top" "0%"
+                                , style "left" "0%"
+                                , style "width" "15%"
+                                , style "height" "100%"
+                                , style "position" "absolute"
+                                ]
+                                []
+                           ]
+                           ++ (render_ui_button 3)
 
                 4 ->
                     --第三页memory
-                    render_ui_button 4
-                        ++ [ text "this is memory page 3" ]
+                    [ render_wall_1
+                    ,    Html.embed
+                                [ Html.Attributes.type_ "image/png"
+                                , src "assets/memory_menu3.png"
+                                , style "top" "0%"
+                                , style "left" "0%"
+                                , style "width" "15%"
+                                , style "height" "100%"
+                                , style "position" "absolute"
+                                ]
+                                []
+                    , div
+                        [ style "top" "87%"
+                        , style "left" "8%"
+                        , style "height" "10%"
+                        , style "width" "6%"
+                        , style "background-color" "white"
+                        , style "position" "absolute"
+                        ]
+                        []
+                           ]
+                           ++ (render_ui_button 4)
 
                 10 ->
                     render_ui_button 10
                         ++ [ text "this is Achievement page" ]
+
+                11 ->
+                    --游戏中的document 详细界面
+                    render_ui_button 11
+                        ++ render_document_detail model.cdocu
+
+                12 ->
+                    --menu中的document 详细界面
+                    render_ui_button 12
+                        ++ render_document_detail model.cdocu
 
                 20 ->
                     render_ui_button 20
@@ -142,6 +200,13 @@ view model =
 {-| render everything
 -}
 
+render_documents : List Document -> Int -> List (Html Msg)
+render_documents docus cs =
+    case cs of
+        2 ->
+            [render_newspaper_index 0 docus]
+        _ ->
+            []
 
 
 {- render_game_setup : Model -> List (Html Msg)
@@ -153,6 +218,19 @@ view model =
            (render_object model)--++(render_button model)
 -}
 {- render the background of the screen, if specific, doesnt have this -}
+
+render_wall_1 : Html Msg
+render_wall_1 =
+    Html.embed
+                                [ Html.Attributes.type_ "image/png"
+                                , src "assets/wall1.png"
+                                , style "top" "12%"
+                                , style "left" "0%"
+                                , style "width" "100%"
+                                , style "height" "72%"
+                                , style "position" "absolute"
+                                ]
+                                []  
 
 
 render_draggable : ( Float, Float ) -> Html Msg
@@ -247,6 +325,8 @@ render_object model =
          )
             ++ render_inventory model.inventory
         )
+
+
 
 
 render_test_information : Model -> List (Svg Msg)
@@ -450,7 +530,7 @@ render_ui_button cstate =
             Button 2 2 4 4 "Pause" Pause "block"
 
         back =
-            Button 2 2 4 4 "Back" Back "block"
+            Button 2 3 4 5 "Back" Back "block"
 
         reset =
             Button 8 2 4 4 "Reset" Reset "block"
@@ -459,16 +539,16 @@ render_ui_button cstate =
             Button 40 20 20 10 "Memory" RecallMemory "block"
 
         next =
-            Button 90 90 4 4 "Next" (MovePage 1) "block"
+            Button 8.5 87.5 5 8 "Next" (MovePage 1) "block"
 
         prev =
-            Button 84 90 4 4 "Prev" (MovePage -1) "block"
+            Button 2.8 87.5 4.2 8 "Prev" (MovePage -1) "block"
 
         achieve =
             Button 40 50 20 10 "Achievement" Achievement "block"
 
         backAchi =
-            Button 2 2 4 4 "Back" BackfromAch "block"
+            Button 2 2 4 4 "Back" Pause "block"
 
         testMemory =
             Button 14 2 4 4 "test" (BeginMemory 0) "block"
@@ -491,21 +571,35 @@ render_ui_button cstate =
             ]
 
         2 ->
-            [ test_button back
-            , test_button next
+            [ trans_button_sq back
+            , trans_button_sq next
             ]
 
         3 ->
-            [ test_button next
-            , test_button prev
+            [ trans_button_sq next
+            , trans_button_sq prev
+            , trans_button_sq back
             ]
 
         4 ->
-            [ test_button prev
+            [ trans_button_sq prev
+            , trans_button_sq back
             ]
 
         10 ->
             [ test_button backAchi
+            ]
+
+        11 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testMemory
+            ]
+
+        12 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testMemory
             ]
 
         20 ->

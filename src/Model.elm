@@ -7,6 +7,8 @@ import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 import Svg.Attributes exposing (x)
+import Document exposing (Document)
+import Document exposing (initial_docu)
 
 
 type alias Model =
@@ -24,6 +26,8 @@ type alias Model =
     , memory : List Memory
     , cmemory : Int --(0-5)
     , cpage : Int
+    , docu : List Document
+    , cdocu : Int
     }
 
 
@@ -44,6 +48,9 @@ initial =
         initial_memory
         -1
         -1
+        initial_docu
+        -1
+
 
 
 {-| when using it, index = index - 1.
