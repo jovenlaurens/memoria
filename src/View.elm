@@ -4,13 +4,13 @@ import Button exposing (Button, test_button)
 import Debug exposing (toString)
 import Draggable
 import Furnitures exposing (..)
-import Level0 exposing (..)
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Inventory exposing (Grid(..), render_inventory)
+import Level0 exposing (..)
 import List exposing (foldr)
-import Memory exposing (MeState(..), draw_frame_and_memory, initial_memory, list_index_memory)
+import Memory exposing (MeState(..), Memory, draw_frame_and_memory, initial_memory, list_index_memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time)
@@ -18,13 +18,12 @@ import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradju
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
+import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
-import Scene exposing (defaultScene)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Ppower exposing (drawpowersupply)
 
 
 style =
@@ -62,6 +61,16 @@ view model =
 
                 else
                     ( 0, 0.5 * (h - het) )
+
+            bkgdColor =
+                if model.cstate == 20 then
+                    "#000000"
+
+                else
+                    "#ffffff"
+
+            per_lef =
+                0.5 * (wid - h)
           in
           div
             [ style "width" (String.fromFloat wid ++ "px")
@@ -69,7 +78,7 @@ view model =
             , style "position" "absolute"
             , style "left" (String.fromFloat lef ++ "px")
             , style "top" (String.fromFloat to ++ "px")
-            , style "background-color" "#d9abaf"
+            , style "background-color" bkgdColor
             ]
             (case model.cstate of
                 98 ->
@@ -110,6 +119,19 @@ view model =
                 10 ->
                     render_ui_button 10
                         ++ [ text "this is Achievement page" ]
+
+                20 ->
+                    render_ui_button 20
+                        ++ [ div
+                                [ style "width" (String.fromFloat het ++ "px")
+                                , style "height" (String.fromFloat het ++ "px")
+                                , style "position" "absolute"
+                                , style "left" (String.fromFloat per_lef ++ "px")
+                                , style "top" "0px"
+                                , style "background-color" "#ffffff"
+                                ]
+                                (render_memory model.cmemory model.cpage)
+                           ]
 
                 _ ->
                     [ text (toString model.cstate) ]
@@ -168,8 +190,9 @@ render_button_level level =
 
         1 ->
             render_stair_level level
-                ++ [ drawclockbutton ]
-                ++ [ render_table_button ]
+                ++ [ drawclockbutton
+                   , render_table_button
+                   ]
 
         2 ->
             render_stair_level level ++ render_mirror_button
@@ -190,7 +213,7 @@ render_mirror_button =
 
 render_button_inside : Int -> List Object -> List (Html Msg)
 render_button_inside cs objs =
-    [drawbackbutton]
+    [ drawbackbutton ]
 
 
 
@@ -205,7 +228,7 @@ render_object model =
         , SvgAttr.viewBox "0 0 1600 900"
         ]
         ((if model.cscene == 0 then
-                case model.clevel of
+            case model.clevel of
                 0 ->
                     level_0_furniture
                         ++ List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
@@ -237,21 +260,26 @@ render_test_information model =
                 "Have"
 
         show3 =
-            toString (model.cscene)
-        fram =
-           list_index_memory 0 model.memory
-        show2 = if fram.state == Locked then
-                    "Locked"
-                else
-                    "Unlocked"
-        show4 = toString (model.inventory.num)
+            toString model.cscene
 
+        fram =
+            list_index_memory 0 model.memory
+
+        show2 =
+            if fram.state == Locked then
+                "Locked"
+
+            else
+                "Unlocked"
+
+        show4 =
+            toString model.inventory.num
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text (under ++ " " ++ show2 ++ " "++ show3 ++ " "++ show4)
+        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 ++ " " ++ show4)
         ]
     ]
 
@@ -336,16 +364,19 @@ render_object_inside scne cle obj old =
                     ]
 
                 Frame a ->
-                    if (cle == 1) then
-                        [render_picture_button]
+                    if cle == 1 then
+                        [ render_picture_button ]
+
                     else
                         []
+
                 Computer a ->
                     draw_computer a 0 cle
-                --三层楼都需要，所以不加level判定
 
+                --三层楼都需要，所以不加level判定
                 Power a ->
                     drawpowersupply a 0 cle
+
                 _ ->
                     []
     in
@@ -373,8 +404,9 @@ render_object_only model cs objects =
 
         Frame a ->
             draw_frame_and_memory model.memory
-            ++ render_frame_outline 0--回头再加1,2,3,4
+                ++ (List.map2 render_frame_outline [ 0 ] model.memory |> List.concat)
 
+        --回头再加1,2,3,4
         Computer a ->
             draw_computer a 5 model.clevel
 
@@ -382,26 +414,33 @@ render_object_only model cs objects =
             drawpowersupply a 6 model.clevel
 
 
+render_frame_outline : Int -> Memory -> List (Svg Msg)
+render_frame_outline index memo =
+    let
+        eff =
+            if memo.state == Unlocked then
+                BeginMemory index
 
-render_frame_outline : Int -> List (Svg Msg)
-render_frame_outline index =
+            else
+                OnClickTriggers index
+    in
     case index of
         0 ->
-                [ Svg.rect
-                    [ SvgAttr.x "100"
-                    , SvgAttr.y "200"
-                    , SvgAttr.width "200"
-                    , SvgAttr.height "200"
-                    , SvgAttr.fill "red"
-                    , SvgAttr.fillOpacity "0.2"
-                    , SvgAttr.stroke "red"
-                    , Svg.Events.onClick (OnClickTriggers 0)
-                    ]
-                    []
+            [ Svg.rect
+                [ SvgAttr.x "100"
+                , SvgAttr.y "200"
+                , SvgAttr.width "200"
+                , SvgAttr.height "200"
+                , SvgAttr.fill "red"
+                , SvgAttr.fillOpacity "0.2"
+                , SvgAttr.stroke "red"
+                , Svg.Events.onClick eff
                 ]
+                []
+            ]
+
         _ ->
             []
-
 
 
 render_ui_button : Int -> List (Html Msg)
@@ -430,11 +469,18 @@ render_ui_button cstate =
 
         backAchi =
             Button 2 2 4 4 "Back" BackfromAch "block"
+
+        testMemory =
+            Button 14 2 4 4 "test" (BeginMemory 0) "block"
+
+        testBack =
+            Button 14 2 4 4 "main" EndMemory "block"
     in
     case cstate of
         0 ->
             [ test_button pause
             , test_button reset
+            , test_button testMemory
             ]
 
         1 ->
@@ -460,6 +506,12 @@ render_ui_button cstate =
 
         10 ->
             [ test_button backAchi
+            ]
+
+        20 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testBack
             ]
 
         _ ->

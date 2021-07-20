@@ -6,16 +6,15 @@ import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
 import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_new_item)
-import Memory exposing (find_cor_pict, list_index_memory, unlock_cor_memory)
+import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
+import Ppower exposing (PowerState(..), updatekey)
 import Ptable exposing (BlockState(..))
-import Ppower exposing(PowerState(..))
 import Task
-import Ppower exposing (updatekey)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -37,10 +36,10 @@ update msg model =
             )
 
         Pause ->
-            ( { model | cstate = model.cstate + 1 }, Cmd.none )
+            ( { model | cstate = 1 }, Cmd.none )
 
         RecallMemory ->
-            ( { model | cstate = model.cstate + 1 }, Cmd.none )
+            ( { model | cstate = 2 }, Cmd.none )
 
         Back ->
             ( { model | cstate = model.cstate - 1 }, Cmd.none )
@@ -62,6 +61,12 @@ update msg model =
 
         ChangeScene a ->
             ( { model | cscene = a }, Cmd.none )
+
+        BeginMemory a ->
+            ( { model | cstate = 20 + a, cmemory = a, cpage = 0 }, Cmd.none )
+
+        EndMemory ->
+            ( { model | cstate = 0 }, Cmd.none )
 
         --cscene = 1代表 object 的index是0
         Reset ->
@@ -121,16 +126,19 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-
         Charge a ->
             ( charge_computer model a
-            |> charge_power 
-            , Cmd.none )
+                |> charge_power
+            , Cmd.none
+            )
+
+        Forward ->
+            (
+                { model | cpage = model.cpage + 1 }, Cmd.none
+            )
 
         _ ->
             ( model, Cmd.none )
-
-
 
 
 test_table_win : Object -> Model -> Model
@@ -282,66 +290,74 @@ update_onclicktrigger model number =
             case model.clevel of
                 0 ->
                     charge_computer model number
+
                 _ ->
                     model
+
         --number是frame的序号(0-4)
         _ ->
             model
 
 
 try_to_update_power : Model -> Int -> Model
-try_to_update_power model index = 
+try_to_update_power model index =
     let
-        toggle power = 
+        toggle power =
             case power of
                 Power a ->
                     Power (Ppower.updatetrigger index a)
-                _   ->
-                    power       
+
+                _ ->
+                    power
     in
-        { model | objects = List.map toggle model.objects }
+    { model | objects = List.map toggle model.objects }
 
 
 try_to_update_computer : Model -> Int -> Model
 try_to_update_computer model number =
     let
-            toggle computer =
-                case computer of
-                    Computer cpt ->
-                        Computer (Pcomputer.updatetrigger number cpt)
+        toggle computer =
+            case computer of
+                Computer cpt ->
+                    Computer (Pcomputer.updatetrigger number cpt)
 
-                    _ ->
-                        computer
+                _ ->
+                    computer
     in
-        { model | objects = List.map toggle model.objects }
+    { model | objects = List.map toggle model.objects }
+
+
 
 --need
+
 
 charge_computer : Model -> Int -> Model
 charge_computer model number =
     let
-            toggle computer =
-                case computer of
-                    Computer cpt ->
-                        Computer { cpt | state = Charged number}
+        toggle computer =
+            case computer of
+                Computer cpt ->
+                    Computer { cpt | state = Charged number }
 
-                    _ ->
-                        computer
+                _ ->
+                    computer
     in
-        { model | objects = List.map toggle model.objects }
+    { model | objects = List.map toggle model.objects }
 
-charge_power : Model  -> Model
-charge_power model  =
+
+charge_power : Model -> Model
+charge_power model =
     let
-            toggle power =
-                case power of
-                    Power a ->
-                        Power { a | state = High}
+        toggle power =
+            case power of
+                Power a ->
+                    Power { a | state = High }
 
-                    _ ->
-                        power
+                _ ->
+                    power
     in
-        { model | objects = List.map toggle model.objects }
+    { model | objects = List.map toggle model.objects }
+
 
 updateclock : Model -> Int -> Model
 updateclock model number =
@@ -356,16 +372,21 @@ updateclock model number =
     in
     { model | objects = List.map toggle model.objects }
 
+
+
 --can be supplemented
 
 
 try_to_unlock_picture : Model -> Int -> Model
-try_to_unlock_picture model number = --number是memory的index
+try_to_unlock_picture model number =
+    --number是memory的index
     --number从0到4代表5段记忆
     let
-        target_memory = list_index_memory number model.memory
-        target_invent = find_the_grid model.inventory.own model.underUse
-        pict_num = --照片的index
+        target_invent =
+            find_the_grid model.inventory.own model.underUse
+
+        pict_num =
+            --照片的index
             case model.underUse of
                 Blank ->
                     -1
@@ -378,17 +399,21 @@ try_to_unlock_picture model number = --number是memory的index
 
         new =
             unlock_cor_memory number pict_num model.memory
-
     in
     if pict_num == -1 then
         model
 
-    else if List.any (\x -> x == pict_num ) need then
+    else if List.any (\x -> x == pict_num) need then
+        { model
+            | memory = Tuple.first new
+            , underUse =
+                if Tuple.second new == True then
+                    Blank
 
-        { model | memory = Tuple.first new
-                , underUse = (if Tuple.second new == True then Blank else model.underUse)
-                , pictures = consume_picture model.pictures pict_num (Tuple.second new)
-                , inventory = eliminate_old_item target_invent model.inventory
+                else
+                    model.underUse
+            , pictures = consume_picture model.pictures pict_num (Tuple.second new)
+            , inventory = eliminate_old_item target_invent model.inventory
         }
 
     else
@@ -399,15 +424,18 @@ consume_picture : List Picture -> Int -> Bool -> List Picture
 consume_picture list index whe =
     if whe == False then
         list
+
     else
         let
             consume id pic =
                 if pic.index == id then
-                    {pic | state = Consumed }
+                    { pic | state = Consumed }
+
                 else
                     pic
         in
-            List.map (consume index) list
+        List.map (consume index) list
+
 
 updatetime : Int -> ClockModel -> Object
 updatetime number clock =
@@ -424,8 +452,6 @@ updatetime number clock =
 
         _ ->
             Debug.todo "branch '_' not implemented"
-
-
 
 
 check_pict_state : Model -> Model

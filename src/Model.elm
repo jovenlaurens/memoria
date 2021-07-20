@@ -22,6 +22,8 @@ type alias Model =
     , inventory : Inventory
     , underUse : Grid
     , memory : List Memory
+    , cmemory : Int --(0-5)
+    , cpage : Int
     }
 
 
@@ -40,6 +42,8 @@ initial =
         initial_inventory
         Blank
         initial_memory
+        -1
+        -1
 
 
 {-| when using it, index = index - 1.

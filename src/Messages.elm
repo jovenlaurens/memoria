@@ -17,12 +17,11 @@ type Msg
     | Reset --back to the beginning of the game, state = 0
     | RecallMemory --state = 2
     | MovePage Int -- 0 for prev, 1 for next
-    | SelectMemory Int --state = 10
     | Back --back one stage (state--)
     | Achievement
     | BackfromAch
       --Memory part are below
-    | BeginMemory Int --state = 10, a is the order of memory
+    | BeginMemory Int --state = 20, a is the order of memory
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory --back to the game itself

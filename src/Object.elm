@@ -1,11 +1,12 @@
 module Object exposing (..)
 
 import Geometry exposing (Location)
-import Pcomputer exposing (ComputerModel, initial_computer)
 import Memory exposing (Memory)
+import Pcomputer exposing (ComputerModel, initial_computer)
 import Pmirror exposing (MirrorModel, initialMirror)
-import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 import Ppower exposing (PowerModel, initPowerModel)
+import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
+
 
 type Object
     = Clock ClockModel
@@ -25,9 +26,6 @@ type alias ClockModel =
 type alias FrameModel =
     { index : List Int
     }
-
-
-
 
 
 get_time : Object -> ( Int, Int )
@@ -61,12 +59,12 @@ test_table loca pre =
 initial_objects : List Object
 initial_objects =
     --cscene = 0,            -|obj |cscene|所在楼层|描述
-    [ Clock (ClockModel 1 30)  --0    1        1
-    , Table initial_table      --1    2        1
+    [ Clock (ClockModel 1 30) --0    1        1
+    , Table initial_table --1    2        1
     , Frame (FrameModel [ 0 ]) --2    3        1
-    , Mirror initialMirror     --3    4        1
-    , Computer initial_computer--4    5        0
-    , Power initPowerModel 
+    , Mirror initialMirror --3    4        1
+    , Computer initial_computer --4    5        0
+    , Power initPowerModel
     ]
 
 

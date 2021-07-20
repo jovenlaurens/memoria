@@ -458,6 +458,7 @@ drawCeiling =
         []
     ]
 
+
 drawChair : List (Svg msg)
 drawChair =
     [ Svg.polygon
@@ -511,6 +512,7 @@ drawChair =
         []
     ]
 
+
 drawMonitor : List (Svg msg)
 drawMonitor =
     [ Svg.polygon
@@ -535,6 +537,7 @@ drawMonitor =
         ]
         []
     ]
+
 
 drawDoor : List (Svg msg)
 drawDoor =
