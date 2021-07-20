@@ -28,6 +28,7 @@ type alias Model =
     , cpage : Int
     , docu : List Document
     , cdocu : Int
+    , move_timer : Float
     }
 
 
@@ -50,6 +51,7 @@ initial =
         -1
         initial_docu
         -1
+        0
 
 
 

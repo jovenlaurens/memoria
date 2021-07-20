@@ -1,6 +1,7 @@
 module Update exposing (..)
 
 import Browser.Dom exposing (getViewport)
+import Document exposing (unlock_cor_docu)
 import Draggable
 import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
 import Html exposing (a)
@@ -12,10 +13,10 @@ import Model exposing (..)
 import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
+import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..), updatekey)
 import Ptable exposing (BlockState(..))
 import Task
-import Document exposing (unlock_cor_docu)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -44,13 +45,14 @@ update msg model =
 
         Back ->
             let
-                new = 
+                new =
                     if model.cstate == 11 then
                         0
+
                     else
                         model.cstate - 1
             in
-                ( { model | cstate = new }, Cmd.none )
+            ( { model | cstate = new }, Cmd.none )
 
         MovePage dir ->
             ( { model | cstate = model.cstate + dir }, Cmd.none )
@@ -132,13 +134,14 @@ update msg model =
                     )
 
                 1 ->
-                    ( { model | cstate = 11
-                              , docu =  unlock_cor_docu index model.docu
-                              , cdocu = index
+                    ( { model
+                        | cstate = 11
+                        , docu = unlock_cor_docu index model.docu
+                        , cdocu = index
                       }
                     , Cmd.none
                     )
-            
+
                 _ ->
                     ( model, Cmd.none )
 
@@ -149,12 +152,30 @@ update msg model =
             )
 
         Forward ->
-            (
-                { model | cpage = model.cpage + 1 }, Cmd.none
+            ( { model | cpage = model.cpage + 1 }
+            , Cmd.none
             )
+
+        Tick elapsed ->
+            ( { model | move_timer = model.move_timer + elapsed, objects = bounce_key_top model.move_timer model.objects }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
+
+
+bounce_key_top : Float -> List Object -> List Object
+bounce_key_top time objectSet =
+    List.map (bounce_key_help time) objectSet
+
+
+bounce_key_help : Float -> Object -> Object
+bounce_key_help time object =
+    case object of
+        Piano a ->
+            Piano { a | pianoKeySet = bounce_key time a.pianoKeySet }
+
+        _ ->
+            object
 
 
 test_table_win : Object -> Model -> Model
@@ -302,6 +323,9 @@ update_onclicktrigger model number =
         6 ->
             try_to_update_power model number
 
+        7 ->
+            { model | objects = try_to_update_piano number model.move_timer model.objects }
+
         0 ->
             case model.clevel of
                 0 ->
@@ -313,6 +337,44 @@ update_onclicktrigger model number =
         --number是frame的序号(0-4)
         _ ->
             model
+
+
+try_to_update_piano : Int -> Float -> List Object -> List Object
+try_to_update_piano index time objectSet =
+    List.map (try_to_update_piano_help index time) objectSet
+
+
+try_to_update_piano_help : Int -> Float -> Object -> Object
+try_to_update_piano_help index time object =
+    case object of
+        Piano a ->
+            Piano { a | currentMusic = index, pianoKeySet = press_key index time a.pianoKeySet }
+
+        _ ->
+            object
+
+
+
+--update_light_mirror_set : Int -> List Object -> List Object
+--update_light_mirror_set index objectSet =
+--    List.map (update_light_mirror index) objectSet
+--
+--
+--update_light_mirror : Int -> Object -> Object
+--update_light_mirror index object =
+--    case object of
+--        Mirror a ->
+--            let
+--                newMirrorSet =
+--                    rotate_mirror a.mirrorSet index
+--
+--                newLightSet =
+--                    refresh_lightSet (List.singleton (Line (Location 400 350) (Location 0 350))) newMirrorSet
+--            in
+--            Mirror { a | mirrorSet = newMirrorSet, lightSet = newLightSet }
+--
+--        _ ->
+--            object
 
 
 try_to_update_power : Model -> Int -> Model

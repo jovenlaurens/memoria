@@ -1,7 +1,8 @@
 module View exposing (..)
 
-import Button exposing (Button, test_button)
+import Button exposing (Button, test_button, trans_button_sq)
 import Debug exposing (toString)
+import Document exposing (Document, render_docu_list, render_document_detail, render_newspaper_index)
 import Draggable
 import Furnitures exposing (..)
 import Html exposing (Html, button, div, img, text)
@@ -18,17 +19,13 @@ import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradju
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
+import Ppiano exposing (draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Button exposing (trans_button_sq)
-import Document exposing (render_newspaper_index)
-import Document exposing (Document)
-import Document exposing (render_document_detail)
-import Document exposing (render_docu_list)
 
 
 style =
@@ -98,8 +95,9 @@ view model =
                         render_level model
 
                      else
-                        render_object model :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
-                        ++ render_documents model.docu model.cscene
+                        render_object model
+                            :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
+                            ++ render_documents model.docu model.cscene
                     )
                         ++ render_ui_button 0
 
@@ -109,49 +107,49 @@ view model =
 
                 2 ->
                     [ render_wall_1
-                    ,    Html.embed
-                                [ Html.Attributes.type_ "image/png"
-                                , src "assets/memory_menu1.png"
-                                , style "top" "0%"
-                                , style "left" "0%"
-                                , style "width" "15%"
-                                , style "height" "100%"
-                                , style "position" "absolute"
-                                ]
-                                [] 
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu1.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
                     ]
                         ++ render_docu_list 0 model.docu
                         ++ render_ui_button 2
 
                 3 ->
                     --第二页memory
-                    [ render_wall_1 
-                    ,    Html.embed
-                                [ Html.Attributes.type_ "image/png"
-                                , src "assets/memory_menu2.png"
-                                , style "top" "0%"
-                                , style "left" "0%"
-                                , style "width" "15%"
-                                , style "height" "100%"
-                                , style "position" "absolute"
-                                ]
-                                []
-                           ]
-                           ++ (render_ui_button 3)
+                    [ render_wall_1
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu2.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    ]
+                        ++ render_ui_button 3
 
                 4 ->
                     --第三页memory
                     [ render_wall_1
-                    ,    Html.embed
-                                [ Html.Attributes.type_ "image/png"
-                                , src "assets/memory_menu3.png"
-                                , style "top" "0%"
-                                , style "left" "0%"
-                                , style "width" "15%"
-                                , style "height" "100%"
-                                , style "position" "absolute"
-                                ]
-                                []
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu3.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
                     , div
                         [ style "top" "87%"
                         , style "left" "8%"
@@ -161,8 +159,8 @@ view model =
                         , style "position" "absolute"
                         ]
                         []
-                           ]
-                           ++ (render_ui_button 4)
+                    ]
+                        ++ render_ui_button 4
 
                 10 ->
                     render_ui_button 10
@@ -199,14 +197,15 @@ view model =
 
 {-| render everything
 -}
-
 render_documents : List Document -> Int -> List (Html Msg)
 render_documents docus cs =
     case cs of
         2 ->
-            [render_newspaper_index 0 docus]
+            [ render_newspaper_index 0 docus ]
+
         _ ->
             []
+
 
 
 {- render_game_setup : Model -> List (Html Msg)
@@ -219,18 +218,19 @@ render_documents docus cs =
 -}
 {- render the background of the screen, if specific, doesnt have this -}
 
+
 render_wall_1 : Html Msg
 render_wall_1 =
     Html.embed
-                                [ Html.Attributes.type_ "image/png"
-                                , src "assets/wall1.png"
-                                , style "top" "12%"
-                                , style "left" "0%"
-                                , style "width" "100%"
-                                , style "height" "72%"
-                                , style "position" "absolute"
-                                ]
-                                []  
+        [ Html.Attributes.type_ "image/png"
+        , src "assets/wall1.png"
+        , style "top" "12%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "height" "72%"
+        , style "position" "absolute"
+        ]
+        []
 
 
 render_draggable : ( Float, Float ) -> Html Msg
@@ -279,6 +279,16 @@ render_button_level level =
             render_stair_level level
 
 
+render_piano_button : List (Html Msg)
+render_piano_button =
+    let
+        but =
+            Button.Button 10 10 10 10 "" (ChangeScene 7) ""
+    in
+    test_button but
+        |> List.singleton
+
+
 render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
@@ -325,8 +335,6 @@ render_object model =
          )
             ++ render_inventory model.inventory
         )
-
-
 
 
 render_test_information : Model -> List (Svg Msg)
@@ -492,6 +500,13 @@ render_object_only model cs objects =
 
         Power a ->
             drawpowersupply a 6 model.clevel
+
+        Piano a ->
+            draw_key_set a.pianoKeySet
+
+
+
+--++ play_audio a.currentMusic
 
 
 render_frame_outline : Int -> Memory -> List (Svg Msg)

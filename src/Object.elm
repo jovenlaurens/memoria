@@ -4,6 +4,7 @@ import Geometry exposing (Location)
 import Memory exposing (Memory)
 import Pcomputer exposing (ComputerModel, initial_computer)
 import Pmirror exposing (MirrorModel, initialMirror)
+import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 
@@ -15,6 +16,7 @@ type Object
     | Mirror MirrorModel
     | Computer ComputerModel
     | Power PowerModel
+    | Piano PianoModel
 
 
 type alias ClockModel =
