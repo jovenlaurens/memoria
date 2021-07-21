@@ -218,8 +218,8 @@ render_page page =
                     [ type_ "image/svg+xml"
                     , src "assets/testforp2.svg"
                     , style "top" "0%"
-                    , style "left" "-5%"
-                    , style "width" "110%"
+                    , style "left" "0%"
+                    , style "width" "100%"
                     , style "height" "100%"
                     , style "position" "absolute"
                     ]

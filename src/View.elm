@@ -66,7 +66,7 @@ view model =
 
             bkgdColor =
                 if model.cstate == 20 then
-                    "#000000"
+                    "#ffffff"
 
                 else
                     "#ffffff"
@@ -91,6 +91,16 @@ view model =
                     [ text "this is intro", button [ onClick EnterState ] [ text "Start" ] ]
 
                 0 ->
+                    (Html.embed
+                    [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        [])::
                     (if model.cscene == 0 then
                         render_level model
 
@@ -178,16 +188,8 @@ view model =
 
                 20 ->
                     render_ui_button 20
-                        ++ [ div
-                                [ style "width" (String.fromFloat het ++ "px")
-                                , style "height" (String.fromFloat het ++ "px")
-                                , style "position" "absolute"
-                                , style "left" (String.fromFloat per_lef ++ "px")
-                                , style "top" "0px"
-                                , style "background-color" "#ffffff"
-                                ]
+                        ++  
                                 (render_memory model.cmemory model.cpage)
-                           ]
 
                 _ ->
                     [ text (toString model.cstate) ]
@@ -255,7 +257,8 @@ render_draggable position =
 render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
-    ]
+    
+        ]
         ++ render_button_level model.clevel
 
 
@@ -542,10 +545,10 @@ render_ui_button : Int -> List (Html Msg)
 render_ui_button cstate =
     let
         pause =
-            Button 2 2 4 4 "Pause" Pause "block"
+            Button 2.6 4.5 3.66 6.5 "Pause" Pause "block"
 
         back =
-            Button 2 3 4 5 "Back" Back "block"
+            Button 2.6 4.5 3.66 6.5 "Back" Back "block"
 
         reset =
             Button 8 2 4 4 "Reset" Reset "block"
@@ -573,7 +576,7 @@ render_ui_button cstate =
     in
     case cstate of
         0 ->
-            [ test_button pause
+            [ trans_button_sq pause
             , test_button reset
             , test_button testMemory
             ]
