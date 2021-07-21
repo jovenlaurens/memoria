@@ -11,6 +11,7 @@ import Memory exposing (MeState)
 import Memory exposing (MeState(..))
 import Button exposing (trans_button_sq)
 import Button exposing (Button)
+import Messages exposing (GraMsg(..))
 
 
 
@@ -76,7 +77,7 @@ render_document_detail index =
                             , style "position" "absolute"
                             ]
                             []
-                , trans_button_sq (Button 20 10 60 80 "" Back "block")
+                , trans_button_sq (Button 20 10 60 80 "" (StartChange Back) "block")
                 ]
             _ ->
                 []
@@ -102,7 +103,7 @@ render_newspaper_index index list =
                         , style "height" "20%"
                         , style "position" "absolute"
                         , style "transform" "rotate(-45deg)"
-                        , onClick (OnClickItem 0 1)
+                        , onClick (StartChange (OnClickDocu 0))
                         ]
                         []
                     

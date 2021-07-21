@@ -8,6 +8,8 @@ import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 import Ppiano
+import Pbulb exposing (BulbModel)
+import Pbulb exposing (initial_bulb)
 
 type Object
     = Clock ClockModel
@@ -17,6 +19,7 @@ type Object
     | Computer ComputerModel
     | Power PowerModel
     | Piano PianoModel
+    | Bul BulbModel
 
 
 type alias ClockModel =
@@ -62,12 +65,13 @@ initial_objects : List Object
 initial_objects =
     --cscene = 0,            -|obj |cscene|所在楼层|描述
     [ Clock (ClockModel 1 30) --0    1        1
-    , Table initial_table --1    2        1
+    , Table initial_table      --1    2        1
     , Frame (FrameModel [ 0 ]) --2    3        1
-    , Mirror initialMirror --3    4        1
+    , Mirror initialMirror      --3    4        1
     , Computer initial_computer --4    5        0
-    , Power initPowerModel
-    , Piano Ppiano.initial
+    , Power initPowerModel      --5    6        0
+    , Piano Ppiano.initial      --6    7        0
+    , Bul initial_bulb          --7    8        1
     ]
 
 

@@ -28,7 +28,7 @@ init a =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ if model.cstate == 0 then
+        [ if model.cscreen.cstate == 0 then
             onAnimationFrameDelta Tick
 
           else

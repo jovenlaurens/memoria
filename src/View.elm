@@ -5,17 +5,16 @@ import Debug exposing (toString)
 import Document exposing (Document, render_docu_list, render_document_detail, render_newspaper_index)
 import Draggable
 import Furnitures exposing (..)
-import Html exposing (Html, button, div, img, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Inventory exposing (Grid(..), render_inventory)
 import Level0 exposing (..)
-import List exposing (foldr)
-import Memory exposing (MeState(..), Memory, draw_frame_and_memory, initial_memory, list_index_memory, render_memory)
+import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), get_time)
-import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
+import Object exposing (Object(..))
+import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
@@ -26,6 +25,7 @@ import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Pbulb exposing (render_bulb)
 
 
 style =
@@ -65,7 +65,7 @@ view model =
                     ( 0, 0.5 * (h - het) )
 
             bkgdColor =
-                if model.cstate == 20 then
+                if model.cscreen.cstate == 20 then
                     "#ffffff"
 
                 else
@@ -82,34 +82,41 @@ view model =
             , style "top" (String.fromFloat to ++ "px")
             , style "background-color" bkgdColor
             ]
-            (case model.cstate of
+            (case model.cscreen.cstate of
                 98 ->
-                    [ text "this is cover", button [ onClick EnterState ] [ text "Enter" ] ]
+                    [ text "this is cover", button [ onClick (StartChange EnterState) ] [ text "Enter" ] ]
 
                 --use % to arrange the position
                 99 ->
-                    [ text "this is intro", button [ onClick EnterState ] [ text "Start" ] ]
+                    [ text "this is intro", button [ onClick (StartChange EnterState) ] [ text "Start" ] ]
 
                 0 ->
-                    (Html.embed
-                    [ Html.Attributes.type_ "image/png"
-                        , src "assets/memory_menu.png"
+                    [
+                      Html.img
+                        [ src "assets/memory_menu.png"
                         , style "top" "0%"
                         , style "left" "0%"
                         , style "width" "100%"
                         , style "height" "100%"
                         , style "position" "absolute"
                         ]
-                        [])::
-                    (if model.cscene == 0 then
+                        []
+                    ,
+                    div
+                        [ style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        (if model.cscreen.cscene == 0 then
                         render_level model
 
                      else
                         render_object model
-                            :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
-                            ++ render_documents model.docu model.cscene
-                            ++ play_piano_audio model.cscene model.objects
+                            :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
+                            ++ render_documents model.docu model.cscreen.cscene
+                            ++ play_piano_audio model.cscreen.cscene model.objects
                     )
+                    ]
                         ++ render_ui_button 0
 
                 1 ->
@@ -180,20 +187,20 @@ view model =
                 11 ->
                     --游戏中的document 详细界面
                     render_ui_button 11
-                        ++ render_document_detail model.cdocu
+                        ++ render_document_detail model.cscreen.cdocu
 
                 12 ->
                     --menu中的document 详细界面
                     render_ui_button 12
-                        ++ render_document_detail model.cdocu
+                        ++ render_document_detail model.cscreen.cdocu
 
                 20 ->
                     render_ui_button 20
                         ++  
-                                (render_memory model.cmemory model.cpage)
+                                (render_memory model.cscreen.cmemory model.cscreen.cpage)
 
                 _ ->
-                    [ text (toString model.cstate) ]
+                    [ text (toString model.cscreen.cstate) ]
             )
         ]
 
@@ -260,7 +267,7 @@ render_level model =
     [ render_object model
     
         ]
-        ++ render_button_level model.clevel
+        ++ render_button_level model.cscreen.clevel
 
 
 render_button_level : Int -> List (Html Msg)
@@ -274,6 +281,7 @@ render_button_level level =
             render_stair_level level
                 ++ [ drawclockbutton
                    , render_table_button
+                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block" )
                    ]
 
         2 ->
@@ -287,7 +295,7 @@ render_piano_button : List (Html Msg)
 render_piano_button =
     let
         but =
-            Button.Button 10 10 10 10 "" (ChangeScene 7) ""
+            Button.Button 10 10 10 10 "" (StartChange (ChangeScene 7)) ""
     in
     test_button but
         |> List.singleton
@@ -297,7 +305,7 @@ render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
         but =
-            Button.Button 30 30 10 10 "" (ChangeScene 4) ""
+            Button.Button 30 30 10 10 "" (StartChange (ChangeScene 4)) ""
     in
     test_button but
         |> List.singleton
@@ -319,22 +327,23 @@ render_object model =
         , SvgAttr.height "100%"
         , SvgAttr.viewBox "0 0 1600 900"
         ]
-        ((if model.cscene == 0 then
-            case model.clevel of
+        ((if model.cscreen.cscene == 0 then
+            case model.cscreen.clevel of
                 0 ->
                     level_0_furniture
-                        ++ List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
                 1 ->
                     level_1_furniture
-                        ++ List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
                 _ ->
-                    List.foldr (render_object_inside model.cscene model.clevel) [] model.objects
+                    List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
           else
             render_picture model.pictures
-                ++ render_object_only model model.cscene model.objects
+                ++ render_object_only model model.cscreen.cscene model.objects
+                ++ render_object_only_html model.cscreen.cscene model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory
@@ -352,7 +361,7 @@ render_test_information model =
                 "Have"
 
         show3 =
-            toString model.cscene
+            toString model.cscreen.cscene
 
         fram =
             list_index_memory 0 model.memory
@@ -463,11 +472,18 @@ render_object_inside scne cle obj old =
                         []
 
                 Computer a ->
-                    draw_computer a 0 cle
+                    if cle == 0 then
+                        draw_computer a 0 cle
+                    else
+                        []
 
                 --三层楼都需要，所以不加level判定
                 Power a ->
-                    drawpowersupply a 0 cle
+                    if cle == 0 then
+                        drawpowersupply a 0 cle
+                    else
+                        []
+                    
 
                 _ ->
                     []
@@ -500,14 +516,31 @@ render_object_only model cs objects =
 
         --回头再加1,2,3,4
         Computer a ->
-            draw_computer a 5 model.clevel
+            draw_computer a 5 model.cscreen.clevel
 
         Power a ->
-            drawpowersupply a 6 model.clevel
+            drawpowersupply a 6 model.cscreen.clevel
 
         Piano a ->
             draw_key_set a.pianoKeySet
 
+        Bul a ->
+            [ Svg.text_
+                []
+                [ Svg.text "aba" ]
+            ]
+
+render_object_only_html : Int -> List Object -> List (Html Msg)
+render_object_only_html cs objs =
+    let
+        tar =
+            list_index_object (cs - 1) objs
+    in
+        case tar of
+            Bul a ->
+                render_bulb 8 a ++ [text "sdfgh"]
+            _ ->
+                []
 
 
 --++ play_audio a.currentMusic
@@ -518,7 +551,7 @@ render_frame_outline index memo =
     let
         eff =
             if memo.state == Unlocked then
-                BeginMemory index
+                StartChange (BeginMemory index)
 
             else
                 OnClickTriggers index
@@ -546,34 +579,34 @@ render_ui_button : Int -> List (Html Msg)
 render_ui_button cstate =
     let
         pause =
-            Button 2.6 4.5 3.66 6.5 "Pause" Pause "block"
+            Button 2.6 4.5 3.66 6.5 "Pause" (StartChange Pause) "block"
 
         back =
-            Button 2.6 4.5 3.66 6.5 "Back" Back "block"
+            Button 2.6 4.5 3.66 6.5 "Back" (StartChange Back) "block"
 
         reset =
             Button 8 2 4 4 "Reset" Reset "block"
 
         enterMemory =
-            Button 40 20 20 10 "Memory" RecallMemory "block"
+            Button 40 20 20 10 "Memory" (StartChange RecallMemory) "block"
 
         next =
-            Button 8.5 87.5 5 8 "Next" (MovePage 1) "block"
+            Button 8.5 87.5 5 8 "Next" (StartChange (MovePage 1)) "block"
 
         prev =
-            Button 2.8 87.5 4.2 8 "Prev" (MovePage -1) "block"
+            Button 2.8 87.5 4.2 8 "Prev" (StartChange (MovePage -1)) "block"
 
         achieve =
-            Button 40 50 20 10 "Achievement" Achievement "block"
+            Button 40 50 20 10 "Achievement" (StartChange Achievement) "block"
 
         backAchi =
-            Button 2 2 4 4 "Back" Pause "block"
+            Button 2 2 4 4 "Back" (StartChange Pause) "block"
 
         testMemory =
-            Button 14 2 4 4 "test" (BeginMemory 0) "block"
+            Button 14 2 4 4 "test" (StartChange (BeginMemory 0)) "block"
 
         testBack =
-            Button 14 2 4 4 "main" EndMemory "block"
+            Button 14 2 4 4 "main" (StartChange EndMemory) "block"
     in
     case cstate of
         0 ->
