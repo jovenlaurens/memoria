@@ -122,6 +122,7 @@ update msg model =
             ( update_onclicktrigger model number
                 |> test_clock_win
                 |> test_mirror_win
+              --|> test_pinao_win
             , Cmd.none
             )
 
@@ -210,6 +211,18 @@ test_clock_win model =
 
 {-| the any should be replaced by custom type because if clock win the mirror will also show the picture
 -}
+
+
+
+--test_piano_win : Model->Model
+--test_piano_win model
+--test_piano_win_help : Object -> Bool
+--test_piano_win_help object =
+--    case object of
+--        Piano a->
+--            let
+
+
 test_mirror_win : Model -> Model
 test_mirror_win model =
     let

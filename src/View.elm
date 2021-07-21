@@ -19,7 +19,7 @@ import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradju
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
-import Ppiano exposing (draw_key_set, play_audio)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
@@ -98,6 +98,7 @@ view model =
                         render_object model
                             :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
                             ++ render_documents model.docu model.cscene
+                            ++ play_piano_audio model.cscene model.objects
                     )
                         ++ render_ui_button 0
 
@@ -264,7 +265,7 @@ render_button_level level =
     --放到button里
     case level of
         0 ->
-            render_stair_level level
+            render_stair_level level ++ render_piano_button
 
         1 ->
             render_stair_level level
@@ -293,7 +294,7 @@ render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
         but =
-            Button.Button 10 10 10 10 "" (ChangeScene 4) ""
+            Button.Button 30 30 10 10 "" (ChangeScene 4) ""
     in
     test_button but
         |> List.singleton
@@ -625,3 +626,22 @@ render_ui_button cstate =
 
         _ ->
             []
+
+
+play_piano_audio : Int -> List Object -> List (Html Msg)
+play_piano_audio currentScene objectSet =
+    let
+        play_piano_audio_help : Int -> Object -> Html Msg
+        play_piano_audio_help cscene object =
+            if cscene == 7 then
+                case object of
+                    Piano a ->
+                        play_audio a.currentMusic
+
+                    _ ->
+                        div [] []
+
+            else
+                div [] []
+    in
+    List.map (play_piano_audio_help currentScene) objectSet

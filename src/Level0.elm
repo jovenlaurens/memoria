@@ -5,6 +5,7 @@ import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Html.Events exposing (onClick)
 
 
 {-| level 0 furniture
@@ -190,7 +191,7 @@ drawPiano =
         []
     , Svg.polygon
         [ SvgAttr.points "602.5,445 247.5,445 247.5,435 602.5,435"
-        , SvgAttr.fill "white"
+        , SvgAttr.fill "blue"
         , SvgAttr.stroke "black"
         , SvgAttr.strokeWidth "1"
         ]

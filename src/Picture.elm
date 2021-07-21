@@ -59,6 +59,7 @@ initial_pictures =
     [ Picture NotShow 0
     , Picture NotShow 1
     , Picture NotShow 2
+    , Picture NotShow 3
     ]
 
 

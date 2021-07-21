@@ -7,7 +7,7 @@ import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-
+import Ppiano
 
 type Object
     = Clock ClockModel
@@ -67,6 +67,7 @@ initial_objects =
     , Mirror initialMirror --3    4        1
     , Computer initial_computer --4    5        0
     , Power initPowerModel
+    , Piano Ppiano.initial
     ]
 
 
