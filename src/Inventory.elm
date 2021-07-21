@@ -19,7 +19,10 @@ type Grid
     = Blank
     | Pict Picture
 
-index_list = [0,1,2,3,4,5,6,7]
+
+index_list =
+    [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+
 
 initial_inventory : Inventory
 initial_inventory =
@@ -51,37 +54,46 @@ insert_new_item grid old =
     in
     Inventory (pre ++ now ++ nex) old.locaLeft new_num
 
+
 eliminate_old_item : Int -> Inventory -> Inventory
 eliminate_old_item index old =
     let
-        new_num = old.num - 1
+        new_num =
+            old.num - 1
+
         pre =
             if old.num == 0 then
                 []
 
             else
                 List.take index old.own
+
         now =
-            [Blank]
+            [ Blank ]
+
         latter =
             if index == 7 then
                 []
+
             else
                 List.drop (index + 1) old.own
     in
-        Inventory (pre ++ now ++ latter) old.locaLeft new_num
+    Inventory (pre ++ now ++ latter) old.locaLeft new_num
+
 
 find_the_grid : List Grid -> Grid -> Int
 find_the_grid list ud =
     case ud of
-        Blank -> -1
+        Blank ->
+            -1
+
         _ ->
             let
-                tmpList = List.indexedMap Tuple.pair list
+                tmpList =
+                    List.indexedMap Tuple.pair list
             in
-                (List.filter (\x -> Tuple.second x == ud) tmpList |> List.head |> Maybe.withDefault (999, Blank))
-                    |> Tuple.first
-
+            (List.filter (\x -> Tuple.second x == ud) tmpList |> List.head |> Maybe.withDefault ( 999, Blank ))
+                |> Tuple.first
 
 
 render_inventory : Inventory -> List (Svg Msg)
@@ -110,8 +122,7 @@ render_inventory_inside grid lef =
         , SvgAttr.fill "red"
         , Svg.Events.onClick (OnClickItem index typeid)
         ]
-        [
-        ]
+        []
 
 
 render_inventory_inside_item : Grid -> Int -> Svg Msg
