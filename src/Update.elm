@@ -10,18 +10,16 @@ import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_n
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
+import Object exposing (ClockModel, Object(..), get_time, test_table)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, press_key)
-import Ppower exposing (PowerState(..), updatekey)
+import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Task
 import Pbulb exposing (update_bulb_inside)
-import Gradient exposing (ColorState)
 import Gradient exposing (Screen)
 import Gradient exposing (GradientState(..))
-import Gradient exposing (ProcessState)
 import Gradient exposing (ColorState(..))
 import Gradient exposing (default_process)
 
@@ -131,8 +129,8 @@ update_gra_part model submsg  =
         other_new = renew_other_thing model submsg
     in
     
-        { other_new | cscreen = targetScreen--need cur
-                    , gradient = graState
+        { other_new | cscreen = targetScreen --need cur
+                    , gradient = graState 
         }
 
 class_gra_1 = [ Pause, RecallMemory ]--need
