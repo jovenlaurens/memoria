@@ -71,8 +71,6 @@ view model =
                 else
                     "#ffffff"
 
-            per_lef =
-                0.5 * (wid - h)
           in
           div
             [ style "width" (String.fromFloat wid ++ "px")
