@@ -11,7 +11,7 @@ import Document exposing (Document)
 import Document exposing (initial_docu)
 import Gradient exposing (GradientState)
 import Gradient exposing (Screen)
-import Gradient exposing (GradientState(..), ColorState)
+import Gradient exposing (GradientState(..))
 import Gradient exposing (ColorState(..))
 
 
