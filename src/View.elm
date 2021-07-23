@@ -26,6 +26,10 @@ import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Gradient exposing (GradientState(..))
+import Gradient exposing (ProcessState(..))
+import Gradient exposing (Gcontent(..))
+import Gradient exposing (get_Gcontent)
 
 
 style =
@@ -52,12 +56,14 @@ view model =
             else
                 ( 0, 0.5 * (h - het) )
 
-        bkgdColor =
+        bkgdColor = --need
             if model.cscreen.cstate == 20 then
                 "#ffffff"
 
             else
                 "#ffffff"
+
+        gcontent = get_Gcontent model.gradient
     in
     div
         [ style "width" "100%"
@@ -67,7 +73,23 @@ view model =
         , style "top" "0"
         , style "background-color" "#000000"
         ]
-        [ div
+        [ (
+            if gcontent == OnlyWord then
+                div
+                    [ style "width" (String.fromFloat wid ++ "px")
+                    , style "height" (String.fromFloat het ++ "px")
+                    , style "position" "absolute"
+                    , style "left" (String.fromFloat lef ++ "px")
+                    , style "top" (String.fromFloat to ++ "px")
+                    , style "background-color" bkgdColor
+                    ]
+                    []
+            else
+                div
+                    []
+                    []
+        )
+        ,  div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
             , style "position" "absolute"
@@ -206,7 +228,7 @@ render_documents docus cs =
 
         _ ->
             []
-
+--need how to simplify
 
 
 {- render_game_setup : Model -> List (Html Msg)

@@ -37,3 +37,26 @@ type GradientState
 default_process : GradientState
 default_process =
     Process 0.05 Black (Disappear Whole)
+
+default_word_change : GradientState
+default_word_change =
+    Process 0.1 White (Disappear OnlyWord)
+
+
+get_Gcontent : GradientState -> Gcontent
+get_Gcontent gstate =
+    let
+        pState =
+            case gstate of
+                Normal -> KeepSame
+                Process aa bb cc ->
+                    cc
+        gcontent =
+            case pState of
+                KeepSame -> NoUse
+                Disappear aa -> aa
+                Appear aa -> aa
+    in
+        gcontent
+    
+    

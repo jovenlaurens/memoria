@@ -20,6 +20,7 @@ import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Svg.Attributes exposing (color, speed)
 import Task
+import Gradient exposing (default_word_change)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -202,8 +203,8 @@ class_gra_1 =
 get_gra_state : GraMsg -> GradientState
 get_gra_state submsg =
     case submsg of
-        Pause ->
-            default_process
+        Forward ->
+            default_word_change
 
         _ ->
             default_process
