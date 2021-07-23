@@ -18,7 +18,7 @@ type ColorState
 type ProcessState
     = Disappear
     | Appear
-    | Fold
+    | KeepSame
 
 type GradientState
     = Process Float ColorState ProcessState-- speed and colorState

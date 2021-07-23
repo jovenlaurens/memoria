@@ -28,11 +28,7 @@ init a =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ if model.cscreen.cstate == 0 then
-            onAnimationFrameDelta Tick
-
-          else
-            Sub.none
+        [ onAnimationFrameDelta Tick
         , onResize Resize
         , Draggable.subscriptions DragMsg model.drag
         ]

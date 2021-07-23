@@ -22,6 +22,9 @@ import Gradient exposing (Screen)
 import Gradient exposing (GradientState(..))
 import Gradient exposing (ColorState(..))
 import Gradient exposing (default_process)
+import Svg.Attributes exposing (color)
+import Gradient exposing (ProcessState(..))
+import Svg.Attributes exposing (speed)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -49,7 +52,7 @@ update msg model =
             )
 
         --cscene = 1代表 object 的index是0
-        Reset ->--maybe gra
+        Reset -> --maybe gra
             ( initial, Task.perform GetViewport getViewport )
 
         DecideLegal location ->
@@ -115,10 +118,52 @@ update msg model =
             )
 
         Tick elapsed ->
-            ( { model | move_timer = model.move_timer + elapsed, objects = bounce_key_top model.move_timer model.objects }, Cmd.none )
+            ( animate model elapsed, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
+
+
+animate : Model -> Float -> Model
+animate model elapsed = --need
+    let
+        (spe, col, pro) =  ( case model.gradient of
+                                Normal ->
+                                    ( 0.0, Useless, KeepSame )
+                                Process aa b c ->
+                                    ( aa, b, c )
+                            )
+        new_opacity = ( case pro of
+                            Disappear ->
+                                model.opac - spe
+                            Appear ->
+                                model.opac + spe
+                            KeepSame ->
+                                model.opac
+                      )
+
+        ( new_gradient, new_cscreen, new_tscreen ) = if pro == Disappear && new_opacity <= 0 then
+                                                         ( Process spe col Appear, model.tscreen, initial_target)
+                                                     else if pro == Appear && new_opacity >= 1 then
+                                                         ( Normal, model.cscreen, initial_target)
+                                                     else
+                                                         ( model.gradient, model.cscreen, model.tscreen)
+
+    in
+        { model | opac = new_opacity
+                    , gradient = new_gradient
+                    , cscreen = new_cscreen
+                    , tscreen = new_tscreen
+                    , move_timer = model.move_timer + elapsed
+                    , objects = bounce_key_top model.move_timer model.objects 
+                    }
+                    
+
+
+
+
+
+
 
 
 update_gra_part : Model -> GraMsg -> Model
@@ -129,7 +174,7 @@ update_gra_part model submsg  =
         other_new = renew_other_thing model submsg
     in
     
-        { other_new | cscreen = targetScreen --need cur
+        { other_new | tscreen = targetScreen --need cur
                     , gradient = graState 
         }
 
@@ -186,6 +231,7 @@ renew_screen_info submsg old =
             let
                 new = case old.cstate of
                         99 -> 0
+                        98 -> 99
                         _ -> old.cstate + 1
             in
                 {old |cstate = new}

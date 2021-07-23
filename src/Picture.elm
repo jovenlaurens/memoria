@@ -1,7 +1,5 @@
 module Picture exposing (..)
 
-import Button exposing (Button, test_button)
-import Html exposing (Html)
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr

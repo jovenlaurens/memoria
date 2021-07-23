@@ -20,6 +20,12 @@ type Object
     | Power PowerModel
     | Piano PianoModel
     | Bul BulbModel
+ {-   | Board BoardModel --9  cscene 华容道
+    | Booklet BookletModel --10
+    | Screen ScreenModel --11
+    | Cabinet CabinetModel --12 13
+    | Russian RussianDoll --14
+    | -}
 
 
 type alias ClockModel =
@@ -72,6 +78,7 @@ initial_objects =
     , Power initPowerModel      --5    6        0
     , Piano Ppiano.initial      --6    7        0
     , Bul initial_bulb          --7    8        1
+
     ]
 
 

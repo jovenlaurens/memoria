@@ -38,15 +38,7 @@ svgString =
 
 view : Model -> Html Msg
 view model =
-    div
-        [ style "width" "100%"
-        , style "height" "100%"
-        , style "position" "absolute"
-        , style "left" "0"
-        , style "top" "0"
-        , style "background-color" "#000000"
-        ]
-        [ let
+        let
             ( w, h ) =
                 model.size
 
@@ -71,7 +63,17 @@ view model =
                 else
                     "#ffffff"
 
-          in
+        in
+    div
+        [ style "width" "100%"
+        , style "height" "100%"
+        , style "position" "absolute"
+        , style "left" "0"
+        , style "top" "0"
+        , style "background-color" "#000000"
+        ]
+         
+        [
           div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
@@ -79,6 +81,7 @@ view model =
             , style "left" (String.fromFloat lef ++ "px")
             , style "top" (String.fromFloat to ++ "px")
             , style "background-color" bkgdColor
+            , style "opacity" (toString model.opac)
             ]
             (case model.cscreen.cstate of
                 98 ->

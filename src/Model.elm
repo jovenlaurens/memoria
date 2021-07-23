@@ -30,6 +30,7 @@ type alias Model =
     , memory : List Memory
     , docu : List Document
     , move_timer : Float
+    , opac : Float
     }
 
 
@@ -54,6 +55,7 @@ initial =
         initial_memory
         initial_docu
         0
+        1
 
 
 initial_screen : Screen
