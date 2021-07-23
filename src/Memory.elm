@@ -2,13 +2,11 @@ module Memory exposing (..)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (height, src, style, type_, width)
-import Messages exposing (Msg)
+import Html.Events exposing (onClick)
+import Messages exposing (GraMsg(..), Msg(..))
 import Picture exposing (Picture, ShowState(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Messages exposing (Msg(..))
-import Html.Events exposing (onClick)
-import Messages exposing (GraMsg(..))
 
 
 type MeState
@@ -16,10 +14,7 @@ type MeState
     | Unlocked
 
 
-
-
-
-type State 
+type State
     = Dialogue
     | Thought
     | Choose Int
@@ -205,7 +200,6 @@ list_index_page index list =
 
 render_page : Page -> List (Html Msg)
 render_page page =
-
     case page.act of
         Dialogue ->
             [ div

@@ -1,10 +1,9 @@
 module Picture exposing (..)
 
-import Messages exposing (Msg(..))
+import Messages exposing (GraMsg(..), Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Messages exposing (GraMsg(..))
 
 
 type alias Picture =
@@ -76,6 +75,6 @@ render_picture_button =
         , SvgAttr.height "180"
         , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0"
-        , Svg.Events.onClick (StartChange(ChangeScene 3))
+        , Svg.Events.onClick (StartChange (ChangeScene 3))
         ]
         []

@@ -6,12 +6,11 @@ import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
 import Memory exposing (MeState)
-import Messages exposing (Msg(..))
+import Messages exposing (GraMsg(..), Msg(..))
 import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
-import Messages exposing (GraMsg(..))
 
 
 type alias ComputerModel =
@@ -154,7 +153,7 @@ draw_computer commodel cs cle =
                     , SvgAttr.width "160"
                     , SvgAttr.height "90"
                     , SvgAttr.fillOpacity "0.0"
-                    , Svg.Events.onClick (StartChange(ChangeScene 5))
+                    , Svg.Events.onClick (StartChange (ChangeScene 5))
                     ]
                     []
                 ]

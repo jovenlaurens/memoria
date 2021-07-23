@@ -75,7 +75,7 @@ render_table_button : Html Msg
 render_table_button =
     let
         enter =
-            Button.Button 75 53.33 12.5 2.22 "" (StartChange(ChangeScene 2)) "block"
+            Button.Button 75 53.33 12.5 2.22 "" (StartChange (ChangeScene 2)) "block"
     in
     test_button enter
 

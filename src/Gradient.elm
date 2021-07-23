@@ -10,22 +10,30 @@ type alias Screen =
     , cdocu : Int
     }
 
-type ColorState 
+
+type ColorState
     = White
     | Black
     | Useless
 
+
+type Gcontent
+    = Whole
+    | OnlyWord
+    | NoUse
+
+
 type ProcessState
-    = Disappear
-    | Appear
+    = Disappear Gcontent
+    | Appear Gcontent
     | KeepSame
 
+
 type GradientState
-    = Process Float ColorState ProcessState-- speed and colorState
-    | Normal 
+    = Process Float ColorState ProcessState -- speed and colorState
+    | Normal
 
 
 default_process : GradientState
 default_process =
-    Process 0.05 Black Disappear
-        
+    Process 0.05 Black (Disappear Whole)

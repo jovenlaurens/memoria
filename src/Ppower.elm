@@ -5,12 +5,11 @@ import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
-import Messages exposing (Msg(..))
+import Messages exposing (GraMsg(..), Msg(..))
 import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
-import Messages exposing (GraMsg(..))
 
 
 type PowerState

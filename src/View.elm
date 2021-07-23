@@ -14,6 +14,7 @@ import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_m
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
+import Pbulb exposing (render_bulb)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
@@ -25,45 +26,39 @@ import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Pbulb exposing (render_bulb)
 
 
 style =
     Html.Attributes.style
 
 
-svgString =
-    "0 0 1600 900"
-
-
 view : Model -> Html Msg
 view model =
-        let
-            ( w, h ) =
-                model.size
+    let
+        ( w, h ) =
+            model.size
 
-            ( wid, het ) =
-                if (9 / 16 * w) >= h then
-                    ( 16 / 9 * h, h )
+        ( wid, het ) =
+            if (9 / 16 * w) >= h then
+                ( 16 / 9 * h, h )
 
-                else
-                    ( w, 9 / 16 * w )
+            else
+                ( w, 9 / 16 * w )
 
-            ( lef, to ) =
-                if (9 / 16 * w) >= h then
-                    ( 0.5 * (w - wid), 0 )
+        ( lef, to ) =
+            if (9 / 16 * w) >= h then
+                ( 0.5 * (w - wid), 0 )
 
-                else
-                    ( 0, 0.5 * (h - het) )
+            else
+                ( 0, 0.5 * (h - het) )
 
-            bkgdColor =
-                if model.cscreen.cstate == 20 then
-                    "#ffffff"
+        bkgdColor =
+            if model.cscreen.cstate == 20 then
+                "#ffffff"
 
-                else
-                    "#ffffff"
-
-        in
+            else
+                "#ffffff"
+    in
     div
         [ style "width" "100%"
         , style "height" "100%"
@@ -72,9 +67,7 @@ view model =
         , style "top" "0"
         , style "background-color" "#000000"
         ]
-         
-        [
-          div
+        [ div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
             , style "position" "absolute"
@@ -92,8 +85,7 @@ view model =
                     [ text "this is intro", button [ onClick (StartChange EnterState) ] [ text "Start" ] ]
 
                 0 ->
-                    [
-                      Html.img
+                    [ Html.img
                         [ src "assets/memory_menu.png"
                         , style "top" "0%"
                         , style "left" "0%"
@@ -102,21 +94,20 @@ view model =
                         , style "position" "absolute"
                         ]
                         []
-                    ,
-                    div
+                    , div
                         [ style "width" "100%"
                         , style "height" "100%"
                         , style "position" "absolute"
                         ]
                         (if model.cscreen.cscene == 0 then
-                        render_level model
+                            render_level model
 
-                     else
-                        render_object model
-                            :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
-                            ++ render_documents model.docu model.cscreen.cscene
-                            ++ play_piano_audio model.cscreen.cscene model.objects
-                    )
+                         else
+                            render_object model
+                                :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
+                                ++ render_documents model.docu model.cscreen.cscene
+                                ++ play_piano_audio model.cscreen.cscene model.objects
+                        )
                     ]
                         ++ render_ui_button 0
 
@@ -197,8 +188,7 @@ view model =
 
                 20 ->
                     render_ui_button 20
-                        ++  
-                                (render_memory model.cscreen.cmemory model.cscreen.cpage)
+                        ++ render_memory model.cscreen.cmemory model.cscreen.cpage
 
                 _ ->
                     [ text (toString model.cscreen.cstate) ]
@@ -266,8 +256,7 @@ render_draggable position =
 render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
-    
-        ]
+    ]
         ++ render_button_level model.cscreen.clevel
 
 
@@ -282,7 +271,7 @@ render_button_level level =
             render_stair_level level
                 ++ [ drawclockbutton
                    , render_table_button
-                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block" )
+                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block")
                    ]
 
         2 ->
@@ -475,6 +464,7 @@ render_object_inside scne cle obj old =
                 Computer a ->
                     if cle == 0 then
                         draw_computer a 0 cle
+
                     else
                         []
 
@@ -482,9 +472,9 @@ render_object_inside scne cle obj old =
                 Power a ->
                     if cle == 0 then
                         drawpowersupply a 0 cle
+
                     else
                         []
-                    
 
                 _ ->
                     []
@@ -531,17 +521,20 @@ render_object_only model cs objects =
                 [ Svg.text "aba" ]
             ]
 
+
 render_object_only_html : Int -> List Object -> List (Html Msg)
 render_object_only_html cs objs =
     let
         tar =
             list_index_object (cs - 1) objs
     in
-        case tar of
-            Bul a ->
-                render_bulb 8 a ++ [text "sdfgh"]
-            _ ->
-                []
+    case tar of
+        Bul a ->
+            render_bulb 8 a ++ [ text "sdfgh" ]
+
+        _ ->
+            []
+
 
 
 --++ play_audio a.currentMusic
