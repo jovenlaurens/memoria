@@ -26,7 +26,7 @@ index_list =
 
 initial_inventory : Inventory
 initial_inventory =
-    Inventory (List.repeat 8 Blank) [ 50, 250, 450, 650, 850, 1050, 1250, 1450, 1650 ] 0
+    Inventory (List.repeat 8 Blank) [ 210, 370, 520, 673, 826, 979, 1135, 1291 ] 0
 
 
 insert_new_item : Grid -> Inventory -> Inventory
@@ -115,7 +115,7 @@ render_inventory_inside grid lef =
     in
     Svg.rect
         [ SvgAttr.x (toString lef)
-        , SvgAttr.y "780"
+        , SvgAttr.y "760"
         , SvgAttr.width "100"
         , SvgAttr.height "100"
         , SvgAttr.fillOpacity "0.1"

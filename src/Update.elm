@@ -10,18 +10,29 @@ import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_n
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), default_object, get_time, test_table)
+import Object exposing (ClockModel, Object(..), get_time, test_table)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, press_key)
-import Ppower exposing (PowerState(..), updatekey)
+import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Task
+import Pbulb exposing (update_bulb_inside)
+import Gradient exposing (Screen)
+import Gradient exposing (GradientState(..))
+import Gradient exposing (ColorState(..))
+import Gradient exposing (default_process)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    
     case msg of
+        StartChange submsg ->
+            (
+                update_gra_part model submsg
+                , Cmd.none
+            )
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
             , Cmd.none
@@ -37,49 +48,8 @@ update msg model =
             , Cmd.none
             )
 
-        Pause ->
-            ( { model | cstate = 1 }, Cmd.none )
-
-        RecallMemory ->
-            ( { model | cstate = 2 }, Cmd.none )
-
-        Back ->
-            let
-                new =
-                    if model.cstate == 11 then
-                        0
-
-                    else
-                        model.cstate - 1
-            in
-            ( { model | cstate = new }, Cmd.none )
-
-        MovePage dir ->
-            ( { model | cstate = model.cstate + dir }, Cmd.none )
-
-        Achievement ->
-            ( { model | cstate = 10 }, Cmd.none )
-
-        BackfromAch ->
-            ( { model | cstate = 1 }, Cmd.none )
-
-        EnterState ->
-            ( update_state model 1, Cmd.none )
-
-        ChangeLevel a ->
-            ( { model | clevel = a }, Cmd.none )
-
-        ChangeScene a ->
-            ( { model | cscene = a }, Cmd.none )
-
-        BeginMemory a ->
-            ( { model | cstate = 20 + a, cmemory = a, cpage = 0 }, Cmd.none )
-
-        EndMemory ->
-            ( { model | cstate = 0 }, Cmd.none )
-
         --cscene = 1代表 object 的index是0
-        Reset ->
+        Reset ->--maybe gra
             ( initial, Task.perform GetViewport getViewport )
 
         DecideLegal location ->
@@ -126,20 +96,12 @@ update msg model =
             , Cmd.none
             )
 
+
         OnClickItem index kind ->
             case kind of
                 0 ->
                     ( pickup_picture index model
                         |> check_pict_state
-                    , Cmd.none
-                    )
-
-                1 ->
-                    ( { model
-                        | cstate = 11
-                        , docu = unlock_cor_docu index model.docu
-                        , cdocu = index
-                      }
                     , Cmd.none
                     )
 
@@ -152,16 +114,103 @@ update msg model =
             , Cmd.none
             )
 
-        Forward ->
-            ( { model | cpage = model.cpage + 1 }
-            , Cmd.none
-            )
-
         Tick elapsed ->
             ( { model | move_timer = model.move_timer + elapsed, objects = bounce_key_top model.move_timer model.objects }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
+
+
+update_gra_part : Model -> GraMsg -> Model
+update_gra_part model submsg  =
+    let
+        targetScreen = renew_screen_info submsg model.cscreen
+        graState = get_gra_state submsg--暂时不用传入model
+        other_new = renew_other_thing model submsg
+    in
+    
+        { other_new | cscreen = targetScreen --need cur
+                    , gradient = graState 
+        }
+
+class_gra_1 = [ Pause, RecallMemory ]--need
+
+get_gra_state :  GraMsg -> GradientState
+get_gra_state submsg =
+    case submsg of
+        Pause ->
+            default_process
+        _ ->
+            default_process
+
+
+
+
+
+
+
+renew_other_thing : Model -> GraMsg -> Model
+renew_other_thing model submsg =
+    case submsg of
+        OnClickDocu index -> 
+            { model | docu = unlock_cor_docu index model.docu }
+        _ -> model
+
+
+
+renew_screen_info : GraMsg -> Screen -> Screen
+renew_screen_info submsg old =
+    case submsg of
+        Pause ->
+            { old | cstate = 1 }
+        RecallMemory ->
+            { old | cstate = 2 }
+        Back ->
+            let
+                new =
+                    if old.cstate == 11 then
+                        0
+
+                    else
+                        old.cstate - 1
+            in
+                {old | cstate = new}
+        MovePage dir ->
+            {old | cstate = old.cstate + dir }
+        
+        Achievement ->
+            {old |cstate = 10}
+        BackfromAch ->
+            {old |cstate = 1}
+        EnterState -> --maybe
+            let
+                new = case old.cstate of
+                        99 -> 0
+                        _ -> old.cstate + 1
+            in
+                {old |cstate = new}
+        ChangeLevel a ->
+            { old | clevel = a }
+        ChangeScene a ->
+            { old | cscene = a }
+        BeginMemory a ->
+            {old | cscene = a 
+                 , cpage = 0
+                 , cmemory = a
+                 , cstate = 20
+            }
+        EndMemory ->
+            { old | cstate = 0 
+                  , cpage = -1
+            }
+        Forward ->
+            { old | cpage = old.cpage + 1}
+        OnClickDocu a ->
+            { old | cdocu = a
+                  , cstate = 11
+            }
+        _ ->
+            old
 
 
 bounce_key_top : Float -> List Object -> List Object
@@ -298,29 +347,11 @@ the meaning of dir:
 0 -> (state = 0)
 -1 -> (state - 1)
 -}
-update_state : Model -> Int -> Model
-update_state model dir =
-    let
-        state =
-            model.cstate
-
-        newState =
-            if dir == 10 || dir == 0 then
-                dir
-
-            else
-                state + dir
-    in
-    if state == 99 then
-        { model | cstate = 0 }
-
-    else
-        { model | cstate = newState }
 
 
 update_onclicktrigger : Model -> Int -> Model
 update_onclicktrigger model number =
-    case model.cscene of
+    case model.cscreen.cscene of
         1 ->
             updateclock model number
 
@@ -339,8 +370,11 @@ update_onclicktrigger model number =
         7 ->
             { model | objects = try_to_update_piano number model.move_timer model.objects }
 
+        8 ->
+            update_bulb model number
+
         0 ->
-            case model.clevel of
+            case model.cscreen.clevel of
                 0 ->
                     charge_computer model number
 
@@ -350,6 +384,23 @@ update_onclicktrigger model number =
         --number是frame的序号(0-4)
         _ ->
             model
+
+
+
+update_bulb : Model -> Int -> Model
+update_bulb model number =
+    let
+        fin num obj =
+            case obj of
+                Bul a ->
+                    Bul (update_bulb_inside num a)
+                _ ->
+                    obj
+    in
+        { model | objects = List.map (fin number) model.objects}
+    
+
+
 
 
 try_to_update_piano : Int -> Float -> List Object -> List Object

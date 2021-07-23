@@ -10,6 +10,7 @@ import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
+import Messages exposing (GraMsg(..))
 
 
 type PowerState
@@ -94,7 +95,7 @@ drawpowersupply_0 =
         , SvgAttr.height "50"
         , SvgAttr.fill "yellow"
         , SvgAttr.rx "15"
-        , Svg.Events.onClick (ChangeScene 6)
+        , Svg.Events.onClick (StartChange (ChangeScene 6))
         ]
         []
     ]

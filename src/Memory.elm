@@ -8,6 +8,7 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Messages exposing (Msg(..))
 import Html.Events exposing (onClick)
+import Messages exposing (GraMsg(..))
 
 
 type MeState
@@ -251,7 +252,7 @@ render_page page =
                     , style "padding" "0"
                     , style "position" "absolute"
                     , style "background-color" "Transparent"
-                    , onClick Forward
+                    , onClick (StartChange Forward)
                     ]
                     []
                 ]
@@ -302,7 +303,7 @@ render_page page =
                     , style "padding" "0"
                     , style "position" "absolute"
                     , style "background-color" "Transparent"
-                    , onClick EndMemory
+                    , onClick (StartChange EndMemory)
                     ]
                     []
                 ]
