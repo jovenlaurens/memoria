@@ -5,9 +5,11 @@ import Debug exposing (toString)
 import Document exposing (Document, render_docu_list, render_document_detail, render_newspaper_index)
 import Draggable
 import Furnitures exposing (..)
+import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
+import Intro exposing (render_intro)
 import Inventory exposing (Grid(..), render_inventory)
 import Level0 exposing (..)
 import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
@@ -26,11 +28,6 @@ import Ptable exposing (draw_block, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Gradient exposing (GradientState(..))
-import Gradient exposing (ProcessState(..))
-import Gradient exposing (Gcontent(..))
-import Gradient exposing (get_Gcontent)
-import Intro exposing (render_intro)
 
 
 style =
@@ -57,14 +54,16 @@ view model =
             else
                 ( 0, 0.5 * (h - het) )
 
-        bkgdColor = --need
+        bkgdColor =
+            --need
             if model.cscreen.cstate == 20 then
                 "#ffffff"
 
             else
                 "#ffffff"
 
-        gcontent = get_Gcontent model.gradient
+        gcontent =
+            get_Gcontent model.gradient
     in
     div
         [ style "width" "100%"
@@ -74,23 +73,22 @@ view model =
         , style "top" "0"
         , style "background-color" "#000000"
         ]
-        [ (
-            if gcontent == OnlyWord then
-                div
-                    [ style "width" (String.fromFloat wid ++ "px")
-                    , style "height" (String.fromFloat het ++ "px")
-                    , style "position" "absolute"
-                    , style "left" (String.fromFloat lef ++ "px")
-                    , style "top" (String.fromFloat to ++ "px")
-                    , style "background-color" bkgdColor
-                    ]
-                    []
-            else
-                div
-                    []
-                    []
-        )
-        ,  div
+        [ if gcontent == OnlyWord then
+            div
+                [ style "width" (String.fromFloat wid ++ "px")
+                , style "height" (String.fromFloat het ++ "px")
+                , style "position" "absolute"
+                , style "left" (String.fromFloat lef ++ "px")
+                , style "top" (String.fromFloat to ++ "px")
+                , style "background-color" bkgdColor
+                ]
+                []
+
+          else
+            div
+                []
+                []
+        , div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
             , style "position" "absolute"
@@ -228,9 +226,10 @@ render_documents docus cs =
 
         _ ->
             []
+
+
+
 --need how to simplify
-
-
 {- render_game_setup : Model -> List (Html Msg)
    render_game_setup model =
 
@@ -240,9 +239,6 @@ render_documents docus cs =
            (render_object model)--++(render_button model)
 -}
 {- render the background of the screen, if specific, doesnt have this -}
-
-
-
 
 
 render_wall_1 : Html Msg

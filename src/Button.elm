@@ -47,12 +47,12 @@ test_button but =
 trans_button_sq : Button -> Html Msg
 trans_button_sq but =
     button
-        [ style "border" "0"
-        , style "top" (toString but.to ++ "%")
+        [ style "top" (toString but.to ++ "%")
         , style "left" (toString but.lef ++ "%")
         , style "height" (toString but.hei ++ "%")
         , style "width" (toString but.wid ++ "%")
         , style "cursor" "pointer"
+        , style "border" "0"
         , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"

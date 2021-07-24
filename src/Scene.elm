@@ -3,7 +3,8 @@ module Scene exposing (..)
 import List exposing (indexedMap)
 
 
-type alias Scene = --哈哈好像这个玩意并没有派上用场，那就重新做一点东西进去
+type alias Scene =
+    --哈哈好像这个玩意并没有派上用场，那就重新做一点东西进去
     { objectOrder : List Int --这一层所有object的编号的列表，render的时候按照这个render
     , pictureSrc : String
     }
@@ -26,4 +27,3 @@ initial_scene =
 
 defaultScene =
     Scene [] ""
-

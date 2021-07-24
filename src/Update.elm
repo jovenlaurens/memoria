@@ -4,9 +4,10 @@ import Browser.Dom exposing (getViewport)
 import Document exposing (unlock_cor_docu)
 import Draggable
 import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
-import Gradient exposing (ColorState(..), Gcontent(..), GradientState(..), ProcessState(..), Screen, default_process)
+import Gradient exposing (ColorState(..), Gcontent(..), GradientState(..), ProcessState(..), Screen, default_process, default_word_change)
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
+import Intro exposing (get_new_intro)
 import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_new_item)
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
@@ -20,8 +21,6 @@ import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Svg.Attributes exposing (color, speed)
 import Task
-import Gradient exposing (default_word_change)
-import Intro exposing (get_new_intro)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -115,7 +114,7 @@ update msg model =
 
         Tick elapsed ->
             ( animate model elapsed
-            , Cmd.none 
+            , Cmd.none
             )
 
         _ ->
@@ -165,7 +164,7 @@ animate model elapsed =
 
             else
                 ( model.gradient, model.cscreen, model.tscreen )
-    
+
         stage_1 =
             { model
                 | opac = new_opacity
@@ -175,10 +174,11 @@ animate model elapsed =
                 , move_timer = model.move_timer + elapsed
                 , objects = bounce_key_top model.move_timer model.objects
             }
-        new_intro = get_new_intro model.intro model.cscreen.cstate
 
+        new_intro =
+            get_new_intro model.intro model.cscreen.cstate
     in
-        { stage_1 | intro = new_intro }
+    { stage_1 | intro = new_intro }
 
 
 update_gra_part : Model -> GraMsg -> Model
@@ -295,6 +295,18 @@ renew_screen_info submsg old =
 
         Forward ->
             { old | cpage = old.cpage + 1 }
+
+        Choice a b ->
+            let
+                new_page =
+                    case ( a, b ) of
+                        ( 0, 0 ) ->
+                            5
+
+                        _ ->
+                            11
+            in
+            { old | cpage = new_page }
 
         OnClickDocu a ->
             { old
