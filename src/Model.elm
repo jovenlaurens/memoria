@@ -1,25 +1,22 @@
 module Model exposing (..)
 
+import Document exposing (Document, initial_docu)
 import Draggable
+import Gradient exposing (ColorState(..), GradientState(..), Screen)
+import Intro exposing (IntroPage, initial_intro)
 import Inventory exposing (Grid(..), Inventory, initial_inventory)
 import Memory exposing (Memory, initial_memory)
 import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 import Svg.Attributes exposing (x)
-import Document exposing (Document)
-import Document exposing (initial_docu)
-import Gradient exposing (GradientState)
-import Gradient exposing (Screen)
-import Gradient exposing (GradientState(..))
-import Gradient exposing (ColorState(..))
 
 
 type alias Model =
     { cscreen : Screen
     , tscreen : Screen
     , gradient : GradientState
-    , objects : List Object 
+    , objects : List Object
     , scenes : List Scene
     , size : ( Float, Float )
     , spcPosition : ( Float, Float )
@@ -30,11 +27,9 @@ type alias Model =
     , memory : List Memory
     , docu : List Document
     , move_timer : Float
+    , opac : Float
+    , intro : IntroPage
     }
-
-
-
-
 
 
 initial : Model
@@ -54,15 +49,22 @@ initial =
         initial_memory
         initial_docu
         0
+        1
+        initial_intro
 
 
 initial_screen : Screen
 initial_screen =
-    Screen 98 1 0 -1 -1 -1
+    Screen 0 1 0 -1 -1 -1
+
+
+
+--need temporary change
+
 
 initial_target : Screen
-initial_target = 
-    Screen 98 1 0 -1 -1 -1
+initial_target =
+    Screen 0 1 0 -1 -1 -1
 
 
 list_index_object : Int -> List Object -> Object

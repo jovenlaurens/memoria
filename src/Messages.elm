@@ -3,8 +3,7 @@ module Messages exposing (..)
 import Browser.Dom exposing (Viewport)
 import Draggable
 import Geometry exposing (Location)
-import Gradient exposing (Screen)
-import Gradient exposing (ColorState)
+import Gradient exposing (ColorState, Screen)
 
 
 type Msg
@@ -18,7 +17,7 @@ type Msg
       --Others
     | GetViewport Viewport
     | Resize Int Int
-    | Tick Float--need
+    | Tick Float --need
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
@@ -40,4 +39,5 @@ type GraMsg
     | BeginMemory Int --state = 20, a is the order of memory
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
-    | EndMemory 
+    | EndMemory
+    | AddLine

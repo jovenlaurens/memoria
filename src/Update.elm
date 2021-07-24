@@ -4,35 +4,33 @@ import Browser.Dom exposing (getViewport)
 import Document exposing (unlock_cor_docu)
 import Draggable
 import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
+import Gradient exposing (ColorState(..), Gcontent(..), GradientState(..), ProcessState(..), Screen, default_process, default_word_change)
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
+import Intro exposing (get_new_intro)
 import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_new_item)
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time, test_table)
+import Pbulb exposing (update_bulb_inside)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
+import Svg.Attributes exposing (color, speed)
 import Task
-import Pbulb exposing (update_bulb_inside)
-import Gradient exposing (Screen)
-import Gradient exposing (GradientState(..))
-import Gradient exposing (ColorState(..))
-import Gradient exposing (default_process)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    
     case msg of
         StartChange submsg ->
-            (
-                update_gra_part model submsg
-                , Cmd.none
+            ( update_gra_part model submsg
+            , Cmd.none
             )
+
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
             , Cmd.none
@@ -49,7 +47,8 @@ update msg model =
             )
 
         --cscene = 1代表 object 的index是0
-        Reset ->--maybe gra
+        Reset ->
+            --maybe gra
             ( initial, Task.perform GetViewport getViewport )
 
         DecideLegal location ->
@@ -96,7 +95,6 @@ update msg model =
             , Cmd.none
             )
 
-
         OnClickItem index kind ->
             case kind of
                 0 ->
@@ -115,47 +113,119 @@ update msg model =
             )
 
         Tick elapsed ->
-            ( { model | move_timer = model.move_timer + elapsed, objects = bounce_key_top model.move_timer model.objects }, Cmd.none )
+            ( animate model elapsed
+            , Cmd.none
+            )
 
         _ ->
             ( model, Cmd.none )
 
 
-update_gra_part : Model -> GraMsg -> Model
-update_gra_part model submsg  =
+animate : Model -> Float -> Model
+animate model elapsed =
+    --need
     let
-        targetScreen = renew_screen_info submsg model.cscreen
-        graState = get_gra_state submsg--暂时不用传入model
-        other_new = renew_other_thing model submsg
+        ( spe, col, pro ) =
+            case model.gradient of
+                Normal ->
+                    ( 0.0, Useless, KeepSame )
+
+                Process aa b c ->
+                    ( aa, b, c )
+
+        new_opacity =
+            case pro of
+                Disappear a ->
+                    model.opac - spe
+
+                Appear a ->
+                    model.opac + spe
+
+                KeepSame ->
+                    model.opac
+
+        type_ =
+            case pro of
+                KeepSame ->
+                    NoUse
+
+                Disappear a ->
+                    a
+
+                Appear b ->
+                    b
+
+        ( new_gradient, new_cscreen, new_tscreen ) =
+            if new_opacity < 0 then
+                ( Process spe col (Appear type_), model.tscreen, initial_target )
+
+            else if new_opacity > 1 then
+                ( Normal, model.cscreen, initial_target )
+
+            else
+                ( model.gradient, model.cscreen, model.tscreen )
+
+        stage_1 =
+            { model
+                | opac = new_opacity
+                , gradient = new_gradient
+                , cscreen = new_cscreen
+                , tscreen = new_tscreen
+                , move_timer = model.move_timer + elapsed
+                , objects = bounce_key_top model.move_timer model.objects
+            }
+
+        new_intro =
+            get_new_intro model.intro model.cscreen.cstate
     in
-    
-        { other_new | cscreen = targetScreen --need cur
-                    , gradient = graState 
-        }
+    { stage_1 | intro = new_intro }
 
-class_gra_1 = [ Pause, RecallMemory ]--need
 
-get_gra_state :  GraMsg -> GradientState
+update_gra_part : Model -> GraMsg -> Model
+update_gra_part model submsg =
+    let
+        targetScreen =
+            renew_screen_info submsg model.cscreen
+
+        graState =
+            get_gra_state submsg
+
+        --暂时不用传入model
+        other_new =
+            renew_other_thing model submsg
+    in
+    { other_new
+        | tscreen = targetScreen --need cur
+        , gradient = graState
+    }
+
+
+class_gra_1 =
+    [ Pause, RecallMemory ]
+
+
+
+--need
+
+
+get_gra_state : GraMsg -> GradientState
 get_gra_state submsg =
     case submsg of
-        Pause ->
-            default_process
+        Forward ->
+            default_word_change
+
         _ ->
             default_process
-
-
-
-
-
 
 
 renew_other_thing : Model -> GraMsg -> Model
 renew_other_thing model submsg =
     case submsg of
-        OnClickDocu index -> 
+        OnClickDocu index ->
             { model | docu = unlock_cor_docu index model.docu }
-        _ -> model
 
+        _ ->
+            model
 
 
 renew_screen_info : GraMsg -> Screen -> Screen
@@ -163,8 +233,10 @@ renew_screen_info submsg old =
     case submsg of
         Pause ->
             { old | cstate = 1 }
+
         RecallMemory ->
             { old | cstate = 2 }
+
         Back ->
             let
                 new =
@@ -174,41 +246,74 @@ renew_screen_info submsg old =
                     else
                         old.cstate - 1
             in
-                {old | cstate = new}
+            { old | cstate = new }
+
         MovePage dir ->
-            {old | cstate = old.cstate + dir }
-        
+            { old | cstate = old.cstate + dir }
+
         Achievement ->
-            {old |cstate = 10}
+            { old | cstate = 10 }
+
         BackfromAch ->
-            {old |cstate = 1}
-        EnterState -> --maybe
+            { old | cstate = 1 }
+
+        EnterState ->
+            --maybe
             let
-                new = case old.cstate of
-                        99 -> 0
-                        _ -> old.cstate + 1
+                new =
+                    case old.cstate of
+                        99 ->
+                            0
+
+                        98 ->
+                            99
+
+                        _ ->
+                            old.cstate + 1
             in
-                {old |cstate = new}
+            { old | cstate = new }
+
         ChangeLevel a ->
             { old | clevel = a }
+
         ChangeScene a ->
             { old | cscene = a }
+
         BeginMemory a ->
-            {old | cscene = a 
-                 , cpage = 0
-                 , cmemory = a
-                 , cstate = 20
+            { old
+                | cscene = a
+                , cpage = 0
+                , cmemory = a
+                , cstate = 20
             }
+
         EndMemory ->
-            { old | cstate = 0 
-                  , cpage = -1
+            { old
+                | cstate = 0
+                , cpage = -1
             }
+
         Forward ->
-            { old | cpage = old.cpage + 1}
+            { old | cpage = old.cpage + 1 }
+
+        Choice a b ->
+            let
+                new_page =
+                    case ( a, b ) of
+                        ( 0, 0 ) ->
+                            5
+
+                        _ ->
+                            11
+            in
+            { old | cpage = new_page }
+
         OnClickDocu a ->
-            { old | cdocu = a
-                  , cstate = 11
+            { old
+                | cdocu = a
+                , cstate = 11
             }
+
         _ ->
             old
 
@@ -347,8 +452,6 @@ the meaning of dir:
 0 -> (state = 0)
 -1 -> (state - 1)
 -}
-
-
 update_onclicktrigger : Model -> Int -> Model
 update_onclicktrigger model number =
     case model.cscreen.cscene of
@@ -386,7 +489,6 @@ update_onclicktrigger model number =
             model
 
 
-
 update_bulb : Model -> Int -> Model
 update_bulb model number =
     let
@@ -394,13 +496,11 @@ update_bulb model number =
             case obj of
                 Bul a ->
                     Bul (update_bulb_inside num a)
+
                 _ ->
                     obj
     in
-        { model | objects = List.map (fin number) model.objects}
-    
-
-
+    { model | objects = List.map (fin number) model.objects }
 
 
 try_to_update_piano : Int -> Float -> List Object -> List Object

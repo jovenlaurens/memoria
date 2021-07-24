@@ -11,6 +11,7 @@ import Update exposing (..)
 import View exposing (view)
 
 
+main : Program () Model Msg
 main =
     Browser.element
         { init = init
@@ -28,11 +29,7 @@ init a =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ if model.cscreen.cstate == 0 then
-            onAnimationFrameDelta Tick
-
-          else
-            Sub.none
+        [ onAnimationFrameDelta Tick
         , onResize Resize
         , Draggable.subscriptions DragMsg model.drag
         ]

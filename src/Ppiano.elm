@@ -43,7 +43,6 @@ initial =
         generate_key_set
         []
         0
-        
 
 
 generate_key_set_help : Int -> PianoKey

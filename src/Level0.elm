@@ -1,11 +1,11 @@
 module Level0 exposing (..)
 
 import Furnitures exposing (drawFloor)
+import Html.Events exposing (onClick)
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Html.Events exposing (onClick)
 
 
 {-| level 0 furniture

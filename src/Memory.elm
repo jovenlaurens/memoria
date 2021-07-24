@@ -1,14 +1,15 @@
 module Memory exposing (..)
 
+import Button exposing (Button, trans_button_sq)
+import Debug exposing (toString)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (height, src, style, type_, width)
-import Messages exposing (Msg)
+import Html.Events exposing (onClick)
+import Messages exposing (GraMsg(..), Msg(..))
 import Picture exposing (Picture, ShowState(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Messages exposing (Msg(..))
-import Html.Events exposing (onClick)
-import Messages exposing (GraMsg(..))
+import Svg.Events
 
 
 type MeState
@@ -16,10 +17,7 @@ type MeState
     | Unlocked
 
 
-
-
-
-type State 
+type State
     = Dialogue
     | Thought
     | Choose Int
@@ -38,8 +36,16 @@ type alias Page =
     { content : String
     , speaker : String
     , backPict : String
-    , figure : List String
+    , figure : String
     , act : State
+    }
+
+
+type alias ChoiceBase =
+    { c1 : String
+    , c2 : String
+    , c3 : String
+    , sum : Int
     }
 
 
@@ -205,122 +211,194 @@ list_index_page index list =
 
 render_page : Page -> List (Html Msg)
 render_page page =
+    let
+        hei =
+            100
 
+        wid =
+            round (hei / 16 / 16 * 7 * 9)
+
+        eff =
+            case page.act of
+                Dialogue ->
+                    StartChange Forward
+
+                End ->
+                    StartChange EndMemory
+
+                _ ->
+                    StartChange Forward
+    in
     case page.act of
-        Dialogue ->
-            [ div
-                [ style "top" "58%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "height" "42%"
-                , style "position" "absolute"
-                ]
-                [ Html.embed
-                    [ type_ "image/svg+xml"
-                    , src "assets/testforp2.svg"
-                    , style "top" "0%"
-                    , style "left" "0%"
-                    , style "width" "100%"
-                    , style "height" "100%"
-                    , style "position" "absolute"
-                    ]
-                    []
-                , div
-                    [ style "top" "17%"
-                    , style "left" "17%"
-                    , style "width" "13%"
-                    , style "height" "10%"
-                    , style "position" "absolute"
-                    ]
-                    [ text page.speaker ]
-                , div
-                    [ style "top" "32%"
-                    , style "left" "16%"
-                    , style "width" "68%"
-                    , style "height" "45%"
-                    , style "position" "absolute"
-                    ]
-                    [ text page.content ]
-                , Html.button
-                    [ style "top" "0%"
-                    , style "left" "0%"
-                    , style "width" "100%"
-                    , style "height" "100%"
-                    , style "border" "0"
-                    , style "cursor" "pointer"
-                    , style "outline" "none"
-                    , style "padding" "0"
-                    , style "position" "absolute"
-                    , style "background-color" "Transparent"
-                    , onClick (StartChange Forward)
-                    ]
-                    []
-                ]
-            ]
-
-        End ->
-            [ div
-                [ style "top" "58%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "height" "42%"
-                , style "position" "absolute"
-                ]
-                [ Html.embed
-                    [ type_ "image/svg+xml"
-                    , src "assets/testforp2.svg"
-                    , style "top" "0%"
-                    , style "left" "-5%"
-                    , style "width" "110%"
-                    , style "height" "100%"
-                    , style "position" "absolute"
-                    ]
-                    []
-                , div
-                    [ style "top" "17%"
-                    , style "left" "17%"
-                    , style "width" "13%"
-                    , style "height" "10%"
-                    , style "position" "absolute"
-                    ]
-                    [ text page.speaker ]
-                , div
-                    [ style "top" "32%"
-                    , style "left" "16%"
-                    , style "width" "68%"
-                    , style "height" "45%"
-                    , style "position" "absolute"
-                    ]
-                    [ text page.content ]
-                , Html.button
-                    [ style "top" "0%"
-                    , style "left" "0%"
-                    , style "width" "100%"
-                    , style "height" "100%"
-                    , style "border" "0"
-                    , style "cursor" "pointer"
-                    , style "outline" "none"
-                    , style "padding" "0"
-                    , style "position" "absolute"
-                    , style "background-color" "Transparent"
-                    , onClick (StartChange EndMemory)
-                    ]
-                    []
-                ]
-            ]
+        Choose a ->
+            render_choice a page
 
         _ ->
-            []
+            [ Html.embed
+                [ type_ "image/png"
+                , src page.backPict
+                , style "top" "20%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "100%"
+                , style "position" "absolute"
+                ]
+                []
+            , Html.embed
+                [ type_ "image/png"
+                , src page.figure
+                , style "bottom" "-4%"
+                , style "left" "25%"
+                , style "width" (toString wid ++ "%")
+                , style "height" (toString hei ++ "%")
+                , style "position" "absolute"
+                ]
+                []
+            , div
+                [ style "top" "58%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "42%"
+                , style "position" "absolute"
+                ]
+                [ Svg.svg
+                    [ SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.viewBox "0 0 1000 420"
+                    ]
+                    [ svg_rect 0 70 1000 300
+                    , svg_rect 50 40 150 60
+                    , svg_text 50 160 500 300 page.content
+                    , svg_text 70 80 150 60 page.speaker
+                    ]
+                , trans_button_sq (Button 0 0 100 100 "" eff "block")
+                ]
+            ]
+
+
+svg_rect : Float -> Float -> Float -> Float -> Svg Msg
+svg_rect x_ y_ wid hei =
+    Svg.rect
+        [ SvgAttr.x (toString x_)
+        , SvgAttr.y (toString y_)
+        , SvgAttr.width (toString wid)
+        , SvgAttr.height (toString hei)
+        , SvgAttr.fill "white"
+        , SvgAttr.fillOpacity "0.5"
+        , SvgAttr.strokeWidth "1"
+        , SvgAttr.stroke "black"
+        ]
+        []
+
+
+svg_tran_button : Float -> Float -> Float -> Float -> Msg -> Svg Msg
+svg_tran_button x_ y_ wid hei eff =
+    Svg.rect
+        [ SvgAttr.x (toString x_)
+        , SvgAttr.y (toString y_)
+        , SvgAttr.width (toString wid)
+        , SvgAttr.height (toString hei)
+        , SvgAttr.fill "white"
+        , SvgAttr.fillOpacity "0.5"
+        , SvgAttr.strokeWidth "1"
+        , SvgAttr.stroke "black"
+        , Svg.Events.onClick eff
+        ]
+        []
+
+
+svg_text : Float -> Float -> Float -> Float -> String -> Svg Msg
+svg_text x_ y_ wid hei content =
+    Svg.text_
+        [ SvgAttr.x (toString x_)
+        , SvgAttr.y (toString y_)
+        , SvgAttr.width (toString wid)
+        , SvgAttr.height (toString hei)
+        , SvgAttr.fontSize "30"
+        , SvgAttr.fontFamily "Times New Roman"
+        ]
+        [ Svg.text content
+        ]
+
+
+render_choice : Int -> Page -> List (Html Msg)
+render_choice index page =
+    let
+        ( ca, cb, cc ) =
+            case index of
+                0 ->
+                    ( "A story about ideal love", "A fantastic novel", "autobiography" )
+
+                _ ->
+                    ( "", "", "" )
+    in
+    [ Html.embed
+        [ type_ "image/png"
+        , src page.backPict
+        , style "top" "20%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "height" "100%"
+        , style "position" "absolute"
+        ]
+        []
+    , div
+        [ style "width" "100%"
+        , style "height" "100%"
+        , style "position" "absolute"
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.viewBox "0 0 1600 900"
+            ]
+            [ svg_tran_button 700 300 200 60 (StartChange (Choice index 0))
+            , svg_tran_button 700 400 200 60 (StartChange (Choice index 1))
+            , svg_tran_button 700 500 200 60 (StartChange (Choice index 2))
+            , svg_text 700 300 200 60 ca
+            , svg_text 700 400 200 60 cb
+            , svg_text 700 500 200 60 cc
+            ]
+        ]
+    ]
 
 
 textBase_0 : List Page
 textBase_0 =
-    [ Page "test1" "Maria" "assets/mvp.png" [ "none" ] Dialogue
-    , Page "test2" "I" "assets/mvp.png" [ "none" ] Dialogue
-    , Page "testend" "Maria" "assets/mvp.png" [ "none" ] End
+    [ Page "So I'm in a cafe, lots of customers." "I" "assets/wall1.png" "assets/girl1.png" Dialogue --0
+    , Page "Wait, it seems that Maria is there. She is merged in something. " "I" "assets/wall1.png" "assets/girl1.png" Dialogue --1
+    , Page "Oh, I was told that she is a freelancer before." "I" "assets/wall1.png" "assets/girl1.png" Dialogue --2
+    , Page "So what kind of thing is she working on?" "I" "assets/wall1.png" "assets/girl1.png" Dialogue --3
+    , Page "" "" "assets/wall1.png" "" (Choose 0) --4
+
+    {- ]
+
+       sub_0_0 : List Page
+       sub_0_0 =
+           [
+    -}
+    , Page "Well, it isn’t mandatory to tell others my idea, but if you are really interested in." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --5
+    , Page "After I expressed my strong will, Maria continued." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --6
+    , Page "It’s a story for my ideal love, exactly. " "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --7
+    , Page "After breaking out with him, I always think about it." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --8
+    , Page "Why I failed to hold love, or, what should it look like? " "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --9
+    , Page "End" "I" "assets/wall1.png" "assets/girl1.png" End --10
+
+    {- ]
+
+       sub_0_1 : List Page
+       sub_0_1 =
+           [
+    -}
+    , Page "Wait" "I" "" "" End
     ]
+
+
+sub_0_2 : List Page
+sub_0_2 =
+    []
 
 
 default_page : Page
 default_page =
-    Page "test" "Maria" "none" [ "none" ] Dialogue
+    Page "test" "Maria" "none" "none" Dialogue

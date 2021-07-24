@@ -154,7 +154,7 @@ drawclockbutton =
         , HtmlAttr.style "background" "#FFF"
         , HtmlAttr.style "border-radius" "50%"
         , HtmlAttr.style "opacity" "0.0"
-        , onClick (StartChange(ChangeScene 1))
+        , onClick (StartChange (ChangeScene 1))
         ]
         []
 
