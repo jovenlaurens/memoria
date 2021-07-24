@@ -30,6 +30,7 @@ import Gradient exposing (GradientState(..))
 import Gradient exposing (ProcessState(..))
 import Gradient exposing (Gcontent(..))
 import Gradient exposing (get_Gcontent)
+import Intro exposing (render_intro)
 
 
 style =
@@ -104,7 +105,7 @@ view model =
 
                 --use % to arrange the position
                 99 ->
-                    [ text "this is intro", button [ onClick (StartChange EnterState) ] [ text "Start" ] ]
+                    render_intro model.intro
 
                 0 ->
                     [ Html.img
@@ -135,7 +136,6 @@ view model =
 
                 1 ->
                     render_ui_button 1
-                        ++ [ text "this is menu!" ]
 
                 2 ->
                     [ render_wall_1
@@ -240,6 +240,9 @@ render_documents docus cs =
            (render_object model)--++(render_button model)
 -}
 {- render the background of the screen, if specific, doesnt have this -}
+
+
+
 
 
 render_wall_1 : Html Msg

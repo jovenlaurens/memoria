@@ -11,6 +11,7 @@ import Update exposing (..)
 import View exposing (view)
 
 
+main : Program () Model Msg
 main =
     Browser.element
         { init = init

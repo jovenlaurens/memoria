@@ -40,3 +40,4 @@ type GraMsg
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory
+    | AddLine

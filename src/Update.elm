@@ -21,6 +21,7 @@ import Ptable exposing (BlockState(..))
 import Svg.Attributes exposing (color, speed)
 import Task
 import Gradient exposing (default_word_change)
+import Intro exposing (get_new_intro)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,7 +114,9 @@ update msg model =
             )
 
         Tick elapsed ->
-            ( animate model elapsed, Cmd.none )
+            ( animate model elapsed
+            , Cmd.none 
+            )
 
         _ ->
             ( model, Cmd.none )
@@ -162,15 +165,20 @@ animate model elapsed =
 
             else
                 ( model.gradient, model.cscreen, model.tscreen )
+    
+        stage_1 =
+            { model
+                | opac = new_opacity
+                , gradient = new_gradient
+                , cscreen = new_cscreen
+                , tscreen = new_tscreen
+                , move_timer = model.move_timer + elapsed
+                , objects = bounce_key_top model.move_timer model.objects
+            }
+        new_intro = get_new_intro model.intro model.cscreen.cstate
+
     in
-    { model
-        | opac = new_opacity
-        , gradient = new_gradient
-        , cscreen = new_cscreen
-        , tscreen = new_tscreen
-        , move_timer = model.move_timer + elapsed
-        , objects = bounce_key_top model.move_timer model.objects
-    }
+        { stage_1 | intro = new_intro }
 
 
 update_gra_part : Model -> GraMsg -> Model

@@ -9,6 +9,8 @@ import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 import Svg.Attributes exposing (x)
+import Intro exposing (IntroPage)
+import Intro exposing (initial_intro)
 
 
 type alias Model =
@@ -27,6 +29,7 @@ type alias Model =
     , docu : List Document
     , move_timer : Float
     , opac : Float
+    , intro : IntroPage
     }
 
 
@@ -48,6 +51,7 @@ initial =
         initial_docu
         0
         1
+        initial_intro
 
 
 initial_screen : Screen
