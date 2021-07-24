@@ -55,7 +55,7 @@ initial =
 
 initial_screen : Screen
 initial_screen =
-    Screen 0 1 0 -1 -1 -1
+    Screen 98 1 0 -1 -1 -1
 
 
 
@@ -64,7 +64,7 @@ initial_screen =
 
 initial_target : Screen
 initial_target =
-    Screen 0 1 0 -1 -1 -1
+    Screen 98 1 0 -1 -1 -1
 
 
 list_index_object : Int -> List Object -> Object

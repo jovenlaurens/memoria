@@ -39,7 +39,7 @@ get_new_intro old cstate =
                     210
 
                 else
-                    old.sec + 0.2
+                    old.sec + 0.5
 
             else
                 0
