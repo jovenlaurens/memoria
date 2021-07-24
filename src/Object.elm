@@ -8,7 +8,7 @@ import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-
+import Pfragment exposing (..)
 
 type Object
     = Clock ClockModel
@@ -19,7 +19,7 @@ type Object
     | Power PowerModel
     | Piano PianoModel
     | Bul BulbModel
-
+    | Fra FragmentModel
 
 
 {- | Board BoardModel --9  cscene 华容道
@@ -81,6 +81,7 @@ initial_objects =
     , Power initPowerModel --5    6        0
     , Piano Ppiano.initial --6    7        0
     , Bul initial_bulb --7    8        1
+    , Fra initfraModel -- 8   9  0  
     ]
 
 

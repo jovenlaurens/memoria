@@ -5,6 +5,10 @@ import Html exposing (Html, div)
 import Html.Attributes as HtmlAttr
 import Html.Events exposing (onClick)
 import Messages exposing (Msg(..))
+import Svg.Attributes as SvgAttr
+import Svg.Events
+import Svg
+import Svg exposing (Svg)
 
 
 type State
@@ -134,7 +138,7 @@ changecolor cl =
 --烦烦子 need
 
 
-render_bulb : Int -> BulbModel -> List (Html Msg)
+render_bulb : Int -> BulbModel -> List (Svg Msg)
 render_bulb cs model =
     case cs of
         8 ->
@@ -144,13 +148,13 @@ render_bulb cs model =
             []
 
 
-drawlight : Bulb -> Html Msg
+drawlight : Bulb -> Svg Msg
 drawlight bulb =
     let
         color =
             case bulb.color of
                 Red ->
-                    "red"
+                    "Red"
 
                 None ->
                     "#000"
@@ -159,19 +163,16 @@ drawlight bulb =
             String.concat [ String.fromInt (20 * Tuple.first bulb.position), "%" ]
 
         lp =
-            String.concat [ String.fromInt (10 * Tuple.second bulb.position), "%" ]
+            String.concat [ String.fromInt (20 * Tuple.second bulb.position), "%" ]
 
         number =
             Tuple.second bulb.position + 3 * (Tuple.first bulb.position - 1)
     in
-    Html.button
-        [ HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "top" tp
-        , HtmlAttr.style "left" lp
-        , HtmlAttr.style "height" "10%"
-        , HtmlAttr.style "width" "5%"
-        , HtmlAttr.style "background" color
-        , HtmlAttr.style "border-radius" "50%"
-        , onClick (OnClickTriggers number)
-        ]
-        []
+        Svg.circle
+            [ SvgAttr.cx tp
+            , SvgAttr.cy lp
+            , SvgAttr.r "50"
+            , SvgAttr.fill color
+            , Svg.Events.onClick (OnClickTriggers number)
+            ]
+            []

@@ -25,6 +25,7 @@ import Ppiano exposing (PianoModel, draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
+import Pfragment exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -354,7 +355,7 @@ render_object model =
           else
             render_picture model.pictures
                 ++ render_object_only model model.cscreen.cscene model.objects
-                ++ render_object_only_html model.cscreen.cscene model.objects
+                --++ render_object_only_html model.cscreen.cscene model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory
@@ -497,8 +498,13 @@ render_object_inside scne cle obj old =
                     else
                         []
 
+                Fra a ->
+                    render_fra 0 a cle
+    
+
                 _ ->
                     []
+
     in
     old ++ new
 
@@ -537,10 +543,11 @@ render_object_only model cs objects =
             draw_key_set a.pianoKeySet
 
         Bul a ->
-            [ Svg.text_
-                []
-                [ Svg.text "aba" ]
-            ]
+            render_bulb 8 a
+        
+        Fra a ->
+            render_fra 9 a model.cscreen.clevel
+
 
 
 render_object_only_html : Int -> List Object -> List (Html Msg)

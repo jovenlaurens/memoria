@@ -19,6 +19,7 @@ import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
+import Pfragment exposing(FragmentState(..))
 import Svg.Attributes exposing (color, speed)
 import Task
 
@@ -476,6 +477,10 @@ update_onclicktrigger model number =
         8 ->
             update_bulb model number
 
+        9 ->
+            update_fra model number
+            
+
         0 ->
             case model.cscreen.clevel of
                 0 ->
@@ -488,6 +493,18 @@ update_onclicktrigger model number =
         _ ->
             model
 
+update_fra : Model -> Int -> Model
+update_fra model number =
+    let
+        fin num obj =
+            case obj of
+                Fra a ->
+                    Fra (Pfragment.updatefra num (Pfragment.getemptypos a.fragment) a)
+
+                _ ->
+                    obj
+    in
+    { model | objects = List.map (fin number) model.objects }
 
 update_bulb : Model -> Int -> Model
 update_bulb model number =
