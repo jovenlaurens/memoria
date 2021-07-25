@@ -93,6 +93,7 @@ update msg model =
                 |> test_clock_win
                 |> test_mirror_win
               --|> test_pinao_win
+                |> test_fragment_win
             , Cmd.none
             )
 
@@ -408,6 +409,18 @@ test_mirror_win_help object =
         _ ->
             False
 
+test_fragment_win : Model -> Model
+test_fragment_win model = 
+    let
+        fin obj =
+            case obj of
+                Fra a ->
+                    Fra (Pfragment.checkoutwin a)
+
+                _ ->
+                    obj
+    in
+    { model | objects = List.map (fin) model.objects }
 
 pickup_picture : Int -> Model -> Model
 pickup_picture index model =
