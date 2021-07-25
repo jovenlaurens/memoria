@@ -100,7 +100,17 @@ view model =
             ]
             (case model.cscreen.cstate of
                 98 ->
-                    [ text "this is cover", button [ onClick (StartChange EnterState) ] [ text "Enter" ] ]
+                    [ Html.img
+                        [ src "assets/98small.jpg"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    , trans_button_sq (Button 0 0 100 100 "" (StartChange EnterState) "block")
+                    ]
 
                 --use % to arrange the position
                 99 ->
@@ -355,7 +365,7 @@ render_object model =
           else
             render_picture model.pictures
                 ++ render_object_only model model.cscreen.cscene model.objects
-                --++ render_object_only_html model.cscreen.cscene model.objects
+                ++ render_object_only_html model.cscreen.cscene model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory

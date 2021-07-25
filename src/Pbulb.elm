@@ -135,7 +135,7 @@ changecolor cl =
 
 
 
---烦烦子 need
+
 
 
 render_bulb : Int -> BulbModel -> List (Svg Msg)

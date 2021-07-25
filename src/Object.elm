@@ -22,7 +22,7 @@ type Object
     | Fra FragmentModel
 
 
-{- | Board BoardModel --9  cscene 华容道
+{- 
    | Booklet BookletModel --10
    | Screen ScreenModel --11
    | Cabinet CabinetModel --12 13
