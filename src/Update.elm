@@ -20,6 +20,8 @@ import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Pfragment exposing(FragmentState(..))
+import Pdolls exposing (..)
+import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
 import Svg.Attributes exposing (color, speed)
 import Task
 
@@ -111,6 +113,11 @@ update msg model =
         Charge a ->
             ( charge_computer model a
                 |> charge_power
+            , Cmd.none
+            )
+
+        Lighton ->
+            ( (lighton_doll model)
             , Cmd.none
             )
 
@@ -492,7 +499,15 @@ update_onclicktrigger model number =
 
         9 ->
             update_fra model number
+        
+        10 ->
+            { model | objects = try_update_bookshelf number model.objects }
+
+        11 ->
+            { model | objects = try_to_update_trophy model.objects }
             
+        12 -> 
+            update_doll model number 
 
         0 ->
             case model.cscreen.clevel of
@@ -505,6 +520,52 @@ update_onclicktrigger model number =
         --number是frame的序号(0-4)
         _ ->
             model
+
+
+update_doll : Model -> Int -> Model
+update_doll model number = 
+    let
+        fin num obj =
+            case obj of
+                Doll a ->
+                    Doll (updatedolltrigger num a)
+
+                _ ->
+                    obj
+    in
+    { model | objects = List.map (fin number) model.objects }
+
+
+try_update_bookshelf : Int -> List Object -> List Object
+try_update_bookshelf choice objectLst =
+    let
+        try_update_bookshelf_help : Int -> Object -> Object
+        try_update_bookshelf_help num object =
+            case object of
+                Book a ->
+                    Book { a | bookshelf = update_bookshelf num a.bookshelf }
+
+                _ ->
+                    object
+    in
+    List.map (try_update_bookshelf_help choice) objectLst
+
+
+try_to_update_trophy : List Object -> List Object
+try_to_update_trophy objlst =
+    let
+        try_to_update_trophy_help : Object -> Object
+        try_to_update_trophy_help obj =
+            case obj of
+                Trophy a ->
+                    Trophy { a | trophy = rotate_trophy a.trophy }
+
+                _ ->
+                    obj
+    in
+    List.map try_to_update_trophy_help objlst
+
+
 
 update_fra : Model -> Int -> Model
 update_fra model number =
@@ -601,6 +662,18 @@ try_to_update_computer model number =
 
 
 --need
+lighton_doll : Model -> Model
+lighton_doll model =
+    let
+        toggle dolls =
+            case dolls of
+                Doll a ->
+                    Doll { a| state = Visible}
+
+                _ ->
+                    dolls
+    in
+    { model | objects = List.map toggle model.objects }
 
 
 charge_computer : Model -> Int -> Model

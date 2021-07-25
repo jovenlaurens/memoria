@@ -26,6 +26,8 @@ import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Pfragment exposing (..)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf, draw_bookshelf_index, draw_trophy, render_bookshelf_button, render_trophy_button)
+import Pdolls exposing (drawdoll_ui)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -289,15 +291,36 @@ render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
     ]
-        ++ render_button_level model.cscreen.clevel
+     ++ render_button_level model.cscreen.clevel model
 
+get_trophy : List Object -> Bool
+get_trophy lst =
+    let
+        get_trophy_face : Object -> Bool
+        get_trophy_face obj =
+            case obj of
+                Trophy a ->
+                    a.trophy.face == Front
 
-render_button_level : Int -> List (Html Msg)
-render_button_level level =
+                _ ->
+                    False
+    in
+    List.any get_trophy_face lst
+
+render_button_level : Int -> Model -> List (Html Msg)
+render_button_level level model =
     --放到button里
     case level of
         0 ->
-            render_stair_level level ++ render_piano_button
+            let
+                face =
+                    get_trophy model.objects
+            in
+            if face then
+                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button ++ List.singleton render_bookshelf_button
+
+            else
+                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button
 
         1 ->
             render_stair_level level
@@ -311,6 +334,8 @@ render_button_level level =
 
         _ ->
             render_stair_level level
+
+
 
 
 render_piano_button : List (Html Msg)
@@ -359,6 +384,10 @@ render_object model =
                     level_1_furniture
                         ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
+                2 -> 
+                    render_level_2
+                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+
                 _ ->
                     List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
@@ -370,6 +399,16 @@ render_object model =
          )
             ++ render_inventory model.inventory
         )
+
+render_level_2 : List (Svg Msg)
+render_level_2 = 
+    [Svg.image 
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level_2.png"
+            ][]]
 
 
 render_test_information : Model -> List (Svg Msg)
@@ -511,6 +550,8 @@ render_object_inside scne cle obj old =
                 Fra a ->
                     render_fra 0 a cle
     
+                Doll a ->
+                    drawdoll_ui 0 a cle
 
                 _ ->
                     []
@@ -557,7 +598,15 @@ render_object_only model cs objects =
         
         Fra a ->
             render_fra 9 a model.cscreen.clevel
+        
+        Trophy a ->
+            draw_trophy a.trophy
 
+        Book a ->
+            draw_bookshelf a.bookshelf ++ draw_bookshelf_index a.bookshelf
+
+        Doll a ->
+            drawdoll_ui 10 a model.cscreen.clevel
 
 
 render_object_only_html : Int -> List Object -> List (Html Msg)
