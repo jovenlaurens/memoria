@@ -28,10 +28,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         up =
-            { model | volume = min 1 (model.volume + 0.1) }
+            { model | volume = min 1 (model.volume + 0.05) }
 
         down =
-            { model | volume = max 0 (model.volume - 0.1) }
+            { model | volume = max 0 (model.volume - 0.05) }
     in
     case msg of
         StartChange submsg ->

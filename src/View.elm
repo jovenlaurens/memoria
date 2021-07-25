@@ -131,8 +131,7 @@ view model =
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                         )
                     , audio
-                        [ Html.Attributes.controls True
-                        , Html.Attributes.src "assets/bgm.mp3"
+                        [ Html.Attributes.src "assets/bgm.mp3"
                         , Html.Attributes.id "bgm"
                         , Html.Attributes.autoplay True
                         ]
@@ -643,10 +642,10 @@ render_ui_button cstate model =
             Button 14 2 4 4 "main" (StartChange EndMemory) "block"
 
         increase =
-            Button 40 10 4 4 "+" Increase "block"
+            Button 88.75 87.5 4 6 "+" Increase "block"
 
         decrease =
-            Button 60 10 4 4 "-" Decrease "block"
+            Button 93.75 87.5 4 6 "-" Decrease "block"
     in
     case cstate of
         0 ->
