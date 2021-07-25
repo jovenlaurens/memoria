@@ -12,20 +12,28 @@ import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_n
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
+import Music exposing (changeVolume, pause, setrate, settime, start)
 import Object exposing (ClockModel, Object(..), get_time, test_table)
 import Pbulb exposing (update_bulb_inside)
 import Pcomputer exposing (State(..))
+import Pfragment exposing (FragmentState(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
-import Pfragment exposing(FragmentState(..))
 import Svg.Attributes exposing (color, speed)
 import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        up =
+            { model | volume = min 1 (model.volume + 0.05) }
+
+        down =
+            { model | volume = max 0 (model.volume - 0.05) }
+    in
     case msg of
         StartChange submsg ->
             ( update_gra_part model submsg
@@ -92,7 +100,7 @@ update msg model =
             ( update_onclicktrigger model number
                 |> test_clock_win
                 |> test_mirror_win
-              --|> test_pinao_win
+                --|> test_pinao_win
                 |> test_fragment_win
             , Cmd.none
             )
@@ -118,6 +126,12 @@ update msg model =
             ( animate model elapsed
             , Cmd.none
             )
+
+        Increase ->
+            ( up, changeVolume ( "bgm", up.volume ) )
+
+        Decrease ->
+            ( down, changeVolume ( "bgm", down.volume ) )
 
         _ ->
             ( model, Cmd.none )
@@ -409,8 +423,9 @@ test_mirror_win_help object =
         _ ->
             False
 
+
 test_fragment_win : Model -> Model
-test_fragment_win model = 
+test_fragment_win model =
     let
         fin obj =
             case obj of
@@ -420,7 +435,8 @@ test_fragment_win model =
                 _ ->
                     obj
     in
-    { model | objects = List.map (fin) model.objects }
+    { model | objects = List.map fin model.objects }
+
 
 pickup_picture : Int -> Model -> Model
 pickup_picture index model =
@@ -492,7 +508,6 @@ update_onclicktrigger model number =
 
         9 ->
             update_fra model number
-            
 
         0 ->
             case model.cscreen.clevel of
@@ -506,6 +521,7 @@ update_onclicktrigger model number =
         _ ->
             model
 
+
 update_fra : Model -> Int -> Model
 update_fra model number =
     let
@@ -518,6 +534,7 @@ update_fra model number =
                     obj
     in
     { model | objects = List.map (fin number) model.objects }
+
 
 update_bulb : Model -> Int -> Model
 update_bulb model number =

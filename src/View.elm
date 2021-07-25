@@ -6,7 +6,7 @@ import Document exposing (Document, render_docu_list, render_document_detail, re
 import Draggable
 import Furnitures exposing (..)
 import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, audio, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Intro exposing (render_intro)
@@ -19,13 +19,13 @@ import Object exposing (Object(..))
 import Pbulb exposing (render_bulb)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
 import Pcomputer exposing (draw_computer)
+import Pfragment exposing (..)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
 import Ppiano exposing (PianoModel, draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
-import Pfragment exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -114,7 +114,13 @@ view model =
 
                 --use % to arrange the position
                 99 ->
-                    render_intro model.intro
+                    [ audio
+                        [ Html.Attributes.src "assets/intro.ogg"
+                        , Html.Attributes.autoplay True
+                        ]
+                        []
+                    ]
+                        ++ render_intro model.intro
 
                 0 ->
                     [ Html.img
@@ -140,6 +146,12 @@ view model =
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                         )
+                    , audio
+                        [ Html.Attributes.src "assets/bgm.ogg"
+                        , Html.Attributes.id "bgm"
+                        , Html.Attributes.autoplay True
+                        ]
+                        []
                     ]
                         ++ render_ui_button 0
 
@@ -510,11 +522,9 @@ render_object_inside scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
-    
 
                 _ ->
                     []
-
     in
     old ++ new
 
@@ -554,10 +564,9 @@ render_object_only model cs objects =
 
         Bul a ->
             render_bulb 8 a
-        
+
         Fra a ->
             render_fra 9 a model.cscreen.clevel
-
 
 
 render_object_only_html : Int -> List Object -> List (Html Msg)
@@ -639,12 +648,20 @@ render_ui_button cstate =
 
         testBack =
             Button 14 2 4 4 "main" (StartChange EndMemory) "block"
+
+        increase =
+            Button 88.75 87.5 4 6 "+" Increase "block"
+
+        decrease =
+            Button 93.75 87.5 4 6 "-" Decrease "block"
     in
     case cstate of
         0 ->
             [ trans_button_sq pause
             , test_button reset
             , test_button testMemory
+            , test_button increase
+            , test_button decrease
             ]
 
         1 ->

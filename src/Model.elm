@@ -29,6 +29,7 @@ type alias Model =
     , move_timer : Float
     , opac : Float
     , intro : IntroPage
+    , volume : Float
     }
 
 
@@ -51,6 +52,7 @@ initial =
         0
         1
         initial_intro
+        1
 
 
 initial_screen : Screen

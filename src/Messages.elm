@@ -21,6 +21,8 @@ type Msg
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
+    | Increase
+    | Decrease
 
 
 type GraMsg
