@@ -131,7 +131,7 @@ view model =
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                         )
                     , audio
-                        [ Html.Attributes.src "assets/bgm.mp3"
+                        [ Html.Attributes.src "assets/bgm.ogg"
                         , Html.Attributes.id "bgm"
                         , Html.Attributes.autoplay True
                         ]

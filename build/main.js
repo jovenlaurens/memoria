@@ -12386,7 +12386,7 @@ var $author$project$View$view = function (model) {
 										$elm$html$Html$audio,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src('assets/bgm.mp3'),
+												$elm$html$Html$Attributes$src('assets/bgm.ogg'),
 												$elm$html$Html$Attributes$id('bgm'),
 												$elm$html$Html$Attributes$autoplay(true)
 											]),
