@@ -154,7 +154,7 @@ drawclockbutton =
         , HtmlAttr.style "background" "#FFF"
         , HtmlAttr.style "border-radius" "50%"
         , HtmlAttr.style "opacity" "0.0"
-        , onClick (ChangeScene 1)
+        , onClick (StartChange (ChangeScene 1))
         ]
         []
 
@@ -188,7 +188,7 @@ drawbackbutton =
         , HtmlAttr.style "height" "5%"
         , HtmlAttr.style "width" "10%"
         , HtmlAttr.style "background" "red"
-        , onClick (ChangeScene 0)
+        , onClick (StartChange (ChangeScene 0))
         ]
         []
 

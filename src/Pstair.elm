@@ -3,14 +3,14 @@ module Pstair exposing (..)
 import Button exposing (..)
 import Debug exposing (toString)
 import Html exposing (Html, button)
-import Messages exposing (Msg(..))
+import Messages exposing (GraMsg(..), Msg(..))
 
 
 render_stair_level : Int -> List (Html Msg)
 render_stair_level cl =
     case cl of
         0 ->
-            [ test_button stair_button_level_0 ]
+            [ trans_button_sq stair_button_level_0 ]
 
         1 ->
             [ trans_button_sq stair_button_level_1l
@@ -23,22 +23,22 @@ render_stair_level cl =
 
 stair_button_level_0 : Button
 stair_button_level_0 =
-    Button 52.2 41.7 9 41.8 "" (ChangeLevel 1) "block"
+    Button 42 45.51 8 39.1 "" (StartChange (ChangeLevel 1)) "block"
 
 
 stair_button_level_1l : Button
 stair_button_level_1l =
-    Button 42 45.51 8 39.1 "" (ChangeLevel 2) "block"
+    Button 42 45.51 8 39.1 "" (StartChange (ChangeLevel 2)) "block"
 
 
 stair_button_level_1r : Button
 stair_button_level_1r =
-    Button 52 45.51 8 39.1 "" (ChangeLevel 0) "block"
+    Button 52 45.51 8 39.1 "" (StartChange (ChangeLevel 0)) "block"
 
 
 stair_button_level_2 : Button
 stair_button_level_2 =
-    Button 52 45.51 8 39.1 "" (ChangeLevel 1) "block"
+    Button 52 45.51 8 39.1 "" (StartChange (ChangeLevel 1)) "block"
 
 
 

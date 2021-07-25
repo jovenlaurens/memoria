@@ -1,4 +1,4 @@
-module Level1 exposing (..)
+module Furnitures exposing (..)
 
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)

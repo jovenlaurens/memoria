@@ -1,8 +1,6 @@
 module Picture exposing (..)
 
-import Button exposing (Button, test_button)
-import Html exposing (Html)
-import Messages exposing (Msg(..))
+import Messages exposing (GraMsg(..), Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -59,6 +57,7 @@ initial_pictures =
     [ Picture NotShow 0
     , Picture NotShow 1
     , Picture NotShow 2
+    , Picture NotShow 3
     ]
 
 
@@ -76,6 +75,6 @@ render_picture_button =
         , SvgAttr.height "180"
         , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0"
-        , Svg.Events.onClick (ChangeScene 3)
+        , Svg.Events.onClick (StartChange (ChangeScene 3))
         ]
         []

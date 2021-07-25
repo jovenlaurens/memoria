@@ -1,9 +1,11 @@
 module Level0 exposing (..)
 
-import Level1 exposing (drawFloor)
+import Furnitures exposing (drawFloor)
+import Html.Events exposing (onClick)
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
+import Svg.Events
 
 
 {-| level 0 furniture
@@ -189,7 +191,7 @@ drawPiano =
         []
     , Svg.polygon
         [ SvgAttr.points "602.5,445 247.5,445 247.5,435 602.5,435"
-        , SvgAttr.fill "white"
+        , SvgAttr.fill "blue"
         , SvgAttr.stroke "black"
         , SvgAttr.strokeWidth "1"
         ]
@@ -458,32 +460,6 @@ drawCeiling =
     ]
 
 
-drawMonitor : List (Svg msg)
-drawMonitor =
-    [ Svg.polygon
-        [ SvgAttr.points "1310,585 1390,585 1390,575 1310,575"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "1270,560 1430,560 1430,470 1270,470"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "1330,575 1370,575 1370,520 1330,520"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    ]
-
-
 drawChair : List (Svg msg)
 drawChair =
     [ Svg.polygon
@@ -530,6 +506,32 @@ drawChair =
         []
     , Svg.polygon
         [ SvgAttr.points "1360,670 1350,670 1350,600 1360,600"
+        , SvgAttr.fill "white"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    ]
+
+
+drawMonitor : List (Svg msg)
+drawMonitor =
+    [ Svg.polygon
+        [ SvgAttr.points "1310,585 1390,585 1390,575 1310,575"
+        , SvgAttr.fill "white"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points "1270,560 1430,560 1430,470 1270,470"
+        , SvgAttr.fill "white"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points "1330,575 1370,575 1370,520 1330,520"
         , SvgAttr.fill "white"
         , SvgAttr.stroke "black"
         , SvgAttr.strokeWidth "1"

@@ -1,24 +1,31 @@
 module View exposing (..)
 
-import Button exposing (Button, test_button)
+import Button exposing (Button, test_button, trans_button_sq)
 import Debug exposing (toString)
+import Document exposing (Document, render_docu_list, render_document_detail, render_newspaper_index)
 import Draggable
-import Html exposing (Html, button, div, img, text)
+import Furnitures exposing (..)
+import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
+import Html exposing (Html, audio, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
+import Intro exposing (render_intro)
 import Inventory exposing (Grid(..), render_inventory)
 import Level0 exposing (..)
-import Level1 exposing (..)
-import List exposing (foldr)
+import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), get_time)
-import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhouradjust, drawhourhand, drawminuteadjust, drawminutehand)
+import Music exposing (changeVolume, pause, setrate, settime, start)
+import Object exposing (Object(..))
+import Pbulb exposing (render_bulb)
+import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
+import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio)
+import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
-import Scene exposing (defaultScene)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -28,12 +35,37 @@ style =
     Html.Attributes.style
 
 
-svgString =
-    "0 0 1600 900"
-
-
 view : Model -> Html Msg
 view model =
+    let
+        ( w, h ) =
+            model.size
+
+        ( wid, het ) =
+            if (9 / 16 * w) >= h then
+                ( 16 / 9 * h, h )
+
+            else
+                ( w, 9 / 16 * w )
+
+        ( lef, to ) =
+            if (9 / 16 * w) >= h then
+                ( 0.5 * (w - wid), 0 )
+
+            else
+                ( 0, 0.5 * (h - het) )
+
+        bkgdColor =
+            --need
+            if model.cscreen.cstate == 20 then
+                "#ffffff"
+
+            else
+                "#ffffff"
+
+        gcontent =
+            get_Gcontent model.gradient
+    in
     div
         [ style "width" "100%"
         , style "height" "100%"
@@ -42,83 +74,181 @@ view model =
         , style "top" "0"
         , style "background-color" "#000000"
         ]
-        [ let
-            ( w, h ) =
-                model.size
+        [ if gcontent == OnlyWord then
+            div
+                [ style "width" (String.fromFloat wid ++ "px")
+                , style "height" (String.fromFloat het ++ "px")
+                , style "position" "absolute"
+                , style "left" (String.fromFloat lef ++ "px")
+                , style "top" (String.fromFloat to ++ "px")
+                , style "background-color" bkgdColor
+                ]
+                []
 
-            ( wid, het ) =
-                if (9 / 16 * w) >= h then
-                    ( 16 / 9 * h, h )
-
-                else
-                    ( w, 9 / 16 * w )
-
-            ( lef, to ) =
-                if (9 / 16 * w) >= h then
-                    ( 0.5 * (w - wid), 0 )
-
-                else
-                    ( 0, 0.5 * (h - het) )
-          in
-          div
+          else
+            div
+                []
+                []
+        , div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
             , style "position" "absolute"
             , style "left" (String.fromFloat lef ++ "px")
             , style "top" (String.fromFloat to ++ "px")
-            , style "background-color" "#d9abaf"
+            , style "background-color" bkgdColor
+            , style "opacity" (toString model.opac)
             ]
-            (case model.cstate of
+            (case model.cscreen.cstate of
                 98 ->
-                    [ text "this is cover", button [ onClick EnterState ] [ text "Enter" ] ]
+                    [ text "this is cover", button [ onClick (StartChange EnterState) ] [ text "Enter" ] ]
 
                 --use % to arrange the position
                 99 ->
-                    [ text "this is intro", button [ onClick EnterState ] [ text "Start" ] ]
+                    render_intro model.intro
 
                 0 ->
-                    (if model.cscene == 0 then
-                        render_level model
+                    [ Html.img
+                        [ src "assets/memory_menu.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    , div
+                        [ style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        (if model.cscreen.cscene == 0 then
+                            render_level model
 
-                     else
-                        render_object model :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscene model.objects
-                    )
-                        ++ render_ui_button 0
+                         else
+                            render_object model
+                                :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
+                                ++ render_documents model.docu model.cscreen.cscene
+                                ++ play_piano_audio model.cscreen.cscene model.objects
+                        )
+                    , audio
+                        [ Html.Attributes.controls True
+                        , Html.Attributes.src "assets/bgm.mp3"
+                        , Html.Attributes.id "bgm"
+                        , Html.Attributes.autoplay True
+                        ]
+                        []
+                    ]
+                        ++ render_ui_button 0 model
 
                 1 ->
-                    render_ui_button 1
-                        ++ [ text "this is menu!" ]
+                    render_ui_button 1 model
 
                 2 ->
-                    --第一页memory
-                    render_ui_button 2
-                        ++ [ text "this is memory page 1" ]
+                    [ render_wall_1
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu1.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    ]
+                        ++ render_docu_list 0 model.docu
+                        ++ render_ui_button 2 model
 
                 3 ->
                     --第二页memory
-                    render_ui_button 3
-                        ++ [ text "this is memory page 2" ]
+                    [ render_wall_1
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu2.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    ]
+                        ++ render_ui_button 3 model
 
                 4 ->
                     --第三页memory
-                    render_ui_button 4
-                        ++ [ text "this is memory page 3" ]
+                    [ render_wall_1
+                    , Html.embed
+                        [ Html.Attributes.type_ "image/png"
+                        , src "assets/memory_menu3.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "15%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    , div
+                        [ style "top" "87%"
+                        , style "left" "8%"
+                        , style "height" "10%"
+                        , style "width" "6%"
+                        , style "background-color" "white"
+                        , style "position" "absolute"
+                        ]
+                        []
+                    ]
+                        ++ render_ui_button 4 model
 
                 10 ->
-                    render_ui_button 10
+                    render_ui_button 10 model
                         ++ [ text "this is Achievement page" ]
 
+                11 ->
+                    --游戏中的document 详细界面
+                    render_ui_button 11 model
+                        ++ render_document_detail model.cscreen.cdocu
+
+                12 ->
+                    --menu中的document 详细界面
+                    render_ui_button 12 model
+                        ++ render_document_detail model.cscreen.cdocu
+
+                20 ->
+                    render_ui_button 20 model
+                        ++ render_memory model.cscreen.cmemory model.cscreen.cpage
+
                 _ ->
-                    [ text (toString model.cstate) ]
+                    [ text (toString model.cscreen.cstate) ]
             )
         ]
 
 
+renderAudio : String -> String -> Html Msg
+renderAudio url id =
+    audio
+        [ Html.Attributes.src url
+        , Html.Attributes.id id
+        , Html.Attributes.autoplay True
+        , Html.Attributes.controls True
+        ]
+        [ text "error" ]
+
+
 {-| render everything
 -}
+render_documents : List Document -> Int -> List (Html Msg)
+render_documents docus cs =
+    case cs of
+        2 ->
+            [ render_newspaper_index 0 docus ]
+
+        _ ->
+            []
 
 
 
+--need how to simplify
 {- render_game_setup : Model -> List (Html Msg)
    render_game_setup model =
 
@@ -128,6 +258,20 @@ view model =
            (render_object model)--++(render_button model)
 -}
 {- render the background of the screen, if specific, doesnt have this -}
+
+
+render_wall_1 : Html Msg
+render_wall_1 =
+    Html.embed
+        [ Html.Attributes.type_ "image/png"
+        , src "assets/wall1.png"
+        , style "top" "12%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "height" "72%"
+        , style "position" "absolute"
+        ]
+        []
 
 
 render_draggable : ( Float, Float ) -> Html Msg
@@ -153,7 +297,7 @@ render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
     ]
-        ++ render_button_level model.clevel
+        ++ render_button_level model.cscreen.clevel
 
 
 render_button_level : Int -> List (Html Msg)
@@ -161,12 +305,14 @@ render_button_level level =
     --放到button里
     case level of
         0 ->
-            render_stair_level level
+            render_stair_level level ++ render_piano_button
 
         1 ->
             render_stair_level level
-                ++ [ drawclockbutton ]
-                ++ [ render_table_button ]
+                ++ [ drawclockbutton
+                   , render_table_button
+                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block")
+                   ]
 
         2 ->
             render_stair_level level ++ render_mirror_button
@@ -175,11 +321,21 @@ render_button_level level =
             render_stair_level level
 
 
+render_piano_button : List (Html Msg)
+render_piano_button =
+    let
+        but =
+            Button.Button 10 10 10 10 "" (StartChange (ChangeScene 7)) ""
+    in
+    test_button but
+        |> List.singleton
+
+
 render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
         but =
-            Button.Button 10 10 10 10 "" (ChangeScene 4) ""
+            Button.Button 30 30 10 10 "" (StartChange (ChangeScene 4)) ""
     in
     test_button but
         |> List.singleton
@@ -187,25 +343,7 @@ render_mirror_button =
 
 render_button_inside : Int -> List Object -> List (Html Msg)
 render_button_inside cs objs =
-    let
-        tar =
-            list_index_object (cs - 1) objs
-    in
-    case tar of
-        Clock a ->
-            [ drawbackbutton
-            ]
-
-        Table a ->
-            [ drawbackbutton
-            ]
-
-        Frame a ->
-            [ drawbackbutton
-            ]
-
-        _ ->
-            []
+    [ drawbackbutton ]
 
 
 
@@ -219,22 +357,23 @@ render_object model =
         , SvgAttr.height "100%"
         , SvgAttr.viewBox "0 0 1600 900"
         ]
-        ((if model.cscene == 0 then
-            case model.clevel of
+        ((if model.cscreen.cscene == 0 then
+            case model.cscreen.clevel of
                 0 ->
                     level_0_furniture
-                        ++ List.foldr (render_object_inside model.cscene) [] model.objects
+                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
                 1 ->
                     level_1_furniture
-                        ++ List.foldr (render_object_inside model.cscene) [] model.objects
+                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
                 _ ->
-                    List.foldr (render_object_inside model.cscene) [] model.objects
+                    List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
           else
             render_picture model.pictures
-                ++ render_object_only model.cscene model.objects
+                ++ render_object_only model model.cscreen.cscene model.objects
+                ++ render_object_only_html model.cscreen.cscene model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory
@@ -250,12 +389,28 @@ render_test_information model =
 
             else
                 "Have"
+
+        show3 =
+            toString model.cscreen.cscene
+
+        fram =
+            list_index_memory 0 model.memory
+
+        show2 =
+            if fram.state == Locked then
+                "Locked"
+
+            else
+                "Unlocked"
+
+        show4 =
+            toString model.inventory.num
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text under
+        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 ++ " " ++ show4)
         ]
     ]
 
@@ -307,7 +462,7 @@ render_picture_index index =
                 , SvgAttr.width "100"
                 , SvgAttr.height "30"
                 , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 1 0)
+                , Svg.Events.onClick (OnClickItem 2 0)
                 ]
                 []
 
@@ -328,8 +483,8 @@ render_picture_index index =
 
 {-| 把
 -}
-render_object_inside : Int -> Object -> List (Svg Msg) -> List (Svg Msg)
-render_object_inside scne obj old =
+render_object_inside : Int -> Int -> Object -> List (Svg Msg) -> List (Svg Msg)
+render_object_inside scne cle obj old =
     let
         new =
             case obj of
@@ -340,18 +495,35 @@ render_object_inside scne obj old =
                     ]
 
                 Frame a ->
-                    [ render_picture_button
-                    ]
+                    if cle == 1 then
+                        [ render_picture_button ]
+
+                    else
+                        []
+
+                Computer a ->
+                    if cle == 0 then
+                        draw_computer a 0 cle
+
+                    else
+                        []
 
                 --三层楼都需要，所以不加level判定
+                Power a ->
+                    if cle == 0 then
+                        drawpowersupply a 0 cle
+
+                    else
+                        []
+
                 _ ->
                     []
     in
     old ++ new
 
 
-render_object_only : Int -> List Object -> List (Svg Msg)
-render_object_only cs objects =
+render_object_only : Model -> Int -> List Object -> List (Svg Msg)
+render_object_only model cs objects =
     let
         tar =
             list_index_object (cs - 1) objects
@@ -370,6 +542,56 @@ render_object_only cs objects =
             draw_block a.blockSet
 
         Frame a ->
+            draw_frame_and_memory model.memory
+                ++ (List.map2 render_frame_outline [ 0 ] model.memory |> List.concat)
+
+        --回头再加1,2,3,4
+        Computer a ->
+            draw_computer a 5 model.cscreen.clevel
+
+        Power a ->
+            drawpowersupply a 6 model.cscreen.clevel
+
+        Piano a ->
+            draw_key_set a.pianoKeySet
+
+        Bul a ->
+            [ Svg.text_
+                []
+                [ Svg.text "aba" ]
+            ]
+
+
+render_object_only_html : Int -> List Object -> List (Html Msg)
+render_object_only_html cs objs =
+    let
+        tar =
+            list_index_object (cs - 1) objs
+    in
+    case tar of
+        Bul a ->
+            render_bulb 8 a ++ [ text "sdfgh" ]
+
+        _ ->
+            []
+
+
+
+--++ play_audio a.currentMusic
+
+
+render_frame_outline : Int -> Memory -> List (Svg Msg)
+render_frame_outline index memo =
+    let
+        eff =
+            if memo.state == Unlocked then
+                StartChange (BeginMemory index)
+
+            else
+                OnClickTriggers index
+    in
+    case index of
+        0 ->
             [ Svg.rect
                 [ SvgAttr.x "100"
                 , SvgAttr.y "200"
@@ -378,52 +600,61 @@ render_object_only cs objects =
                 , SvgAttr.fill "red"
                 , SvgAttr.fillOpacity "0.2"
                 , SvgAttr.stroke "red"
-                ]
-                []
-            , Svg.rect
-                [ SvgAttr.x "100"
-                , SvgAttr.y "200"
-                , SvgAttr.width "100"
-                , SvgAttr.height "200"
-                , SvgAttr.fill "red"
-                , SvgAttr.fillOpacity "0.2"
-                , SvgAttr.stroke "red"
+                , Svg.Events.onClick eff
                 ]
                 []
             ]
 
+        _ ->
+            []
 
-render_ui_button : Int -> List (Html Msg)
-render_ui_button cstate =
+
+render_ui_button : Int -> Model -> List (Html Msg)
+render_ui_button cstate model =
     let
         pause =
-            Button 2 2 4 4 "Pause" Pause "block"
+            Button 2.6 4.5 3.66 6.5 "Pause" (StartChange Pause) "block"
 
         back =
-            Button 2 2 4 4 "Back" Back "block"
+            Button 2.6 4.5 3.66 6.5 "Back" (StartChange Back) "block"
 
         reset =
             Button 8 2 4 4 "Reset" Reset "block"
 
         enterMemory =
-            Button 40 20 20 10 "Memory" RecallMemory "block"
+            Button 40 20 20 10 "Memory" (StartChange RecallMemory) "block"
 
         next =
-            Button 90 90 4 4 "Next" (MovePage 1) "block"
+            Button 8.5 87.5 5 8 "Next" (StartChange (MovePage 1)) "block"
 
         prev =
-            Button 84 90 4 4 "Prev" (MovePage -1) "block"
+            Button 2.8 87.5 4.2 8 "Prev" (StartChange (MovePage -1)) "block"
 
         achieve =
-            Button 40 50 20 10 "Achievement" Achievement "block"
+            Button 40 50 20 10 "Achievement" (StartChange Achievement) "block"
 
         backAchi =
-            Button 2 2 4 4 "Back" BackfromAch "block"
+            Button 2 2 4 4 "Back" (StartChange Pause) "block"
+
+        testMemory =
+            Button 14 2 4 4 "test" (StartChange (BeginMemory 0)) "block"
+
+        testBack =
+            Button 14 2 4 4 "main" (StartChange EndMemory) "block"
+
+        increase =
+            Button 40 10 4 4 "+" Increase "block"
+
+        decrease =
+            Button 60 10 4 4 "-" Decrease "block"
     in
     case cstate of
         0 ->
-            [ test_button pause
+            [ trans_button_sq pause
             , test_button reset
+            , test_button testMemory
+            , test_button increase
+            , test_button decrease
             ]
 
         1 ->
@@ -434,22 +665,61 @@ render_ui_button cstate =
             ]
 
         2 ->
-            [ test_button back
-            , test_button next
+            [ trans_button_sq back
+            , trans_button_sq next
             ]
 
         3 ->
-            [ test_button next
-            , test_button prev
+            [ trans_button_sq next
+            , trans_button_sq prev
+            , trans_button_sq back
             ]
 
         4 ->
-            [ test_button prev
+            [ trans_button_sq prev
+            , trans_button_sq back
             ]
 
         10 ->
             [ test_button backAchi
             ]
 
+        11 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testMemory
+            ]
+
+        12 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testMemory
+            ]
+
+        20 ->
+            [ test_button pause
+            , test_button reset
+            , test_button testBack
+            ]
+
         _ ->
             []
+
+
+play_piano_audio : Int -> List Object -> List (Html Msg)
+play_piano_audio currentScene objectSet =
+    let
+        play_piano_audio_help : Int -> Object -> Html Msg
+        play_piano_audio_help cscene object =
+            if cscene == 7 then
+                case object of
+                    Piano a ->
+                        play_audio a.currentMusic
+
+                    _ ->
+                        div [] []
+
+            else
+                div [] []
+    in
+    List.map (play_piano_audio_help currentScene) objectSet

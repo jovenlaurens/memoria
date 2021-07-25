@@ -1,5 +1,6 @@
 module Geometry exposing (..)
 
+
 type alias Location =
     { x : Float
     , y : Float

@@ -1,6 +1,9 @@
 module Model exposing (..)
 
+import Document exposing (Document, initial_docu)
 import Draggable
+import Gradient exposing (ColorState(..), GradientState(..), Screen)
+import Intro exposing (IntroPage, initial_intro)
 import Inventory exposing (Grid(..), Inventory, initial_inventory)
 import Memory exposing (Memory, initial_memory)
 import Object exposing (..)
@@ -10,10 +13,10 @@ import Svg.Attributes exposing (x)
 
 
 type alias Model =
-    { cstate : Int
-    , clevel : Int --
-    , cscene : Int
-    , objects : List Object --要用到的地方再indexedmap--要不要分level0,1,2
+    { cscreen : Screen
+    , tscreen : Screen
+    , gradient : GradientState
+    , objects : List Object
     , scenes : List Scene
     , size : ( Float, Float )
     , spcPosition : ( Float, Float )
@@ -22,15 +25,20 @@ type alias Model =
     , inventory : Inventory
     , underUse : Grid
     , memory : List Memory
+    , docu : List Document
+    , move_timer : Float
+    , opac : Float
+    , intro : IntroPage
+    , volume : Float
     }
 
 
 initial : Model
 initial =
     Model
-        98
-        1
-        0
+        initial_screen
+        initial_target
+        Normal
         initial_objects
         initial_scene
         ( 0, 0 )
@@ -40,10 +48,27 @@ initial =
         initial_inventory
         Blank
         initial_memory
+        initial_docu
+        0
+        1
+        initial_intro
+        1
 
 
-{-| when using it, index = index - 1.
--}
+initial_screen : Screen
+initial_screen =
+    Screen 98 1 0 -1 -1 -1
+
+
+
+--need temporary change
+
+
+initial_target : Screen
+initial_target =
+    Screen 98 1 0 -1 -1 -1
+
+
 list_index_object : Int -> List Object -> Object
 list_index_object index list =
     if index > List.length list then
