@@ -21,12 +21,12 @@ type Grid
 
 
 index_list =
-    [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+    [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
 
 initial_inventory : Inventory
 initial_inventory =
-    Inventory (List.repeat 8 Blank) [ 210, 370, 520, 673, 826, 979, 1135, 1291 ] 0
+    Inventory (List.repeat 11 Blank) [ 300, 415, 530, 645, 760, 875, 990, 1105, 1220, 1335, 1450 ] 0
 
 
 insert_new_item : Grid -> Inventory -> Inventory
@@ -115,9 +115,9 @@ render_inventory_inside grid lef =
     in
     Svg.rect
         [ SvgAttr.x (toString lef)
-        , SvgAttr.y "760"
-        , SvgAttr.width "100"
-        , SvgAttr.height "100"
+        , SvgAttr.y "800"
+        , SvgAttr.width "80"
+        , SvgAttr.height "80"
         , SvgAttr.fillOpacity "0.1"
         , SvgAttr.fill "red"
         , Svg.Events.onClick (OnClickItem index typeid)
@@ -152,8 +152,8 @@ render_inventory_inside_item grid lef =
     Svg.text_
         [ SvgAttr.x (toString lef)
         , SvgAttr.y "800"
-        , SvgAttr.width "100"
-        , SvgAttr.height "100"
+        , SvgAttr.width "80"
+        , SvgAttr.height "80"
         ]
         [ Svg.text show
         ]

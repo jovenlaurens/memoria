@@ -8,7 +8,9 @@ import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-
+import Pfragment exposing (FragmentModel, initfraModel)
+import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
+import Pdolls exposing (DollModel, initDollModel)
 
 type Object
     = Clock ClockModel
@@ -19,10 +21,13 @@ type Object
     | Power PowerModel
     | Piano PianoModel
     | Bul BulbModel
+    | Fra FragmentModel
+    | Book BookletModel
+    | Trophy TrophyModel
+    | Doll DollModel
 
 
-
-{- | Board BoardModel --9  cscene 华容道
+{- 
    | Booklet BookletModel --10
    | Screen ScreenModel --11
    | Cabinet CabinetModel --12 13
@@ -81,6 +86,10 @@ initial_objects =
     , Power initPowerModel --5    6        0
     , Piano Ppiano.initial --6    7        0
     , Bul initial_bulb --7    8        1
+    , Fra initfraModel -- 8   9  0  
+    , Book Pbookshelf_trophy.initial_book_model -- 9  10 0
+    , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
+    , Doll initDollModel -- 11  12  2 
     ]
 
 

@@ -9,7 +9,25 @@ import Svg.Attributes as SvgAttr
 -}
 level_1_furniture : List (Svg Msg)
 level_1_furniture =
-    drawWindow
+    [
+        Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level1.png"
+            ]
+            []
+        {-, Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/memory_menu.png"
+            ]
+            []-} --ui dont need now
+    ]
+    {-drawWindow
         ++ drawTable
         ++ drawFloor
         ++ drawLeftChair
@@ -21,7 +39,7 @@ level_1_furniture =
         ++ drawSofa
         ++ drawLamp
         ++ drawDrawer
-        ++ drawPhotos
+        ++ drawPhotos-}
 
 
 drawTable : List (Svg msg)

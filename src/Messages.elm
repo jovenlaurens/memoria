@@ -21,7 +21,7 @@ type Msg
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
-
+    | Lighton
 
 type GraMsg
     = EnterState --from cover to intro, from intro to the game (state++ until 0, cover 100, intro 101)

@@ -135,3 +135,24 @@ draw_single_key key =
         , onClick (OnClickTriggers key.index)
         ]
         []
+
+
+check_order : List Int -> Bool
+check_order list =
+    case list of
+        x :: x1 :: x2 :: lst ->
+            let
+                target =
+                    [ 1, 2, 3 ]
+
+                newList =
+                    List.drop 1 list
+            in
+            if x == 1 && x1 == 2 && x2 == 3 then
+                True
+
+            else
+                check_order newList
+
+        _ ->
+            False

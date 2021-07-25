@@ -327,7 +327,7 @@ render_choice index page =
         ( ca, cb, cc ) =
             case index of
                 0 ->
-                    ( "A story about ideal love", "A fantastic novel", "autobiography" )
+                    ( "A story about ideal love", "A fantastic novel", "my autobiography" )
 
                 _ ->
                     ( "", "", "" )
