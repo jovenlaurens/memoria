@@ -13,6 +13,8 @@ import String exposing (toInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Button exposing (trans_button_sq)
+import Button exposing (Button)
 
 
 
@@ -105,7 +107,7 @@ drawhourhand cs clock =
             Debug.todo "branch '_' not implemented"
 
 
-drawminutehand : Int -> ClockModel -> Svg Msg
+drawminutehand : Int -> ClockModel -> Svg Msg --need to replace
 drawminutehand cs clock =
     case cs of
         0 ->
@@ -145,18 +147,8 @@ hourangle hour minute =
 
 drawclockbutton : Html Msg
 drawclockbutton =
-    button
-        [ HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "top" "7.78%"
-        , HtmlAttr.style "left" "48.125%"
-        , HtmlAttr.style "height" "60px"
-        , HtmlAttr.style "width" "60px"
-        , HtmlAttr.style "background" "#FFF"
-        , HtmlAttr.style "border-radius" "50%"
-        , HtmlAttr.style "opacity" "0.0"
-        , onClick (StartChange (ChangeScene 1))
-        ]
-        []
+    trans_button_sq (Button 47.125 14.75 18 15 "" (StartChange (ChangeScene 1)) "block")
+    
 
 
 

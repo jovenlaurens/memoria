@@ -119,16 +119,7 @@ view model =
                     render_intro model.intro
 
                 0 ->
-                    [ Html.img
-                        [ src "assets/memory_menu.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-                    , div
+                    [ div
                         [ style "width" "100%"
                         , style "height" "100%"
                         , style "position" "absolute"
@@ -142,6 +133,7 @@ view model =
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                         )
+                    
                     ]
                         ++ render_ui_button 0
 
@@ -334,6 +326,8 @@ render_button_level level model =
 
         _ ->
             render_stair_level level
+
+
 
 
 
