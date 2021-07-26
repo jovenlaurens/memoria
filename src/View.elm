@@ -33,6 +33,7 @@ import Svg.Events
 import Pcabinet exposing (render_cabinet)
 import Pmirror exposing (render_mirror)
 import Picture exposing (render_inventory)
+import Pbulb exposing (Bulb)
 
 
 style =
@@ -321,7 +322,6 @@ render_button_level level model =
             render_stair_level level
                 ++ [ drawclockbutton
                    , render_table_button
-                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block")
                    ]
 
         2 ->
@@ -522,12 +522,12 @@ render_object_inside scne cle obj old =
     let
         new =
             case obj of
-                Clock a ->
+                {-Clock a ->
                     [ drawclock scne
                     , drawhourhand scne a
                     , drawminutehand scne a
                     ]
-
+            -}
                 Frame a ->
                     if cle == 1 then
                         [ render_picture_button ]
@@ -556,8 +556,13 @@ render_object_inside scne cle obj old =
                 Cabinet a ->
                     render_cabinet scne cle a
 
-                
-    
+                Bul a ->
+                     if cle == 1 then
+                        render_bulb 0 a
+
+                     else
+                        []
+                    
                 Doll a ->
                     drawdoll_ui 0 a cle
 

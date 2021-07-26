@@ -64,16 +64,13 @@ drawclock cs =
                 []
 
         1 ->
-            Svg.circle
-                [ SvgAttr.cx "800"
-                , SvgAttr.cy "400"
-                , SvgAttr.r "300"
-                , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.color "#FFF"
-                , SvgAttr.stroke "#000"
-                , SvgAttr.strokeWidth "4px"
-                ]
-                []
+            Svg.image 
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level1/clock.png"
+            ][]
 
         _ ->
             Debug.todo "branch '_' not implemented"
@@ -82,27 +79,17 @@ drawclock cs =
 drawhourhand : Int -> ClockModel -> Svg Msg
 drawhourhand cs clock =
     case cs of
-        0 ->
-            Svg.ellipse
-                [ SvgAttr.cx "808"
-                , SvgAttr.cy "100"
-                , SvgAttr.rx "8"
-                , SvgAttr.ry "2"
-                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (hourangle clock.hour clock.minute - 90), " ", "800", " ", "100)" ])
-                ]
-                []
-
         1 ->
-            Svg.ellipse
-                [ SvgAttr.cx "869"
-                , SvgAttr.cy "400"
-                , SvgAttr.rx "80"
-                , SvgAttr.ry "10"
-                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (hourangle clock.hour clock.minute - 90), " ", "800", " ", "400)" ])
+            Svg.image
+                [ SvgAttr.x "25%"
+                 ,SvgAttr.y "17%"
+                 ,SvgAttr.width "50%"
+                , SvgAttr.height "50%"
+                , SvgAttr.xlinkHref "assets/level1/needlelong.png"
+                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (hourangle clock.hour clock.minute), " ", "800", " ", "345)" ])
                 , Svg.Events.onClick (OnClickTriggers 1)
                 ]
                 []
-
         _ ->
             Debug.todo "branch '_' not implemented"
 
@@ -110,23 +97,15 @@ drawhourhand cs clock =
 drawminutehand : Int -> ClockModel -> Svg Msg --need to replace
 drawminutehand cs clock =
     case cs of
-        0 ->
-            Svg.ellipse
-                [ SvgAttr.cx "810"
-                , SvgAttr.cy "100"
-                , SvgAttr.rx "12"
-                , SvgAttr.ry "2"
-                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (minuteangle clock.minute - 90), " ", "800", " ", "100)" ])
-                ]
-                []
 
         1 ->
-            Svg.ellipse
-                [ SvgAttr.cx "910"
-                , SvgAttr.cy "400"
-                , SvgAttr.rx "120"
-                , SvgAttr.ry "10"
-                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (minuteangle clock.minute - 90), " ", "800", " ", "400)" ])
+            Svg.image
+                [ SvgAttr.x "25%"
+                 ,SvgAttr.y "17%"
+                 ,SvgAttr.width "50%"
+                , SvgAttr.height "50%"
+                , SvgAttr.xlinkHref "assets/level1/needleshort.png"
+                , SvgAttr.transform (String.concat [ "rotate(", String.fromFloat (minuteangle clock.minute), " ", "800", " ", "345)" ])
                 , Svg.Events.onClick (OnClickTriggers 0)
                 ]
                 []
