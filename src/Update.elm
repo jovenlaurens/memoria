@@ -26,8 +26,9 @@ import Task
 import Pcabinet exposing (CabinetModel)
 import Pcabinet exposing (switch_cabState)
 import Pmirror exposing (refresh_keyboard)
-import Pmirror exposing (test_keyboard_win_inside)
+import Pmirror exposing (test_keyboard_win_inside, LightState(..))
 import Picture exposing (list_index_picture)
+import Pmirror exposing (LightState(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -120,8 +121,8 @@ update msg model =
             , Cmd.none
             )
 
-        Lighton ->
-            ( (lighton_doll model)
+        Lighton a -> 
+            ( (update_lighton a model)
             , Cmd.none
             )
 
@@ -331,10 +332,16 @@ renew_screen_info submsg old =
                 new_page =
                     case ( a, b ) of
                         ( 0, 0 ) ->
-                            5
+                            8
+                        
+                        ( 0, 1 ) ->
+                            13
+
+                        ( 0, 2 ) ->
+                            17
 
                         _ ->
-                            11
+                            22
             in
             { old | cpage = new_page }
 
@@ -780,6 +787,31 @@ try_to_update_computer model number =
     in
     { model | objects = List.map toggle model.objects }
 
+
+update_lighton : Int -> Model -> Model
+update_lighton number model =
+    case number of
+        0 ->
+           lighton_mirror model
+
+        1 -> 
+            lighton_doll model
+
+        _ ->
+            model
+
+lighton_mirror : Model -> Model
+lighton_mirror model =
+    let
+        toggle mirror =
+            case mirror of
+                Mirror a ->
+                    Mirror { a | lightstate = Light_2_on}
+
+                _ ->
+                    mirror
+    in
+    { model | objects = List.map toggle model.objects }  
 
 
 --need
