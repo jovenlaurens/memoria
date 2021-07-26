@@ -7,11 +7,12 @@ import Html.Events exposing (onClick)
 import Memory exposing (MeState(..))
 import Messages exposing (GraMsg(..), Msg(..))
 import Picture exposing (ShowState(..))
+import Button exposing (test_button)
+
 
 
 type alias Document =
     { showState : ShowState
-    , lockState : MeState
     , index : Int
     , belong : Int
     }
@@ -22,14 +23,14 @@ type alias Document =
 -}
 initial_docu : List Document
 initial_docu =
-    [ Document Show Locked 0 0
+    [ Document Show 0 0
     ]
 
 
 list_index_docu : Int -> List Document -> Document
 list_index_docu index list =
     if index > List.length list then
-        Document Show Locked 0 0
+        Document Show 0 0
 
     else
         case list of
@@ -41,42 +42,66 @@ list_index_docu index list =
                     list_index_docu (index - 1) xs
 
             _ ->
-                Document Show Locked 0 0
+                Document Show 0 0
 
 
-unlock_cor_docu : Int -> List Document -> List Document
-unlock_cor_docu index old =
-    let
-        fin ind docu =
-            if docu.index == ind && docu.lockState == Locked then
-                { docu | lockState = Unlocked }
 
-            else
-                docu
-    in
-    List.map (fin index) old
 
 
 render_document_detail : Int -> List (Html Msg)
 render_document_detail index =
     case index of
-        0 ->
-            [ Html.embed
-                [ type_ "image/svg+xml"
-                , src "assets/newspaper1.svg"
-                , style "top" "10%"
-                , style "left" "20%"
-                , style "width" "60%"
-                , style "height" "80%"
-                , style "position" "absolute"
-                ]
-                []
-            , trans_button_sq (Button 20 10 60 80 "" (StartChange Back) "block")
+        1 ->
+            [ Html.img
+                        [ src "assets/level1/drawerclose.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+            , Html.img
+                        [ src "assets/level1/drivinglicencebig.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+            , drawbackbutton_
             ]
+        2 ->
+            [ Html.img
+                        [ src "assets/level1/drawerclose.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+            , Html.img
+                        [ src "assets/level1/cafecard.png"
+                        , style "top" "0%"
+                        , style "left" "0%"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "position" "absolute"
+                        ]
+                        []
+            , drawbackbutton_
+            ]
+
 
         _ ->
             []
 
+
+drawbackbutton_ : Html Msg
+drawbackbutton_ =
+    test_button (Button 3 75 10 5 "←" (StartChange Back) "block")
 
 render_newspaper_index : Int -> List Document -> Html Msg
 render_newspaper_index index list =
@@ -87,16 +112,34 @@ render_newspaper_index index list =
     if tar.showState == Show then
         case tar.index of
             0 ->
-                Html.embed
-                    [ type_ "image/png"
-                    , src "assets/newspaper1.png"
-                    , style "top" "40%"
-                    , style "left" "70%"
-                    , style "width" "15%"
-                    , style "height" "20%"
+               Html.button
+                    [ style "top" "14%"
+                    , style "left" "39%"
+                    , style "height" "50%"
+                    , style "width" "39%"
+                    , style "cursor" "pointer"
+                    , style "border" "0"
+                    , style "outline" "none"
+                    , style "padding" "0"
                     , style "position" "absolute"
-                    , style "transform" "rotate(-45deg)"
-                    , onClick (StartChange (OnClickDocu 0))
+                    , style "background-color" "Transparent"
+                    , style "transform" "rotate(66deg)"
+                    ]
+                    []
+
+            1 ->
+                Html.button
+                    [ style "top" "14%"
+                    , style "left" "39%"
+                    , style "height" "50%"
+                    , style "width" "39%"
+                    , style "cursor" "pointer"
+                    , style "border" "0"
+                    , style "outline" "none"
+                    , style "padding" "0"
+                    , style "position" "absolute"
+                    , style "background-color" "Transparent"
+                    , style "transform" "rotate(66deg)"
                     ]
                     []
 
@@ -111,49 +154,6 @@ render_newspaper_index index list =
             []
 
 
-draw_list : Int -> MeState -> List (Html Msg)
-draw_list id lck =
-    case id of
-        0 ->
-            if lck == Locked then
-                [ Html.embed
-                    [ type_ "image/png"
-                    , src "assets/newspaper1.png"
-                    , style "top" "30%"
-                    , style "left" "10%"
-                    , style "width" "15%"
-                    , style "height" "20%"
-                    , style "position" "absolute"
-                    ]
-                    []
-                ]
-
-            else
-                [ Html.embed
-                    [ type_ "image/svg+xml"
-                    , src "assets/newspaper1.svg"
-                    , style "top" "30%"
-                    , style "left" "10%"
-                    , style "width" "15%"
-                    , style "height" "20%"
-                    , style "position" "absolute"
-                    , onClick (OnClickItem 0 1)
-                    ]
-                    []
-                ]
-
-        _ ->
-            []
 
 
-render_docu_list : Int -> List Document -> List (Html Msg)
-render_docu_list index list =
-    let
-        drawin id docu =
-            if docu.belong == id then
-                draw_list docu.index docu.lockState
 
-            else
-                []
-    in
-    List.map (drawin index) list |> List.concat

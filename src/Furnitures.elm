@@ -7,17 +7,37 @@ import Svg.Attributes as SvgAttr
 
 {-| level 1 furniture
 -}
-level_1_furniture : List (Svg Msg)
-level_1_furniture =
-    [
-        Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level1.png"
-            ]
-            []
+level_1_furniture : Bool -> List (Svg Msg)
+level_1_furniture sta =
+    if sta then
+        [
+            Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/level1.png"
+                ]
+                []
+            , Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/tablelightsmall.png"
+                ]
+                []
+        ]
+    else
+        [Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/level1.png"
+                ]
+                []
+        ]
         {-, Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
@@ -26,7 +46,7 @@ level_1_furniture =
             , SvgAttr.xlinkHref "assets/memory_menu.png"
             ]
             []-} --ui dont need now
-    ]
+    
     {-drawWindow
         ++ drawTable
         ++ drawFloor

@@ -341,23 +341,6 @@ drawchargedpc a model =
 
 
 
-{- drawbackbutton : ComputerModel -> Html Msg
-   drawbackbutton model =
-       case model.scene of
-       1 ->
-           button
-               [ HtmlAttr.style "position" "absolute"
-               , HtmlAttr.style "top" "80%"
-               , HtmlAttr.style "left" "10%"
-               , HtmlAttr.style "height" "30px"
-               , HtmlAttr.style "width" "60px"
-               , HtmlAttr.style "background" "red"
-               , onClick (Changescene 0)
-               ]
-               []
-       _ ->
-           button[HtmlAttr.style "opacity" "0.0"][]
--}
 
 
 drawnumberbutton : Numberkey -> Svg Msg
