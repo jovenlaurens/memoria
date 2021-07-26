@@ -31,6 +31,8 @@ import Pdolls exposing (drawdoll_ui)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Pcabinet exposing (render_cabinet)
+import Pmirror exposing (render_mirror)
 
 
 style =
@@ -132,6 +134,7 @@ view model =
                                 :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
+                                ++ render_picture model.pictures
                         )
                     
                     ]
@@ -363,6 +366,11 @@ render_button_inside cs objs =
 
 render_object : Model -> Svg Msg
 render_object model =
+    let
+        cs = model.cscreen.cscene
+        cle = model.cscreen.clevel
+    in
+    
     Svg.svg
         [ SvgAttr.width "100%"
         , SvgAttr.height "100%"
@@ -372,23 +380,23 @@ render_object model =
             case model.cscreen.clevel of
                 0 ->
                     level_0_furniture
-                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside cs cle) [] model.objects
 
                 1 ->
                     level_1_furniture
-                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside cs cle) [] model.objects
 
                 2 -> 
                     render_level_2
                         ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
 
                 _ ->
-                    List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                    List.foldr (render_object_inside cs cle) [] model.objects
 
           else
-            render_picture model.pictures
-                ++ render_object_only model model.cscreen.cscene model.objects
-                ++ render_object_only_html model.cscreen.cscene model.objects
+            
+                render_object_only model cs model.objects
+                ++ render_object_only_html cs model.objects
                 ++ render_test_information model
          )
             ++ render_inventory model.inventory
@@ -543,6 +551,11 @@ render_object_inside scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
+                
+                Cabinet a ->
+                    render_cabinet scne cle a
+
+                
     
                 Doll a ->
                     drawdoll_ui 0 a cle
@@ -562,7 +575,7 @@ render_object_only model cs objects =
     in
     case tar of
         Mirror a ->
-            draw_frame a.frame ++ draw_mirror a.mirrorSet ++ draw_light a.lightSet
+            render_mirror a
 
         Clock a ->
             [ drawclock cs
@@ -592,6 +605,9 @@ render_object_only model cs objects =
         
         Fra a ->
             render_fra 9 a model.cscreen.clevel
+
+        Cabinet a ->
+            render_cabinet model.cscreen.cscene model.cscreen.clevel a
         
         Trophy a ->
             draw_trophy a.trophy

@@ -3,8 +3,10 @@ module Messages exposing (..)
 import Browser.Dom exposing (Viewport)
 import Draggable
 import Geometry exposing (Location)
+import Svg.Attributes
+import Svg exposing (Svg)
+import Debug exposing (toString)
 import Gradient exposing (ColorState, Screen)
-
 
 type Msg
     = OnClickTriggers Int --OnClickTriggers a :  a is the list number of the buttons on the object (regulations in details should be included in the design of obejcts)
@@ -41,3 +43,21 @@ type GraMsg
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory
     | AddLine
+
+
+type PassState
+    = Pass
+    | NotYet
+
+svg_text_2 : Float -> Float -> Float -> Float -> String -> Svg Msg
+svg_text_2 x_ y_ wid hei content =
+    Svg.text_
+        [ Svg.Attributes.x (toString x_)
+        , Svg.Attributes.y (toString y_)
+        , Svg.Attributes.width (toString wid)
+        , Svg.Attributes.height (toString hei)
+        , Svg.Attributes.fontSize "30"
+        , Svg.Attributes.fontFamily "Times New Roman"
+        ]
+        [ Svg.text content
+        ]

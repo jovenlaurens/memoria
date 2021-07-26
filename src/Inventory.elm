@@ -118,8 +118,9 @@ render_inventory_inside grid lef =
         , SvgAttr.y "800"
         , SvgAttr.width "80"
         , SvgAttr.height "80"
-        , SvgAttr.fillOpacity "0.1"
-        , SvgAttr.fill "red"
+        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.fill "grey"
+        , SvgAttr.stroke "black"
         , Svg.Events.onClick (OnClickItem index typeid)
         ]
         []

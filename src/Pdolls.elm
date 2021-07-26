@@ -79,7 +79,7 @@ drawdoll_0 =
             , SvgAttr.width "25"
             , SvgAttr.height "50"
             , SvgAttr.fillOpacity "0.0"
-            , Svg.Events.onClick (StartChange (ChangeScene 12))
+            , Svg.Events.onClick (StartChange (ChangeScene 14))
             ][]
         ]
         

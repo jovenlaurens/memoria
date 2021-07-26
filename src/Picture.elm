@@ -54,10 +54,17 @@ list_index_picture index list =
 
 initial_pictures : List Picture
 initial_pictures =
-    [ Picture NotShow 0
-    , Picture NotShow 1
-    , Picture NotShow 2
-    , Picture NotShow 3
+    [ Picture NotShow 0 --碎片0 for memory 1
+    , Picture NotShow 1 --碎片1 for memory 1
+    , Picture NotShow 2 --钥匙0 for basement
+    , Picture NotShow 3 --碎片2 for memory 2
+    , Picture NotShow 4 --碎片3 for memory 3
+    , Picture NotShow 5 --碎片4 for memory 3
+    , Picture NotShow 6 --锤子 for 2楼 小猪罐子
+    , Picture NotShow 7 --钥匙1 for 电箱
+    , Picture NotShow 8 --碎片5 for memory 4
+    , Picture NotShow 9 --钥匙2 for 1楼 柜子
+    , Picture NotShow 10 --镰刀 for 1楼 
     ]
 
 

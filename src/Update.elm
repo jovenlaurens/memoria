@@ -24,6 +24,10 @@ import Pdolls exposing (..)
 import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
 import Svg.Attributes exposing (color, speed)
 import Task
+import Pcabinet exposing (CabinetModel)
+import Pcabinet exposing (switch_cabState)
+import Pmirror exposing (refresh_keyboard)
+import Pmirror exposing (test_keyboard_win_inside)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -181,13 +185,30 @@ animate model elapsed =
                 , cscreen = new_cscreen
                 , tscreen = new_tscreen
                 , move_timer = model.move_timer + elapsed
-                , objects = bounce_key_top model.move_timer model.objects
+                , objects =( bounce_key_top model.move_timer model.objects
+                                |> test_keyboard_win
+                    )
             }
 
         new_intro =
             get_new_intro model.intro model.cscreen.cstate
     in
     { stage_1 | intro = new_intro }
+
+
+test_keyboard_win : List Object -> List Object
+test_keyboard_win list =
+    let
+        fin obj =
+            case obj of
+                Mirror a ->
+                    Mirror (test_keyboard_win_inside a)
+                _ ->
+                    obj
+    in
+        List.map fin list
+    
+
 
 
 update_gra_part : Model -> GraMsg -> Model
@@ -391,12 +412,29 @@ test_mirror_win model =
     let
         flag =
             List.any test_mirror_win_help model.objects
+
     in
     if flag then
-        { model | pictures = show_index_picture 2 model.pictures }
+        { model | objects = List.map show_phone_question model.objects }
 
     else
         model
+
+
+
+
+show_phone_question : Object -> Object
+show_phone_question obj =
+    case obj of
+        Mirror a ->
+            Mirror {a | stage = (Pass, NotYet)}
+        _ ->
+            obj
+            
+
+
+
+
 
 
 test_mirror_win_help : Object -> Bool
@@ -505,22 +543,48 @@ update_onclicktrigger model number =
 
         11 ->
             { model | objects = try_to_update_trophy model.objects }
-            
-        12 -> 
+        
+        12 ->
+            update_cab 12 number model.underUse model
+
+        13 ->
+            update_cab 13 number model.underUse model 
+
+        14 -> 
             update_doll model number 
 
         0 ->
-            case model.cscreen.clevel of
+            (case model.cscreen.clevel of
                 0 ->
                     charge_computer model number
 
                 _ ->
-                    model
+                    model)
 
-        --number是frame的序号(0-4)
         _ ->
             model
 
+
+
+update_cab : Int -> Int -> Grid -> Model ->Model
+update_cab cs number underuse model =
+    let
+        fin num obj =
+            case obj of
+                Cabinet a ->
+                    if a.index == cs then
+                        ( Cabinet (refresh_cabinet cs a number underuse |> Tuple.first)
+                        , (refresh_cabinet cs a number underuse |> Tuple.second) )
+                    else
+                        (obj, False)
+
+                _ ->
+                    (obj, False)
+    
+        new_objects = ((List.map (fin number) model.objects) |> List.unzip |> Tuple.first)
+    in
+        {model | objects = new_objects}
+ 
 
 update_doll : Model -> Int -> Model
 update_doll model number = 
@@ -535,6 +599,15 @@ update_doll model number =
     in
     { model | objects = List.map (fin number) model.objects }
 
+
+refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
+refresh_cabinet which cab number underuse =
+    if number == 0 {-&& underuse == -} then
+        ({ cab | upper = (switch_cabState cab.upper)}, False)
+    else if number == 1 then
+        ({ cab | upper = (switch_cabState cab.upper)}, False)
+    else
+        Debug.todo ""
 
 try_update_bookshelf : Int -> List Object -> List Object
 try_update_bookshelf choice objectLst =
@@ -852,7 +925,10 @@ update_light_mirror index object =
                 newLightSet =
                     refresh_lightSet (List.singleton (Line (Location 400 350) (Location 0 350))) newMirrorSet
             in
-            Mirror { a | mirrorSet = newMirrorSet, lightSet = newLightSet }
+            Mirror ({ a | mirrorSet = newMirrorSet, lightSet = newLightSet }
+                        |> refresh_keyboard index
+                    )
+                        
 
         _ ->
             object
