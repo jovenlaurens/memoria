@@ -6,11 +6,12 @@ import Geometry exposing (Location)
 import Svg.Attributes
 import Svg exposing (Svg)
 import Debug exposing (toString)
-import Gradient exposing (ColorState, Screen)
+
 
 type Msg
     = OnClickTriggers Int --OnClickTriggers a :  a is the list number of the buttons on the object (regulations in details should be included in the design of obejcts)
-    | OnClickItem Int Int --OnClickItem,第一个int是index,第二个是种类(frag, key等工具,进inventory,可能会取消第二个参数)
+    | OnClickItem Int --OnClickItem,第一个int是index,进inventory,可能会取消第二个参数)
+    | OnClickInventory Int --物品栏的index
     | DecideLegal Location
     | Reset --back to the beginning of the game, state = 0
       --Gradient part are below

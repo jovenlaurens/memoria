@@ -4,11 +4,13 @@ import Messages exposing (GraMsg(..), Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Debug exposing (toString)
 
 
 type alias Picture =
     { state : ShowState
     , index : Int
+    , lef : Int
     }
 
 
@@ -16,7 +18,6 @@ type ShowState
     = NotShow
     | Show
     | Picked
-    | Stored
     | UnderUse
     | Consumed
 
@@ -45,6 +46,65 @@ show_index_picture index list =
 -}
 
 
+render_inventory : List Picture -> List (Svg Msg)
+render_inventory picts =
+    List.map render_inventory_inside_item picts
+    ++ List.map render_inventory_inside_item picts
+
+render_inventory_inside : Picture -> List (Svg Msg)
+render_inventory_inside pict =
+    let
+        opa = if pict.state == UnderUse then
+                 "0.5"
+              else
+                "0.3"
+    in
+
+    [ Svg.rect
+        [ SvgAttr.x (toString pict.lef)
+        , SvgAttr.y "800"
+        , SvgAttr.width "80"
+        , SvgAttr.height "80"
+        , SvgAttr.fillOpacity opa
+        , SvgAttr.fill "grey"
+        , SvgAttr.stroke "black"
+        , Svg.Events.onClick (OnClickInventory pict.index)
+        ]
+        []
+    ]
+
+render_inventory_inside_item : Picture -> Svg Msg
+render_inventory_inside_item pict =
+    let
+        pictSrc = "assets/picts/"++(toString pict.index)++".png"
+    in
+    
+    case pict.state of
+        Picked ->
+            Svg.image
+                [ SvgAttr.x (toString pict.lef)
+                , SvgAttr.y "800"
+                , SvgAttr.width "80"
+                , SvgAttr.height "80"
+                , SvgAttr.xlinkHref pictSrc
+                ]
+                []
+        UnderUse ->
+            Svg.image
+                [ SvgAttr.x (toString pict.lef)
+                , SvgAttr.y "800"
+                , SvgAttr.width "80"
+                , SvgAttr.height "80"
+                , SvgAttr.xlinkHref pictSrc
+                , SvgAttr.opacity "0.4"
+                ]
+                []
+        _ ->
+            Svg.rect
+                []
+                []
+        
+
 list_index_picture : Int -> List Picture -> Picture
 list_index_picture index list =
     List.drop index list
@@ -54,23 +114,28 @@ list_index_picture index list =
 
 initial_pictures : List Picture
 initial_pictures =
-    [ Picture NotShow 0 --碎片0 for memory 1
-    , Picture NotShow 1 --碎片1 for memory 1
-    , Picture NotShow 2 --钥匙0 for basement
-    , Picture NotShow 3 --碎片2 for memory 2
-    , Picture NotShow 4 --碎片3 for memory 3
-    , Picture NotShow 5 --碎片4 for memory 3
-    , Picture NotShow 6 --锤子 for 2楼 小猪罐子
-    , Picture NotShow 7 --钥匙1 for 电箱
-    , Picture NotShow 8 --碎片5 for memory 4
-    , Picture NotShow 9 --钥匙2 for 1楼 柜子
-    , Picture NotShow 10 --镰刀 for 1楼 
+    [ Picture NotShow 0 300--碎片0 for memory 1
+    , Picture NotShow 1 415--碎片1 for memory 1
+    , Picture NotShow 2 530--钥匙0 for basement
+    , Picture NotShow 3 645--碎片2 for memory 2
+    , Picture NotShow 4 760--碎片3 for memory 3
+    , Picture NotShow 5 875--碎片4 for memory 3
+    , Picture NotShow 6 990--锤子 for 2楼 小猪罐子
+    , Picture NotShow 7 1105--钥匙1 for 电箱
+    , Picture NotShow 8 1220--碎片5 for memory 4
+    , Picture NotShow 9 1335--钥匙2 for 1楼 柜子
+    , Picture NotShow 10 1450--镰刀 for 1楼 
     ]
+
+--[ 300, 415, 530, 645, 760, 875, 990, 1105, 1220, 1335, 1450 ]
+
+--制作一张查找表：
+--所有的可能的render选项都从这个查找表里走
 
 
 default_picture : Picture
 default_picture =
-    Picture NotShow 0
+    Picture NotShow 0 0
 
 
 render_picture_button : Svg Msg

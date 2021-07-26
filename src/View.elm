@@ -10,7 +10,6 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Intro exposing (render_intro)
-import Inventory exposing (Grid(..), render_inventory)
 import Level0 exposing (..)
 import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
 import Messages exposing (..)
@@ -33,6 +32,7 @@ import Svg.Attributes as SvgAttr
 import Svg.Events
 import Pcabinet exposing (render_cabinet)
 import Pmirror exposing (render_mirror)
+import Picture exposing (render_inventory)
 
 
 style =
@@ -399,25 +399,27 @@ render_object model =
                 ++ render_object_only_html cs model.objects
                 ++ render_test_information model
          )
-            ++ render_inventory model.inventory
+            ++ render_inventory model.pictures
         )
 
 render_level_2 : List (Svg Msg)
 render_level_2 = 
-    [Svg.image 
+    [ Svg.image 
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
             , SvgAttr.xlinkHref "assets/level_2.png"
-            ][]]
+            ]
+            []
+    ]
 
 
 render_test_information : Model -> List (Svg Msg)
 render_test_information model =
     let
         under =
-            if model.underUse == Blank then
+            if model.underUse == 0 then
                 "Blank"
 
             else
@@ -436,14 +438,13 @@ render_test_information model =
             else
                 "Unlocked"
 
-        show4 =
-            toString model.inventory.num
+
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 ++ " " ++ show4)
+        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 )
         ]
     ]
 
@@ -473,7 +474,7 @@ render_picture_index index =
                 , SvgAttr.width "100"
                 , SvgAttr.height "30"
                 , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 0 0)
+                , Svg.Events.onClick (OnClickItem 0)
                 ]
                 []
 
@@ -484,7 +485,7 @@ render_picture_index index =
                 , SvgAttr.width "100"
                 , SvgAttr.height "30"
                 , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 1 0)
+                , Svg.Events.onClick (OnClickItem 1)
                 ]
                 []
 
@@ -495,7 +496,7 @@ render_picture_index index =
                 , SvgAttr.width "100"
                 , SvgAttr.height "30"
                 , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 2 0)
+                , Svg.Events.onClick (OnClickItem 2)
                 ]
                 []
 

@@ -8,7 +8,6 @@ import Gradient exposing (ColorState(..), Gcontent(..), GradientState(..), Proce
 import Html exposing (a)
 import Html.Attributes exposing (dir, list)
 import Intro exposing (get_new_intro)
-import Inventory exposing (Grid(..), eliminate_old_item, find_the_grid, insert_new_item)
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
@@ -28,6 +27,7 @@ import Pcabinet exposing (CabinetModel)
 import Pcabinet exposing (switch_cabState)
 import Pmirror exposing (refresh_keyboard)
 import Pmirror exposing (test_keyboard_win_inside)
+import Picture exposing (list_index_picture)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -103,16 +103,16 @@ update msg model =
             , Cmd.none
             )
 
-        OnClickItem index kind ->
-            case kind of
-                0 ->
-                    ( pickup_picture index model
-                        |> check_pict_state
-                    , Cmd.none
-                    )
+        OnClickItem index ->
+            
+            ( pickup_picture index model
+            , Cmd.none
+            )
 
-                _ ->
-                    ( model, Cmd.none )
+        OnClickInventory index ->
+            ( select_picture index model
+            , Cmd.none
+            )
 
         Charge a ->
             ( charge_computer model a
@@ -470,25 +470,69 @@ test_fragment_win model =
 pickup_picture : Int -> Model -> Model
 pickup_picture index model =
     let
-        f =
-            \x ->
-                if x.index == index then
-                    if x.state == Show then
-                        { x | state = Picked }
+        fin id pict =
+            if id == pict.index && pict.state == Show then
+                { pict | state = Picked }
+            else
+                pict
+        new_pictures = List.map (fin index) model.pictures
 
-                    else if x.state == Stored && model.underUse == Blank then
-                        { x | state = UnderUse }
-
-                    else if x.state == UnderUse then
-                        { x | state = Stored }
-
-                    else
-                        x
-
-                else
-                    x
     in
-    { model | pictures = List.map f model.pictures }
+        { model | pictures = new_pictures }
+
+
+select_picture : Int -> Model -> Model
+select_picture index model =
+        List.foldr (select_picture_inside index) model model.pictures
+
+
+
+select_picture_inside : Int -> Picture -> Model -> Model
+select_picture_inside id pict mod =
+    let
+        udus = mod.underUse
+        mpc = mod.pictures
+    in
+            if id == pict.index && pict.state == Picked then
+                if udus == 99 then
+                    { mod | underUse = id
+                           , pictures = choose_index_picture id mpc
+                    }
+                else
+                    { mod | pictures = change_index_picture id udus mpc
+                            , underUse = id
+                    }
+            else
+                mod
+
+
+choose_index_picture : Int -> List Picture -> List Picture
+choose_index_picture index list =
+    let
+        fin id pict =
+            if id == pict.index then
+                {pict | state = UnderUse}
+            else
+                pict     
+    in
+        List.map (fin index) list
+
+change_index_picture : Int -> Int -> List Picture -> List Picture
+change_index_picture index udu list =
+    let
+        fin id udus pict =
+            if id == pict.index then
+                {pict | state = UnderUse}
+            else if udus == pict.index then
+                {pict | state = Picked}
+            else
+                pict
+    in
+        List.map (fin index udu) list
+    
+
+
+
 
 
 dragConfig : Draggable.Config () Msg
@@ -544,11 +588,11 @@ update_onclicktrigger model number =
         11 ->
             { model | objects = try_to_update_trophy model.objects }
         
-        12 ->
+        {-12 ->
             update_cab 12 number model.underUse model
 
         13 ->
-            update_cab 13 number model.underUse model 
+            update_cab 13 number model.underUse model -}
 
         14 -> 
             update_doll model number 
@@ -559,32 +603,36 @@ update_onclicktrigger model number =
                     charge_computer model number
 
                 _ ->
-                    model)
+                    model
+            )
 
         _ ->
             model
 
 
 
-update_cab : Int -> Int -> Grid -> Model ->Model
-update_cab cs number underuse model =
-    let
-        fin num obj =
-            case obj of
-                Cabinet a ->
-                    if a.index == cs then
-                        ( Cabinet (refresh_cabinet cs a number underuse |> Tuple.first)
-                        , (refresh_cabinet cs a number underuse |> Tuple.second) )
-                    else
-                        (obj, False)
-
-                _ ->
-                    (obj, False)
     
-        new_objects = ((List.map (fin number) model.objects) |> List.unzip |> Tuple.first)
-    in
-        {model | objects = new_objects}
  
+
+
+        
+        
+
+
+
+clear_index_picture : Int -> List Picture -> List Picture
+clear_index_picture index list =
+    let
+        fin id pict =
+            if id == pict.index && pict.state == UnderUse then
+                { pict | state = Consumed }
+            else
+                pict    
+    in
+        List.map (fin index) list
+    
+
+
 
 update_doll : Model -> Int -> Model
 update_doll model number = 
@@ -600,14 +648,14 @@ update_doll model number =
     { model | objects = List.map (fin number) model.objects }
 
 
-refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
+{-refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
 refresh_cabinet which cab number underuse =
     if number == 0 {-&& underuse == -} then
         ({ cab | upper = (switch_cabState cab.upper)}, False)
     else if number == 1 then
         ({ cab | upper = (switch_cabState cab.upper)}, False)
     else
-        Debug.todo ""
+        Debug.todo ""-}
 
 try_update_bookshelf : Int -> List Object -> List Object
 try_update_bookshelf choice objectLst =
@@ -797,7 +845,8 @@ updateclock model number =
 
 try_to_unlock_picture : Model -> Int -> Model
 try_to_unlock_picture model number =
-    --number是memory的index
+    model
+    {--number是memory的index
     --number从0到4代表5段记忆
     let
         target_invent =
@@ -835,7 +884,7 @@ try_to_unlock_picture model number =
         }
 
     else
-        model
+        model-}
 
 
 consume_picture : List Picture -> Int -> Bool -> List Picture
@@ -877,7 +926,7 @@ check_pict_state model =
     let
         refresh_underuse mod =
             if List.all (\x -> x.state /= UnderUse) model.pictures == True then
-                { mod | underUse = Blank }
+                { mod | underUse = 99 }
 
             else
                 mod
@@ -888,7 +937,7 @@ check_pict_state model =
 
 check_use_picture : Picture -> Model -> Model
 check_use_picture pict model =
-    let
+    {-let
         from_picked_to_stored index pic =
             if pic.index == index then
                 { pic | state = Stored }
@@ -905,7 +954,7 @@ check_use_picture pict model =
             , pictures = List.map (from_picked_to_stored pict.index) model.pictures
         }
 
-    else
+    else-}
         model
 
 

@@ -137,7 +137,7 @@ draw_list id lck =
                     , style "width" "15%"
                     , style "height" "20%"
                     , style "position" "absolute"
-                    , onClick (OnClickItem 0 1)
+                    , onClick (OnClickItem 0)
                     ]
                     []
                 ]
