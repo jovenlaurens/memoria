@@ -65,7 +65,7 @@ drawpowerbutton =
             , SvgAttr.width "50"
             , SvgAttr.height "50"
             , SvgAttr.fillOpacity "0.0"
-            , Svg.Events.onClick (Lighton)
+            , Svg.Events.onClick (Lighton 1)
             ]
             []
         ]

@@ -11,10 +11,14 @@ import List exposing (foldr)
 
 
 
-
+type LightState 
+        = Light_2_on
+        | Light_2_off
+        | Otherobject
 
 type alias MirrorModel =
-    { frame : List Location
+    { lightstate : LightState
+    , frame : List Location
     , lightSet : List Line
     , mirrorSet : List Mirror
     , stage : (PassState, PassState)
@@ -27,6 +31,7 @@ type alias MirrorModel =
 initialMirror : MirrorModel
 initialMirror =
     MirrorModel
+        Light_2_off
         (generate_frames ( 4, 4 ))
         (List.singleton (Line (Location 400 350) (Location 0 350)))
         [ Mirror (Line (Location 300 350) (Location 400 350)) 1

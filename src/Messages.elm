@@ -24,7 +24,8 @@ type Msg
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
-    | Lighton
+    | Lighton Int  -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
+
 
 type GraMsg
     = EnterState --from cover to intro, from intro to the game (state++ until 0, cover 100, intro 101)

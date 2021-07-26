@@ -363,13 +363,16 @@ render_choice index page =
     ]
 
 
-textBase_0 : List Page
+textBase_0 : List Page --这个是memory1的对话
 textBase_0 =
-    [ Page "So I'm in a cafe, lots of customers." "I" "assets/wall1.png" "assets/girl1.png" Dialogue --0
-    , Page "Wait, it seems that Maria is there. She is merged in something. " "I" "assets/wall1.png" "assets/girl1.png" Dialogue --1
-    , Page "Oh, I was told that she is a freelancer before." "I" "assets/wall1.png" "assets/girl1.png" Dialogue --2
-    , Page "So what kind of thing is she working on?" "I" "assets/wall1.png" "assets/girl1.png" Dialogue --3
-    , Page "" "" "assets/wall1.png" "" (Choose 0) --4
+    [ Page "So, I’m in a crowded cafe." "I" "assets/wall1.png" "" Dialogue --0
+    , Page "Maria is there!" "I" "assets/wall1.png" "" Dialogue --1
+    , Page "She is immersed in something." "I" "assets/wall1.png" "" Dialogue --2
+    , Page "Oh, she told that she is a freelancer. " "I" "assets/wall1.png" "" Dialogue --3
+    , Page "What is she is working on? " "I" "assets/wall1.png" "" Dialogue --4
+    , Page "(Attention: Your memory is made by yourself)" "" "assets/wall1.png" "" Dialogue --5
+    , Page "(different choice will lead to a different Maria.)" "" "assets/wall1.png" "" Dialogue --6
+    , Page "" "" "assets/wall1.png" "" (Choose 0) --7
 
     {- ]
 
@@ -377,12 +380,11 @@ textBase_0 =
        sub_0_0 =
            [
     -}
-    , Page "Well, it isn’t mandatory to tell others my idea, but if you are really interested in." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --5
-    , Page "After I expressed my strong will, Maria continued." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --6
-    , Page "It’s a story for my ideal love, exactly. " "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --7
-    , Page "After breaking out with him, I always think about it." "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --8
-    , Page "Why I failed to hold love, or, what should it look like? " "Maira" "assets/wall1.png" "assets/girl1.png" Dialogue --9
-    , Page "End" "I" "assets/wall1.png" "assets/girl1.png" End --10
+    , Page "I don't have to tell you exactly what happened," "Maira" "assets/wall1.png" "assets/girl/3.png" Dialogue --8
+    , Page "but if you're really interested..." "Maira" "assets/wall1.png" "assets/girl/6.png" Dialogue --9
+    , Page "I met my true love. " "Maira" "assets/wall1.png" "assets/girl/1.png" Dialogue --10
+    , Page "I've always wondered what would have happened if I had held on to him." "Maira" "assets/wall1.png" "assets/girl/9.png" Dialogue --11
+    , Page "End" "" "assets/wall1.png" "assets/girl1.png" End --12
 
     {- ]
 
@@ -390,13 +392,28 @@ textBase_0 =
        sub_0_1 =
            [
     -}
-    , Page "Wait" "I" "" "" End
+
+    , Page "Have you ever been inspired by perfection?" "Maira" "assets/wall1.png" "assets/girl/6.png" Dialogue --13
+    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maira" "assets/wall1.png" "assets/girl/1.png" Dialogue --14   
+    , Page "What are the limits of perfection?" "Maira" "assets/wall1.png" "assets/girl/1.png" Dialogue --15
+    , Page "End" "" "assets/wall1.png" "assets/girl1.png" End --16
+
+    , Page "I'm working on my autobiography." "Maira" "assets/wall1.png" "assets/girl/3.png" Dialogue --17
+    , Page "In this record, I want to figure out what I really am." "Maira" "assets/wall1.png" "assets/girl/7.png" Dialogue --18
+    , Page "What I look like." "Maira" "assets/wall1.png" "assets/girl/7.png" Dialogue --19
+    , Page "How can I talk to myself and figure out what happened?" "Maira" "assets/wall1.png" "assets/girl/9.png" Dialogue --20
+    , Page "My daily life, my preference, and something like this." "Maira" "assets/wall1.png" "assets/girl/6.png" Dialogue --21
+    , Page "Sorry if my mind surprised you." "Maira" "assets/wall1.png" "assets/girl/3.png" Dialogue --22
+    , Page "End" "" "assets/wall1.png" ""  End -- 23
     ]
 
+--可以这样，List String （对话文字） List String （人物） List String（背景路径） Listing String (人物图像路径) （类型（实际上thought没有用到））
+--然后map
 
 sub_0_2 : List Page
 sub_0_2 =
     []
+
 
 
 default_page : Page
