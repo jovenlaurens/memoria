@@ -8,6 +8,7 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events exposing (onClick)
+import Button exposing (trans_button_sq)
 
 
 type BlockState
@@ -17,7 +18,7 @@ type BlockState
 
 blockLength : Float
 blockLength =
-    40.0
+    30.0
 
 
 type alias Block =
@@ -33,10 +34,15 @@ type alias TableModel =
     }
 
 
+
+
+    
+
+
 initial_table : TableModel
 initial_table =
     TableModel initial_block
-        (Location (500.0 + twoOfSquare3_help * 3 / 2) (500.0 - 1.5 * blockLength))
+        (Location (575.0 + twoOfSquare3_help * 3 / 2) (575.0 - 1.5 * blockLength))
         ( 0, 0 )
 
 
@@ -64,20 +70,20 @@ twoOfSquare3_help =
 
 initial_block : List Block
 initial_block =
-    three_block_set (Location 500.0 500.0)
-        ++ three_block_set (Location (500.0 - 3 * blockLength) 500.0)
-        ++ three_block_set (Location (500.0 + 3 * blockLength) 500.0)
-        ++ ushape_block_set (Location 500.0 (500.0 + 2 * blockLength * sqrt 3))
-        ++ ushape_block_set (Location 500.0 (500.0 - blockLength * sqrt 3))
+    three_block_set (Location 575.0 575.0)
+        ++ three_block_set (Location (575.0 - 3 * blockLength) 575.0)
+        ++ three_block_set (Location (575.0 + 3 * blockLength) 575.0)
+        ++ ushape_block_set (Location 575.0 (575.0 + 2 * blockLength * sqrt 3))
+        ++ ushape_block_set (Location 575.0 (575.0 - blockLength * sqrt 3))
 
 
 render_table_button : Html Msg
 render_table_button =
     let
         enter =
-            Button.Button 75 53.33 12.5 2.22 "" (StartChange (ChangeScene 2)) "block"
+            Button.Button 73 57.33 17.5 6.22 "" (StartChange (ChangeScene 2)) "block"
     in
-    test_button enter
+    trans_button_sq enter
 
 
 drawpath : List (Svg Msg)
@@ -147,35 +153,115 @@ get_point location =
 
 draw_single_block : Block -> Svg Msg
 draw_single_block block =
-    let
-        x =
-            block.anchor.x
-
-        y =
-            block.anchor.y
-
-        color =
-            case block.state of
+    case block.state of
                 Active ->
-                    "white"
+                    Svg.rect
+                        []
+                        []
 
                 NonActive ->
-                    "blue"
+                    Svg.polygon
+                        [ SvgAttr.fill "black"
+                        , SvgAttr.strokeWidth "5"
+                        , SvgAttr.fillOpacity "0.3"
+                        , SvgAttr.points (get_point block.anchor)
+                        , onClick (DecideLegal block.anchor)
+                        --, SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
+                        ]
+                        []
+
+    
+
+
+draw_block : Bool -> Bool -> Bool -> List Block -> List (Svg Msg)
+draw_block state sta1 sta2 blockSet =
+    (draw_back state)
+  ++ draw_coffee_back sta1 sta2
+  ++ List.map draw_single_block blockSet
+
+
+draw_back : Bool -> List (Svg Msg)
+draw_back sta =
+    let
+        light = if sta then
+                    [ Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level1/tablelight.png"
+                        ]
+                        []
+                    , Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level1/lightword.png"
+                        ]
+                        []
+                    ]
+                else
+                    []
+
     in
-    Svg.polygon
-        [ SvgAttr.fill color
-        , SvgAttr.strokeWidth "5"
-        , SvgAttr.points (get_point block.anchor)
-        , onClick (DecideLegal block.anchor)
 
-        --, SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
-        ]
-        []
+            ( Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+                ]
+                []
+            )
+            ::light
 
 
-draw_block : List Block -> List (Svg Msg)
-draw_block blockSet =
-    List.map draw_single_block blockSet
+draw_coffee_back : Bool -> Bool -> List (Svg Msg)
+draw_coffee_back a b =
+    case (a, b) of
+        (_ , True) ->
+            []
+        (True, False) ->
+            [
+                Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                    ]
+                    []
+            , Svg.circle
+                    [ SvgAttr.cx "575"
+                    , SvgAttr.cy "560"
+                    , SvgAttr.r "120"
+                    , SvgAttr.fillOpacity "0.0"
+                    , Svg.Events.onClick (OnClickTriggers 0)
+                    ]
+                    []
+            ]
+        (False, _) ->
+            [
+                Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                    ]
+                    []
+            , Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/coffeebubble.png"
+                    ]
+                    []
+            
+            ]
 
 
 change_block_state : Location -> Block -> Block

@@ -2,7 +2,7 @@ module View exposing (..)
 
 import Button exposing (Button, test_button, trans_button_sq)
 import Debug exposing (toString)
-import Document exposing (Document, render_docu_list, render_document_detail, render_newspaper_index)
+import Document exposing (Document, render_document_detail, render_newspaper_index)
 import Draggable
 import Furnitures exposing (..)
 import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
@@ -10,7 +10,6 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Intro exposing (render_intro)
-import Inventory exposing (Grid(..), render_inventory)
 import Level0 exposing (..)
 import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
 import Messages exposing (..)
@@ -31,6 +30,13 @@ import Pdolls exposing (drawdoll_ui)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Pcabinet exposing (render_cabinet)
+import Pmirror exposing (render_mirror)
+import Picture exposing (render_inventory)
+import Pbulb exposing (Bulb)
+import Button exposing (black_white_but)
+import Ptable exposing (draw_coffee_back)
+import Picture exposing (render_frame)
 
 
 style =
@@ -132,6 +138,7 @@ view model =
                                 :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
+                                ++ render_picture model.pictures
                         )
                     
                     ]
@@ -153,7 +160,6 @@ view model =
                         ]
                         []
                     ]
-                        ++ render_docu_list 0 model.docu
                         ++ render_ui_button 2
 
                 3 ->
@@ -223,11 +229,12 @@ view model =
 
 {-| render everything
 -}
-render_documents : List Document -> Int -> List (Html Msg)
+render_documents :  List Document -> Int -> List (Html Msg)
 render_documents docus cs =
     case cs of
         2 ->
             [ render_newspaper_index 0 docus ]
+
 
         _ ->
             []
@@ -235,15 +242,7 @@ render_documents docus cs =
 
 
 --need how to simplify
-{- render_game_setup : Model -> List (Html Msg)
-   render_game_setup model =
 
-       if model.cscene == 0 then
-           (render_level model)++(render_object model)--++(render_button model)
-       else
-           (render_object model)--++(render_button model)
--}
-{- render the background of the screen, if specific, doesnt have this -}
 
 
 render_wall_1 : Html Msg
@@ -318,7 +317,6 @@ render_button_level level model =
             render_stair_level level
                 ++ [ drawclockbutton
                    , render_table_button
-                   , test_button (Button.Button 60 20 10 10 "" (StartChange (ChangeScene 8)) "block")
                    ]
 
         2 ->
@@ -363,6 +361,11 @@ render_button_inside cs objs =
 
 render_object : Model -> Svg Msg
 render_object model =
+    let
+        cs = model.cscreen.cscene
+        cle = model.cscreen.clevel
+    in
+    
     Svg.svg
         [ SvgAttr.width "100%"
         , SvgAttr.height "100%"
@@ -372,44 +375,45 @@ render_object model =
             case model.cscreen.clevel of
                 0 ->
                     level_0_furniture
-                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
                 1 ->
-                    level_1_furniture
-                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                    level_1_furniture model.checklist.level1light
+                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
                 2 -> 
                     render_level_2
-                        ++ List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
                 _ ->
-                    List.foldr (render_object_inside model.cscreen.cscene model.cscreen.clevel) [] model.objects
+                    List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
           else
-            render_picture model.pictures
-                ++ render_object_only model model.cscreen.cscene model.objects
-                ++ render_object_only_html model.cscreen.cscene model.objects
-                ++ render_test_information model
+            
+                render_object_only model cs model.objects
+                ++ render_object_only_html cs model.objects
          )
-            ++ render_inventory model.inventory
+            ++ render_inventory model.pictures
         )
 
 render_level_2 : List (Svg Msg)
 render_level_2 = 
-    [Svg.image 
+    [ Svg.image 
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
             , SvgAttr.xlinkHref "assets/level_2.png"
-            ][]]
+            ]
+            []
+    ]
 
 
-render_test_information : Model -> List (Svg Msg)
+{-render_test_information : Model -> List (Svg Msg)
 render_test_information model =
     let
         under =
-            if model.underUse == Blank then
+            if model.underUse == 99 then
                 "Blank"
 
             else
@@ -422,25 +426,20 @@ render_test_information model =
             list_index_memory 0 model.memory
 
         show2 =
-            if fram.state == Locked then
-                "Locked"
+            toString model.checklist.level1light
 
-            else
-                "Unlocked"
 
-        show4 =
-            toString model.inventory.num
     in
     [ Svg.text_
         [ SvgAttr.x "100"
         , SvgAttr.y "200"
         ]
-        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 ++ " " ++ show4)
+        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 )
         ]
     ]
+-}
 
-
-render_picture : List Picture -> List (Svg Msg)
+render_picture : List Picture -> List (Html Msg)
 render_picture list =
     let
         render_pict_inside pict =
@@ -455,70 +454,53 @@ render_picture list =
     List.map render_pict_inside list
 
 
-render_picture_index : Int -> Svg Msg
+render_picture_index : Int -> Html Msg
 render_picture_index index =
     case index of
         0 ->
-            Svg.rect
-                [ SvgAttr.x "1300"
-                , SvgAttr.y "400"
-                , SvgAttr.width "100"
-                , SvgAttr.height "30"
-                , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 0 0)
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "54%"
+                , style "left" "32%"
+                , style "width" "16%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
                 ]
                 []
 
         1 ->
-            Svg.rect
-                [ SvgAttr.x "1400"
-                , SvgAttr.y "600"
-                , SvgAttr.width "100"
-                , SvgAttr.height "30"
-                , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 1 0)
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "50%"
+                , style "left" "60%"
+                , style "width" "20%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
                 ]
                 []
-
-        2 ->
-            Svg.rect
-                [ SvgAttr.x "1400"
-                , SvgAttr.y "600"
-                , SvgAttr.width "100"
-                , SvgAttr.height "30"
-                , SvgAttr.fill "red"
-                , Svg.Events.onClick (OnClickItem 2 0)
-                ]
-                []
-
         _ ->
-            Svg.rect
-                []
-                []
+            Debug.todo ""
 
 
 
-{- [
-   drawclock model
-   , drawhourhand model
-   , drawminutehand model
-   ]
--}
+
+
+
 
 
 {-| 把
 -}
-render_object_inside : Int -> Int -> Object -> List (Svg Msg) -> List (Svg Msg)
-render_object_inside scne cle obj old =
+render_object_inside : CheckList -> Int -> Int -> Object -> List (Svg Msg) -> List (Svg Msg)
+render_object_inside cklst scne cle obj old =
     let
         new =
             case obj of
-                Clock a ->
+                {-Clock a ->
                     [ drawclock scne
                     , drawhourhand scne a
                     , drawminutehand scne a
                     ]
-
+            -}
                 Frame a ->
                     if cle == 1 then
                         [ render_picture_button ]
@@ -543,7 +525,17 @@ render_object_inside scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
-    
+                
+                Cabinet a ->
+                    render_cabinet scne cle a
+
+                Bul a ->
+                     if cle == 1 then
+                        render_bulb 0 a
+
+                     else
+                        []
+                    
                 Doll a ->
                     drawdoll_ui 0 a cle
 
@@ -559,10 +551,12 @@ render_object_only model cs objects =
     let
         tar =
             list_index_object (cs - 1) objects
+
+        cklst = model.checklist
     in
     case tar of
         Mirror a ->
-            draw_frame a.frame ++ draw_mirror a.mirrorSet ++ draw_light a.lightSet
+            render_mirror a
 
         Clock a ->
             [ drawclock cs
@@ -571,11 +565,11 @@ render_object_only model cs objects =
             ]
 
         Table a ->
-            draw_block a.blockSet
+            
+            draw_block cklst.level1light cklst.level1coffee cklst.level1liquid a.blockSet
 
         Frame a ->
-            draw_frame_and_memory model.memory
-                ++ (List.map2 render_frame_outline [ 0 ] model.memory |> List.concat)
+            render_frame model.pictures
 
         --回头再加1,2,3,4
         Computer a ->
@@ -592,6 +586,9 @@ render_object_only model cs objects =
         
         Fra a ->
             render_fra 9 a model.cscreen.clevel
+
+        Cabinet a ->
+            render_cabinet model.cscreen.cscene model.cscreen.clevel a
         
         Trophy a ->
             draw_trophy a.trophy
@@ -654,22 +651,22 @@ render_ui_button : Int -> List (Html Msg)
 render_ui_button cstate =
     let
         pause =
-            Button 2.6 4.5 3.66 6.5 "Pause" (StartChange Pause) "block"
+            Button 2.6 4.5 3.66 6.5 "||" (StartChange Pause) "block"
 
         back =
-            Button 2.6 4.5 3.66 6.5 "Back" (StartChange Back) "block"
+            Button 2.6 4.5 3.66 6.5 "←" (StartChange Back) "block"
 
         reset =
-            Button 8 2 4 4 "Reset" Reset "block"
+            Button 8 4.5 3.66 6.5 "Re" Reset "block"
 
         enterMemory =
             Button 40 20 20 10 "Memory" (StartChange RecallMemory) "block"
 
         next =
-            Button 8.5 87.5 5 8 "Next" (StartChange (MovePage 1)) "block"
+            Button 8.5 87.5 5 8 "→" (StartChange (MovePage 1)) "block"
 
         prev =
-            Button 2.8 87.5 4.2 8 "Prev" (StartChange (MovePage -1)) "block"
+            Button 2.8 87.5 4.2 8 "←" (StartChange (MovePage -1)) "block"
 
         achieve =
             Button 40 50 20 10 "Achievement" (StartChange Achievement) "block"
@@ -685,9 +682,8 @@ render_ui_button cstate =
     in
     case cstate of
         0 ->
-            [ trans_button_sq pause
+            [ test_button pause
             , test_button reset
-            , test_button testMemory
             ]
 
         1 ->
@@ -756,3 +752,8 @@ play_piano_audio currentScene objectSet =
                 div [] []
     in
     List.map (play_piano_audio_help currentScene) objectSet
+
+
+
+        
+        

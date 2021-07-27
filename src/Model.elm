@@ -4,7 +4,6 @@ import Document exposing (Document, initial_docu)
 import Draggable
 import Gradient exposing (ColorState(..), GradientState(..), Screen)
 import Intro exposing (IntroPage, initial_intro)
-import Inventory exposing (Grid(..), Inventory, initial_inventory)
 import Memory exposing (Memory, initial_memory)
 import Object exposing (..)
 import Picture exposing (Picture, initial_pictures)
@@ -22,13 +21,13 @@ type alias Model =
     , spcPosition : ( Float, Float )
     , drag : Draggable.State ()
     , pictures : List Picture
-    , inventory : Inventory
-    , underUse : Grid
+    , underUse : Int
     , memory : List Memory
     , docu : List Document
     , move_timer : Float
     , opac : Float
-    , intro : IntroPage
+    , intro : IntroPage-- 可以做掉
+    , checklist : CheckList
     }
 
 
@@ -44,13 +43,15 @@ initial =
         ( 0, 0 )
         Draggable.init
         initial_pictures
-        initial_inventory
-        Blank
+        99
         initial_memory
         initial_docu
         0
         1
         initial_intro
+        initial_checklist
+        
+
 
 
 initial_screen : Screen
@@ -65,6 +66,17 @@ initial_screen =
 initial_target : Screen
 initial_target =
     Screen 98 1 0 -1 -1 -1
+
+
+type alias CheckList =
+    { level1light : Bool
+    , level1coffee : Bool
+    , level1liquid : Bool
+    , level1lowercab : Bool
+    }
+
+initial_checklist : CheckList
+initial_checklist = (CheckList False False False False)
 
 
 list_index_object : Int -> List Object -> Object

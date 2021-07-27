@@ -6,12 +6,21 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
+import Svg.Events
+import List exposing (foldr)
+
+
+
 
 
 type alias MirrorModel =
     { frame : List Location
     , lightSet : List Line
     , mirrorSet : List Mirror
+    , stage : (PassState, PassState)
+    , keyboard : List Int
+    , keyIndex : List Int
+    , answer : Int
     }
 
 
@@ -24,6 +33,10 @@ initialMirror =
         , Mirror (Line (Location 350 100) (Location 350 0)) 2
         , Mirror (Line (Location 50 100) (Location 50 0)) 3
         ]
+        (NotYet, NotYet)
+        (List.repeat 26 0)
+        (List.range 4 29)
+        -1
 
 
 generate_one_frame : ( Float, Float ) -> Location
@@ -53,6 +66,63 @@ generate_frames size =
         |> List.map generate_one_frame
 
 
+switch_key : Int -> Int
+switch_key old =
+    if old == 0 then
+        1
+    else
+        0
+
+
+
+correct_answer_1 : List Int
+correct_answer_1 = [ 0, 0, 1, 1, 0, 0, 0, 1, 0, 0
+                   , 1, 0, 0, 0, 0, 0, 0, 1, 0
+                   , 0, 0, 0, 0, 0, 1, 0
+                   ]
+correct_answer_2 : List Int
+correct_answer_2 = [ 0, 0, 1, 1, 1, 0, 0, 0, 1, 0
+                   , 1, 1, 0, 0, 0, 1, 0, 0, 1
+                   , 0, 0, 1, 0, 0, 1, 0
+                   ]
+
+correct_answer_3 : List Int
+correct_answer_3 = [ 0, 0, 1, 1, 1, 1, 0, 0, 1, 0
+                   , 0, 0, 0, 0, 0, 0, 0, 0, 1
+                   , 0, 0, 1, 1, 0, 1, 0
+                   ]
+
+
+test_keyboard_win_inside : MirrorModel -> MirrorModel
+test_keyboard_win_inside old =
+    if List.any (\x -> x ==  old.keyboard)  [correct_answer_1, correct_answer_2, correct_answer_3] then
+        { old | stage = (Pass, Pass)}
+    else
+        old
+--need bug
+
+
+refresh_keyboard : Int -> MirrorModel -> MirrorModel
+refresh_keyboard index old =
+    if index <= 3 then
+        old
+    else
+        let
+            fin id keyid keyb =
+                if id == keyid then
+                    switch_key keyb
+                else
+                    keyb
+        
+            newKeyb = List.map2 (fin index) old.keyIndex old.keyboard
+        in 
+            { old | keyboard = newKeyb }
+
+
+
+
+
+
 frameWidth =
     100.0
 
@@ -64,6 +134,93 @@ frameHeight =
 toFloatPoint : ( Int, Int ) -> ( Float, Float )
 toFloatPoint ( x, y ) =
     ( Basics.toFloat x, Basics.toFloat y )
+
+
+render_mirror : MirrorModel -> List (Svg Msg)
+render_mirror a =
+    let
+        key = if ( a.stage |> Tuple.first ) == Pass then
+                    draw_keyboard a.keyboard a.keyIndex
+              else
+                    []
+
+    in
+    
+       draw_frame a.frame 
+    ++ draw_mirror a.mirrorSet 
+    ++ draw_light a.lightSet
+    ++ draw_question a.stage a.answer
+    ++ key
+    ++ draw_test_info a.keyboard
+    ++ draw_test_info correct_answer_1
+    ++ [svg_text_2 500 800 600 100 (toString a.stage)]
+
+
+draw_test_info : List Int -> List (Svg Msg)
+draw_test_info mirr =
+    let
+        newc = ( \x y-> y ++ (toString x) ++ " ")
+        content = List.foldl newc " " mirr
+    in
+    
+    [
+        svg_text_2 500 750 600 100 content
+    ]
+
+
+draw_question : (PassState, PassState) -> Int -> List (Svg Msg)
+draw_question (a, b) answer =
+    if a == NotYet then
+        []
+    else if b == NotYet then
+        [
+            svg_text_2 500 300 100 100 "Who is my favourite female character?"
+        ]
+    else
+        [
+            svg_text_2 500 300 100 100 ( toString answer )
+        ]
+
+
+draw_keyboard : List Int -> List Int -> List (Svg Msg)
+draw_keyboard keyboard kid =
+    let
+        list_x = [ 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050
+                 , 600, 650, 700, 750, 800, 850, 900, 950, 1000
+                 , 600, 650, 700, 750, 800, 850, 900
+                 ]
+        list_y = [ 400, 400, 400, 400, 400, 400, 400, 400, 400, 400
+                 , 450, 450, 450, 450, 450, 450, 450, 450, 450
+                 , 500, 500, 500, 500, 500, 500, 500
+                 ]
+    in
+        List.map4 draw_one_keyboard list_x list_y keyboard kid
+    
+
+draw_one_keyboard : Int -> Int -> Int -> Int -> Svg Msg
+draw_one_keyboard x y sta id =
+    let
+        opa = 
+            if sta == 0 then
+                "0.2"
+            else
+                "0.5"
+    in
+    
+    Svg.rect
+        [ SvgAttr.x (toString x)
+        , SvgAttr.y (toString y)
+        , SvgAttr.width "40"
+        , SvgAttr.height "40"
+        , SvgAttr.fill "black"
+        , SvgAttr.fillOpacity opa
+        , SvgAttr.strokeWidth "1"
+        , SvgAttr.stroke "black"
+        , Svg.Events.onClick (OnClickTriggers id)
+        ]
+        []
+
+
 
 
 draw_light : List Line -> List (Svg msg)
