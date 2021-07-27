@@ -7,7 +7,6 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Svg.Events
 
 
 render_trophy_button : Html Msg
@@ -17,6 +16,16 @@ render_trophy_button =
             Button.Button 66 41 21 9 "" (StartChange (ChangeScene 10)) ""
     in
     test_button enter
+
+
+
+--render_bookshelf_button : Html Msg
+--render_bookshelf_button =
+--    let
+--        enter =
+--            Button.Button 70 15 10 10 "" (StartChange (ChangeScene 10)) ""
+--    in
+--    test_button enter
 
 
 type Direction
@@ -327,21 +336,14 @@ draw_bookshelf bookshelf =
 
                 _ ->
                     "assets/trophy/trophy_bg.png"
-
-        bg =
-            [ Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref state
-                ]
-                []
-            ]
     in
-    case bookshelf.trophy.face of
-        Front ->
-            bg ++ List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
-
-        _ ->
-            bg ++ draw_trophy bookshelf.trophy
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref state
+        ]
+        []
+    ]
+        ++ List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
