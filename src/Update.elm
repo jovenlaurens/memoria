@@ -19,7 +19,7 @@ import Pdolls exposing (..)
 import Pfragment exposing (FragmentState(..))
 import Picture exposing (Picture, ShowState(..), list_index_picture, show_index_picture)
 import Pmirror exposing (LightState(..), refresh_keyboard, test_keyboard_win_inside)
-import Ppiano exposing (bounce_key, press_key)
+import Ppiano exposing (bounce_key, check_order, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Svg.Attributes exposing (color, speed)
@@ -94,7 +94,7 @@ update msg model =
             ( update_onclicktrigger model number
                 |> test_clock_win
                 |> test_mirror_win
-                --|> test_pinao_win
+                |> test_piano_win
                 |> test_fragment_win
                 |> test_bulb_win
             , Cmd.none
@@ -422,16 +422,27 @@ test_clock_win model =
 
 {-| the any should be replaced by custom type because if clock win the mirror will also show the picture
 -}
+test_piano_win : Model -> Model
+test_piano_win model =
+    let
+        flag =
+            List.any test_piano_win_help model.objects
+    in
+    if flag then
+        { model | pictures = show_index_picture 1 model.pictures }
+
+    else
+        model
 
 
+test_piano_win_help : Object -> Bool
+test_piano_win_help object =
+    case object of
+        Piano a ->
+            check_order a.playedKey
 
---test_piano_win : Model->Model
---test_piano_win model
---test_piano_win_help : Object -> Bool
---test_piano_win_help object =
---    case object of
---        Piano a->
---            let
+        _ ->
+            False
 
 
 test_mirror_win : Model -> Model
@@ -808,7 +819,7 @@ try_to_update_piano_help : Int -> Float -> Object -> Object
 try_to_update_piano_help index time object =
     case object of
         Piano a ->
-            Piano { a | currentMusic = index, pianoKeySet = press_key index time a.pianoKeySet }
+            Piano { a | currentMusic = index, pianoKeySet = press_key index time a.pianoKeySet, playedKey = List.append a.playedKey [ index ] }
 
         _ ->
             object

@@ -1,5 +1,6 @@
 module Ppiano exposing (..)
 
+import Button exposing (Button, test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
@@ -76,7 +77,7 @@ bounce_key time keySet =
     let
         bounce_key_help : Float -> PianoKey -> PianoKey
         bounce_key_help currentTime key =
-            if currentTime - key.press_time > 900 && key.keyState == Down then
+            if currentTime - key.press_time > 500 && key.keyState == Down then
                 { key | keyState = Up, press_time = 0 }
 
             else
@@ -139,15 +140,15 @@ draw_single_key key =
 check_order : List Int -> Bool
 check_order list =
     case list of
-        x :: x1 :: x2 :: lst ->
+        x :: x1 :: x2 :: x3 :: x4 :: x5 :: x6 :: lst ->
             let
                 target =
-                    [ 1, 2, 3 ]
+                    [ 1, 1, 4, 5, 1, 4 ]
 
                 newList =
                     List.drop 1 list
             in
-            if x == 1 && x1 == 2 && x2 == 3 then
+            if [ x, x1, x2, x3, x4, x5, x6 ] == target then
                 True
 
             else
@@ -155,3 +156,13 @@ check_order list =
 
         _ ->
             False
+
+
+render_piano_button : List (Html Msg)
+render_piano_button =
+    let
+        but =
+            Button.Button 16 60 21 10 "" (StartChange (ChangeScene 7)) ""
+    in
+    test_button but
+        |> List.singleton

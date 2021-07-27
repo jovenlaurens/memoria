@@ -13,7 +13,7 @@ render_trophy_button : Html Msg
 render_trophy_button =
     let
         enter =
-            Button.Button 20 20 10 10 "" (StartChange (ChangeScene 10)) ""
+            Button.Button 66 41 21 9 "" (StartChange (ChangeScene 10)) ""
     in
     test_button enter
 
@@ -113,7 +113,7 @@ initial_bookshelf =
     Bookshelf
         (List.map initial_bookshelf_help indexSet)
         Invisible
-        ( 1, 1 )
+        ( 1, 2 )
         Full
         (Trophy Left (Location 200 100))
 
@@ -251,30 +251,77 @@ draw_trophy trophy =
 
 draw_bookshelf_index : Bookshelf -> List (Svg Msg)
 draw_bookshelf_index bookshelf =
-    List.map draw_book_index bookshelf.books
+    List.map (draw_book_index bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
 
 
-draw_book_index : Book -> Svg Msg
-draw_book_index book =
+draw_book_index : ( Int, Int ) -> BookChoice -> Book -> Svg Msg
+draw_book_index ( x, y ) choice book =
     let
         txt =
             String.fromInt book.index
+
+        delta_y =
+            if x /= y then
+                if book.index == x then
+                    -20
+
+                else if book.index == y && choice == Full then
+                    -20
+
+                else
+                    0
+
+            else
+                case choice of
+                    One ->
+                        if book.index == x then
+                            -20
+
+                        else
+                            0
+
+                    Full ->
+                        0
     in
     Svg.text_
         [ SvgAttr.x (String.fromFloat book.anchor.x)
-        , SvgAttr.y (String.fromFloat book.anchor.y)
+        , SvgAttr.y (String.fromFloat (book.anchor.y + delta_y))
         , SvgAttr.fill "Red"
         ]
         [ text txt ]
 
 
-draw_book : Book -> Svg Msg
-draw_book book =
+draw_book : ( Int, Int ) -> BookChoice -> Book -> Svg Msg
+draw_book ( x, y ) choice book =
+    let
+        delta_y =
+            if x /= y then
+                if book.index == x then
+                    -20
+
+                else if book.index == y && choice == Full then
+                    -20
+
+                else
+                    0
+
+            else
+                case choice of
+                    One ->
+                        if book.index == x then
+                            -20
+
+                        else
+                            0
+
+                    Full ->
+                        0
+    in
     Svg.rect
         [ SvgAttr.width "50"
         , SvgAttr.height "50"
         , SvgAttr.x (String.fromFloat book.anchor.x)
-        , SvgAttr.y (String.fromFloat book.anchor.y)
+        , SvgAttr.y (String.fromFloat (book.anchor.y + delta_y))
         , SvgAttr.stroke "Pink"
         , SvgAttr.fill "Blue"
         , SvgAttr.strokeWidth "3"
@@ -286,4 +333,4 @@ draw_book book =
 
 draw_bookshelf : Bookshelf -> List (Svg Msg)
 draw_bookshelf bookshelf =
-    List.map draw_book bookshelf.books
+    List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books

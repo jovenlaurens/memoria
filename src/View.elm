@@ -24,7 +24,7 @@ import Pdolls exposing (drawdoll_ui)
 import Pfragment exposing (..)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_frame, render_inventory, render_picture_button)
 import Pmirror exposing (LightState(..), draw_frame, draw_light, draw_mirror, render_mirror)
-import Ppiano exposing (PianoModel, draw_key_set, play_audio)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio, render_piano_button)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_button)
@@ -309,16 +309,6 @@ render_button_level level model =
 
         _ ->
             render_stair_level level
-
-
-render_piano_button : List (Html Msg)
-render_piano_button =
-    let
-        but =
-            Button.Button 10 10 10 10 "" (StartChange (ChangeScene 7)) ""
-    in
-    test_button but
-        |> List.singleton
 
 
 render_mirror_button : List (Html Msg)
@@ -658,6 +648,17 @@ render_object_only_html cs objs =
     case tar of
         Bul a ->
             render_bulb 8 a ++ [ text "sdfgh" ]
+
+        Piano a ->
+            [ div
+                [ Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "position" "absolute"
+                , Html.Attributes.style "left" "300px"
+                , Html.Attributes.style "top" "450px"
+                ]
+                [ Html.text (Debug.toString a.pianoKeySet) ]
+            ]
 
         _ ->
             []

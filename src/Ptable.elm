@@ -1,6 +1,6 @@
 module Ptable exposing (..)
 
-import Button exposing (test_button)
+import Button exposing (test_button, trans_button_sq)
 import Debug exposing (toString)
 import Geometry exposing (Location)
 import Html exposing (Html)
@@ -8,7 +8,6 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events exposing (onClick)
-import Button exposing (trans_button_sq)
 
 
 type BlockState
@@ -32,11 +31,6 @@ type alias TableModel =
     , lastLocation : Location
     , size : ( Float, Float )
     }
-
-
-
-
-    
 
 
 initial_table : TableModel
@@ -154,113 +148,110 @@ get_point location =
 draw_single_block : Block -> Svg Msg
 draw_single_block block =
     case block.state of
-                Active ->
-                    Svg.rect
-                        []
-                        []
+        Active ->
+            Svg.rect
+                []
+                []
 
-                NonActive ->
-                    Svg.polygon
-                        [ SvgAttr.fill "black"
-                        , SvgAttr.strokeWidth "5"
-                        , SvgAttr.fillOpacity "0.3"
-                        , SvgAttr.points (get_point block.anchor)
-                        , onClick (DecideLegal block.anchor)
-                        --, SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
-                        ]
-                        []
+        NonActive ->
+            Svg.polygon
+                [ SvgAttr.fill "black"
+                , SvgAttr.strokeWidth "5"
+                , SvgAttr.fillOpacity "0.3"
+                , SvgAttr.points (get_point block.anchor)
+                , onClick (DecideLegal block.anchor)
 
-    
+                --, SvgAttr.transform (String.concat [ "rotate( 30", " ", String.fromFloat x, " ", String.fromFloat y, ")" ])
+                ]
+                []
 
 
 draw_block : Bool -> Bool -> Bool -> List Block -> List (Svg Msg)
 draw_block state sta1 sta2 blockSet =
-    (draw_back state)
-  ++ draw_coffee_back sta1 sta2
-  ++ List.map draw_single_block blockSet
+    draw_back state
+        ++ draw_coffee_back sta1 sta2
+        ++ List.map draw_single_block blockSet
 
 
 draw_back : Bool -> List (Svg Msg)
 draw_back sta =
     let
-        light = if sta then
-                    [ Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level1/tablelight.png"
-                        ]
-                        []
-                    , Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level1/lightword.png"
-                        ]
-                        []
+        light =
+            if sta then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/tablelight.png"
                     ]
-                else
                     []
-
-    in
-
-            ( Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+                , Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/lightword.png"
+                    ]
+                    []
                 ]
+
+            else
                 []
-            )
-            ::light
+    in
+    Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+        ]
+        []
+        :: light
 
 
 draw_coffee_back : Bool -> Bool -> List (Svg Msg)
 draw_coffee_back a b =
-    case (a, b) of
-        (_ , True) ->
+    case ( a, b ) of
+        ( _, True ) ->
             []
-        (True, False) ->
-            [
-                Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
-                    ]
-                    []
+
+        ( True, False ) ->
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                ]
+                []
             , Svg.circle
-                    [ SvgAttr.cx "575"
-                    , SvgAttr.cy "560"
-                    , SvgAttr.r "120"
-                    , SvgAttr.fillOpacity "0.0"
-                    , Svg.Events.onClick (OnClickTriggers 0)
-                    ]
-                    []
+                [ SvgAttr.cx "575"
+                , SvgAttr.cy "560"
+                , SvgAttr.r "120"
+                , SvgAttr.fillOpacity "0.0"
+                , Svg.Events.onClick (OnClickTriggers 0)
+                ]
+                []
             ]
-        (False, _) ->
-            [
-                Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
-                    ]
-                    []
+
+        ( False, _ ) ->
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                ]
+                []
             , Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffeebubble.png"
-                    ]
-                    []
-            
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffeebubble.png"
+                ]
+                []
             ]
 
 
