@@ -524,6 +524,17 @@ render_picture_index index =
                 ]
                 []
 
+        3 ->
+            Html.img
+                [ src ("assets/picts/" ++ toString index ++ ".png")
+                , style "top" "50%"
+                , style "left" "60%"
+                , style "width" "20%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
         _ ->
             Debug.todo ""
 

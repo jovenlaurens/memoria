@@ -140,7 +140,7 @@ draw_single_key key =
 check_order : List Int -> Bool
 check_order list =
     case list of
-        x :: x1 :: x2 :: x3 :: x4 :: x5 :: x6 :: lst ->
+        x :: x1 :: x2 :: x3 :: x4 :: x5 :: lst ->
             let
                 target =
                     [ 1, 1, 4, 5, 1, 4 ]
@@ -148,7 +148,7 @@ check_order list =
                 newList =
                     List.drop 1 list
             in
-            if [ x, x1, x2, x3, x4, x5, x6 ] == target then
+            if [ x, x1, x2, x3, x4, x5 ] == target then
                 True
 
             else

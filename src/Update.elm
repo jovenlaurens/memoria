@@ -429,7 +429,7 @@ test_piano_win model =
             List.any test_piano_win_help model.objects
     in
     if flag then
-        { model | pictures = show_index_picture 1 model.pictures }
+        { model | pictures = show_index_picture 3 model.pictures }
 
     else
         model
