@@ -380,10 +380,10 @@ textBase_0 =
        sub_0_0 =
            [
     -}
-    , Page "I don't have to tell you exactly what happened," "Maira" "assets/intro.png" "assets/girl/3.png" Dialogue --8
-    , Page "but if you're really interested..." "Maira" "assets/intro.png" "assets/girl/6.png" Dialogue --9
-    , Page "I met my true love. " "Maira" "assets/intro.png" "assets/girl/1.png" Dialogue --10
-    , Page "I've always wondered what would have happened if I had held on to him." "Maira" "assets/intro.png" "assets/girl/9.png" Dialogue --11
+    , Page "I don't have to tell you exactly what happened," "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --8
+    , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --9
+    , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --10
+    , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --11
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End --12
 
     {- ]
@@ -393,17 +393,17 @@ textBase_0 =
            [
     -}
 
-    , Page "Have you ever been inspired by perfection?" "Maira" "assets/intro.png" "assets/girl/6.png" Dialogue --13
-    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maira" "assets/intro.png" "assets/girl/1.png" Dialogue --14   
-    , Page "What are the limits of perfection?" "Maira" "assets/intro.png" "assets/girl/1.png" Dialogue --15
+    , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --13
+    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14   
+    , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --15
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End --16
 
-    , Page "I'm working on my autobiography." "Maira" "assets/intro.png" "assets/girl/3.png" Dialogue --17
-    , Page "In this record, I want to figure out what I really am." "Maira" "assets/intro.png" "assets/girl/7.png" Dialogue --18
-    , Page "What I look like." "Maira" "assets/intro.png" "assets/girl/7.png" Dialogue --19
-    , Page "How can I talk to myself and figure out what happened?" "Maira" "assets/intro.png" "assets/girl/9.png" Dialogue --20
-    , Page "My daily life, my preference, and something like this." "Maira" "assets/intro.png" "assets/girl/6.png" Dialogue --21
-    , Page "Sorry if my mind surprised you." "Maira" "assets/intro.png" "assets/girl/3.png" Dialogue --22
+    , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --17
+    , Page "In this record, I want to figure out what I really am." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --18
+    , Page "What I look like." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --19
+    , Page "How can I talk to myself and figure out what happened?" "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --20
+    , Page "My daily life, my preference, and something like this." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --21
+    , Page "Sorry if my mind surprised you." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --22
     , Page "End" "" "assets/intro.png" ""  End -- 23
     ]
 

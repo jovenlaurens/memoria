@@ -25,7 +25,7 @@ import Task
 import Pcabinet exposing (CabinetModel)
 import Pcabinet exposing (switch_cabState)
 import Pmirror exposing (refresh_keyboard)
-import Pmirror exposing (test_keyboard_win_inside)
+import Pmirror exposing (test_keyboard_win_inside, LightState(..))
 import Picture exposing (list_index_picture)
 import Pbulb exposing (checkoutwin)
 
@@ -121,8 +121,8 @@ update msg model =
             , Cmd.none
             )
 
-        Lighton ->
-            ( (lighton_doll model)
+        Lighton a ->
+            ( (update_lighton a model)
             , Cmd.none
             )
 
@@ -864,6 +864,32 @@ try_to_update_computer model number =
 
 
 
+--needupdate_lighton : Int -> Model -> Model
+update_lighton number model =
+    case number of
+        0 ->
+           lighton_mirror model
+
+        1 -> 
+            lighton_doll model
+
+        _ ->
+            model
+
+lighton_mirror : Model -> Model
+lighton_mirror model =
+    let
+        toggle mirror =
+            case mirror of
+                Mirror a ->
+                    Mirror { a | lightstate = Light_2_on}
+
+                _ ->
+                    mirror
+    in
+    { model | objects = List.map toggle model.objects }  
+
+
 --need
 lighton_doll : Model -> Model
 lighton_doll model =
@@ -877,7 +903,6 @@ lighton_doll model =
                     dolls
     in
     { model | objects = List.map toggle model.objects }
-
 
 charge_computer : Model -> Int -> Model
 charge_computer model number =

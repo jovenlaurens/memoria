@@ -16,7 +16,8 @@ render_stair_level cl =
             [ trans_button_sq stair_button_level_1l
             , trans_button_sq stair_button_level_1r
             ]
-
+        2->
+            [trans_button_sq stair_button_level_2]
         _ ->
             [ test_button stair_button_level_2 ]
 

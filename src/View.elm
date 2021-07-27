@@ -31,7 +31,7 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
 import Pcabinet exposing (render_cabinet)
-import Pmirror exposing (render_mirror)
+import Pmirror exposing (render_mirror, LightState(..))
 import Picture exposing (render_inventory)
 import Pbulb exposing (Bulb)
 import Button exposing (black_white_but)
@@ -344,7 +344,7 @@ render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
         but =
-            Button.Button 30 30 10 10 "" (StartChange (ChangeScene 4)) ""
+            Button.Button 17 71 10 2 "" (StartChange (ChangeScene 4)) ""
     in
     test_button but
         |> List.singleton
@@ -381,8 +381,8 @@ render_object model =
                     level_1_furniture model.checklist.level1light
                         ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
-                2 -> 
-                    render_level_2
+                2 ->  
+                    (render_level_2 model)
                         ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
                 _ ->
@@ -396,14 +396,79 @@ render_object model =
             ++ render_inventory model.pictures
         )
 
-render_level_2 : List (Svg Msg)
-render_level_2 = 
+render_level_2 : Model -> List (Svg Msg)
+render_level_2 model = 
     [ Svg.image 
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level_2.png"
+            , SvgAttr.xlinkHref "assets/level2/level2.png"
+            ]
+            []
+    ] ++ (render_window model)
+
+
+render_window : Model -> List (Svg Msg)
+render_window model =
+    let
+        toggle mirror =
+            case mirror of
+                Mirror a ->
+                    a.lightstate
+
+                _ ->
+                    Otherobject
+        statelist = List.map toggle model.objects
+
+        state =findlightstate statelist
+    in
+        case state of
+            Light_2_off ->
+                render_window_off
+
+            Light_2_on ->
+                render_window_on
+
+            _->
+                []
+
+findlightstate : List(LightState) -> LightState
+findlightstate list = 
+        case list of
+            x :: xs ->
+                 if (x == Light_2_on || x == Light_2_off) then
+                        x
+                 else
+                    findlightstate xs
+            
+            x ->
+                Otherobject
+            
+
+
+
+render_window_off : List (Svg Msg)
+render_window_off = 
+    [ Svg.image 
+            [ SvgAttr.x "30"
+            , SvgAttr.y "400"
+            , SvgAttr.width "40%"
+            , SvgAttr.height "30%"
+            , SvgAttr.xlinkHref "assets/level2/window_off.png"
+            , Svg.Events.onClick(Lighton 0)
+            ]
+            []
+    ]
+
+render_window_on : List (Svg Msg)
+render_window_on = 
+    [ Svg.image 
+            [ SvgAttr.x "30"
+            , SvgAttr.y "400"
+            , SvgAttr.width "40%"
+            , SvgAttr.height "30%"
+            , SvgAttr.xlinkHref "assets/level2/window_on.png"
             ]
             []
     ]
