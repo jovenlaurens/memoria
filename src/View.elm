@@ -644,7 +644,7 @@ render_object_only model cs objects =
             draw_trophy a.trophy
 
         Book a ->
-            draw_bookshelf a.bookshelf ++ draw_bookshelf_index a.bookshelf ++ draw_trophy a.trophy
+            draw_bookshelf a.bookshelf
 
         Doll a ->
             drawdoll_ui 10 a model.cscreen.clevel

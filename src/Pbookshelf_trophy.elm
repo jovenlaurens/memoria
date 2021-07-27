@@ -7,6 +7,7 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
+import Svg.Events
 
 
 render_trophy_button : Html Msg
@@ -16,16 +17,6 @@ render_trophy_button =
             Button.Button 66 41 21 9 "" (StartChange (ChangeScene 10)) ""
     in
     test_button enter
-
-
-
---render_bookshelf_button : Html Msg
---render_bookshelf_button =
---    let
---        enter =
---            Button.Button 70 15 10 10 "" (StartChange (ChangeScene 10)) ""
---    in
---    test_button enter
 
 
 type Direction
@@ -97,11 +88,11 @@ initial_bookshelf_help number =
             Basics.toFloat number
 
         x =
-            fl * 50
+            fl * 60
     in
     Book
         number
-        (Location x 500.0)
+        (Location (x + 250) 300.0)
 
 
 initial_bookshelf : Bookshelf
@@ -224,26 +215,24 @@ draw_trophy trophy =
         link =
             case trophy.face of
                 Front ->
-                    "1"
+                    "front"
 
                 Rear ->
-                    "2"
+                    "back"
 
                 Left ->
-                    "3"
+                    "left"
 
                 Right ->
-                    "4"
+                    "right"
     in
-    Svg.rect
-        [ SvgAttr.width "200"
-        , SvgAttr.height "200"
-        , SvgAttr.x "600"
-        , SvgAttr.y "100"
-        , SvgAttr.fill "blue"
-        , SvgAttr.stroke "Pink"
-        , SvgAttr.strokeWidth "3"
+    Svg.image
+        [ SvgAttr.width "300"
+        , SvgAttr.height "400"
+        , SvgAttr.x "450"
+        , SvgAttr.y "300"
         , onClick (OnClickTriggers 100)
+        , SvgAttr.xlinkHref ("assets/trophy/" ++ link ++ ".png")
         ]
         []
         |> List.singleton
@@ -317,20 +306,42 @@ draw_book ( x, y ) choice book =
                     Full ->
                         0
     in
-    Svg.rect
-        [ SvgAttr.width "50"
-        , SvgAttr.height "50"
+    Svg.image
+        [ SvgAttr.width "60"
+        , SvgAttr.height "300"
         , SvgAttr.x (String.fromFloat book.anchor.x)
         , SvgAttr.y (String.fromFloat (book.anchor.y + delta_y))
-        , SvgAttr.stroke "Pink"
-        , SvgAttr.fill "Blue"
-        , SvgAttr.strokeWidth "3"
-        , SvgAttr.fillOpacity "0.2"
         , onClick (OnClickTriggers book.index)
+        , SvgAttr.xlinkHref ("assets/book/" ++ String.fromInt book.index ++ ".png")
         ]
         []
 
 
 draw_bookshelf : Bookshelf -> List (Svg Msg)
 draw_bookshelf bookshelf =
-    List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
+    let
+        state =
+            case bookshelf.trophy.face of
+                Front ->
+                    "assets/book/book_back.png"
+
+                _ ->
+                    "assets/trophy/trophy_bg.png"
+
+        bg =
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref state
+                ]
+                []
+            ]
+    in
+    case bookshelf.trophy.face of
+        Front ->
+            bg ++ List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
+
+        _ ->
+            bg ++ draw_trophy bookshelf.trophy

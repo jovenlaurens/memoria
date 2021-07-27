@@ -57,7 +57,7 @@ generate_key_set_help number =
             fl * keyLength
     in
     PianoKey
-        (Location x 400.0)
+        (Location (x + 400) 500.0)
         number
         Up
         0
