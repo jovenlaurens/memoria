@@ -182,6 +182,9 @@ render_memory cm cp =
                 0 ->
                     textBase_0
 
+                1 ->
+                    textBase_1
+
                 _ ->
                     []
 
@@ -329,6 +332,12 @@ render_choice index page =
                 0 ->
                     ( "A story about ideal love", "A fantastic novel", "my autobiography" )
 
+                1 ->
+                    ( "I don't know", "Why not check for ourselves?", "Interesting question." )
+
+                2 ->
+                    ( "Anna Karenina", "Scarlett O 'Hara", "Not very clear." )
+
                 _ ->
                     ( "", "", "" )
     in
@@ -363,7 +372,13 @@ render_choice index page =
     ]
 
 
-textBase_0 : List Page --这个是memory1的对话
+textBase_0 : List Page
+
+
+
+--这个是memory1的对话
+
+
 textBase_0 =
     [ Page "So, I’m in a crowded cafe." "I" "assets/intro.png" "assets/blank.png" Dialogue --0
     , Page "Maria is there!" "I" "assets/intro.png" "assets/girl/3.png" Dialogue --1
@@ -392,28 +407,100 @@ textBase_0 =
        sub_0_1 =
            [
     -}
-
     , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --13
-    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14   
+    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14
     , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --15
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End --16
-
     , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --17
     , Page "In this record, I want to figure out what I really am." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --18
     , Page "What I look like." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --19
     , Page "How can I talk to myself and figure out what happened?" "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --20
     , Page "My daily life, my preference, and something like this." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --21
     , Page "Sorry if my mind surprised you." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --22
-    , Page "End" "" "assets/intro.png" ""  End -- 23
+    , Page "End" "" "assets/intro.png" "" End -- 23
     ]
+
+
 
 --可以这样，List String （对话文字） List String （人物） List String（背景路径） Listing String (人物图像路径) （类型（实际上thought没有用到））
 --然后map
 
+
+textBase_1 : List Page
+textBase_1 =
+    [ Page "It’s a brilliant summer night." "I" "assets/intro.png" "assets/blank.png" Dialogue --0
+    , Page "Our first date, under the hanabi." "I" "assets/intro.png" "assets/girl/3.png" Dialogue --1
+    , Page "Suddenly, a weird thought comes to my mind," "I" "assets/intro.png" "assets/girl/3.png" Dialogue --2
+    , Page "What’s the actual shape of a hanabi? Is it like a sphere, or a disc? " "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue --3
+    , Page "Maria replied" "" "assets/intro.png" "assets/girl/3.png" Dialogue --4
+    , Page "" "" "assets/intro.png" "" (Choose 1) --5
+
+    -- 2A: I don't know
+    , Page "I don’t know." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --6
+    , Page "It’s so beautiful yet so sad." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --7
+    , Page "Just like real life, huh?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --8
+    , Page "I know what you mean." "Jerome" "assets/intro.png" "assets/girl/9.png" Dialogue --9
+    , Page "We don't appreciate beauty until we lose it. " "Jerome" "assets/intro.png" "assets/girl/9.png" Dialogue --10
+    , Page "Exactly." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --11
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --12
+
+    -- 2B: Why not check for ourselves?
+    , Page "Let's find out!" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --13
+    , Page "Just take a Montgolfier and fly through the sky, when the fireworks begin." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14
+    , Page "It must be amazing!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --15
+    , Page "Sounds cool!" "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --16
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --17
+
+    -- 2C: Interesting question.
+    , Page "It’s an interesting question." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --18
+    , Page "However, instead of watching it from outside, what if we stood inside the hanabi?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --19
+    , Page "How can it turn from a small black ball into a brilliant scene?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --20
+    , Page "Maria thinks about things from a peculiar perspective." "I" "assets/intro.png" "assets/girl/9.png" Dialogue --21
+    , Page "Seems that she is always investigating inner parts of one thing." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --22
+    , Page "Now it’s my turn to give you a question!" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --23
+    , Page "For what?" "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue --24
+    , Page "Just guess: who is my favorite female character?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --25
+    , Page "" "" "assets/intro.png" "" (Choose 2) --26
+
+    --3A: Anna Karenina
+    , Page "Anna Karenina? " "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue --27
+    , Page "The first time I read this book, I was impressed by her courage to love, even though the ending isn't satisfactory." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --28
+    , Page "She never met the right one." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --29
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --30
+
+    --3B: Scarlett O 'Hara
+    , Page "Scarlett? You know her." "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue --31
+    , Page "Exactly! How can you read my mind? Her brave, aggressive heart is so appealing to me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --32
+    , Page "But, you two are not the same." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --33
+    , Page "Maybe a little." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --34
+    , Page "Like how?" "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue --35
+    , Page "Too many things in her world: Man, money and her land." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --36
+    , Page "I’m different from her!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --37
+    , Page "That means you don’t like money?" "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --38
+    , Page "I like it!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --39
+    , Page "But my love is bigger than money." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --40
+    , Page "Wish I could understand." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --41
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --42
+
+    -- #c: Not very clear
+    , Page "I can’t pick one." "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue --43
+    , Page "You are too complex for me to know." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --44
+    , Page "It happens." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --45
+    , Page "It’s of course a trouble for me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --46
+    , Page "Who can figure out their own personality?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --47
+    , Page "You are always the unique one." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue --48
+    , Page "That may become a problem, a serious problem, one day……" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --49
+    , Page "Maria’s voice is covered by the fireworks, gradually. " "I" "assets/intro.png" "assets/girl/1.png" Dialogue --50
+    , Page "Through these months, I can ensure that she is undoubtedly an unusual woman." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --51
+    , Page "and from her eyes, I can feel a sense of glamour, secret but dangerous." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --52
+    , Page "But I love her." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --53
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --54
+    ]
+
+
 sub_0_2 : List Page
 sub_0_2 =
     []
-
 
 
 default_page : Page
