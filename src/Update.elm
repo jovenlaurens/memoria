@@ -10,7 +10,7 @@ import Intro exposing (get_new_intro)
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), get_time, test_table)
+import Object exposing (ClockModel, Object(..), get_time, test_table, get_doll_number, get_pig_state)
 import Pbulb exposing (Color(..),  update_bulb_inside)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
@@ -28,6 +28,7 @@ import Pmirror exposing (refresh_keyboard)
 import Pmirror exposing (test_keyboard_win_inside, LightState(..))
 import Picture exposing (list_index_picture)
 import Pbulb exposing (checkoutwin)
+import Object exposing (get_pig_state)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -101,6 +102,8 @@ update msg model =
               --|> test_pinao_win
                 |> test_fragment_win
                 |> test_bulb_win
+                |> test_doll_win
+                |> test_pig_mash
             , Cmd.none
             )
 
@@ -449,7 +452,38 @@ test_mirror_win model =
     else
         model
 
+test_doll_win : Model -> Model 
+test_doll_win model = 
+    let
+        dol =
+            list_index_object 13 model.objects
 
+        num = get_doll_number dol
+
+        pic2 = list_index_picture 2 model.pictures
+    in
+        if num == 4 && pic2.state == NotShow then
+        { model | pictures = show_index_picture 2 model.pictures }
+
+         else
+        model
+
+
+test_pig_mash : Model -> Model 
+test_pig_mash model = 
+    let
+        dol =
+            list_index_object 13 model.objects
+
+        state = get_pig_state dol
+
+        pic7 = list_index_picture 7 model.pictures
+    in
+        if state == Broken && pic7.state == NotShow then
+        { model | pictures = show_index_picture 7 model.pictures }
+
+         else
+        model
 
 
 show_phone_question : Object -> Object
