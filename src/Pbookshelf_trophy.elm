@@ -115,7 +115,7 @@ initial_bookshelf =
         Invisible
         ( 1, 2 )
         Full
-        (Trophy Left (Location 200 100))
+        (Trophy Right (Location 200 100))
 
 
 rotate_trophy : Trophy -> Trophy
