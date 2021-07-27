@@ -3,7 +3,6 @@ module Pbookshelf_trophy exposing (..)
 import Button exposing (test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
@@ -14,18 +13,19 @@ render_trophy_button : Html Msg
 render_trophy_button =
     let
         enter =
-            Button.Button 20 20 10 10 "" (StartChange (ChangeScene 11)) ""
+            Button.Button 20 20 10 10 "" (StartChange (ChangeScene 10)) ""
     in
     test_button enter
 
 
-render_bookshelf_button : Html Msg
-render_bookshelf_button =
-    let
-        enter =
-            Button.Button 70 15 10 10 "" (StartChange (ChangeScene 10)) ""
-    in
-    test_button enter
+
+--render_bookshelf_button : Html Msg
+--render_bookshelf_button =
+--    let
+--        enter =
+--            Button.Button 70 15 10 10 "" (StartChange (ChangeScene 10)) ""
+--    in
+--    test_button enter
 
 
 type Direction
@@ -62,11 +62,13 @@ type alias Bookshelf =
     , viewState : ViewState
     , changeIndex : ( Int, Int )
     , choiceState : BookChoice
+    , trophy : Trophy
     }
 
 
 type alias BookletModel =
     { bookshelf : Bookshelf
+    , trophy : Trophy
     }
 
 
@@ -79,6 +81,7 @@ initial_book_model : BookletModel
 initial_book_model =
     BookletModel
         initial_bookshelf
+        (Trophy Left (Location 200 100))
 
 
 initial_trophy_model : TrophyModel
@@ -112,6 +115,7 @@ initial_bookshelf =
         Invisible
         ( 1, 1 )
         Full
+        (Trophy Left (Location 200 100))
 
 
 rotate_trophy : Trophy -> Trophy
@@ -216,6 +220,21 @@ foldl_help ( b1, b2 ) shelfItem newlst =
 
 draw_trophy : Trophy -> List (Svg Msg)
 draw_trophy trophy =
+    let
+        link =
+            case trophy.face of
+                Front ->
+                    "1"
+
+                Rear ->
+                    "2"
+
+                Left ->
+                    "3"
+
+                Right ->
+                    "4"
+    in
     Svg.rect
         [ SvgAttr.width "200"
         , SvgAttr.height "200"
@@ -224,7 +243,7 @@ draw_trophy trophy =
         , SvgAttr.fill "blue"
         , SvgAttr.stroke "Pink"
         , SvgAttr.strokeWidth "3"
-        , onClick (OnClickTriggers 0)
+        , onClick (OnClickTriggers 100)
         ]
         []
         |> List.singleton
