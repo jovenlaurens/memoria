@@ -406,7 +406,16 @@ render_level_2 model =
             , SvgAttr.xlinkHref "assets/level2/level2.png"
             ]
             []
+    ,Svg.image
+            [ SvgAttr.x "70%"
+            , SvgAttr.y "60%"
+            , SvgAttr.width "2%"
+            , SvgAttr.xlinkHref "assets/level2/doll.png"
+            ]
+            []
     ] ++ (render_window model)
+
+
 
 
 render_window : Model -> List (Svg Msg)
@@ -539,6 +548,27 @@ render_picture_index index =
                 , style "top" "50%"
                 , style "left" "60%"
                 , style "width" "20%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+        2 -> 
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "28%"
+                , style "left" "33%"
+                , style "width" "2%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
+        7 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "25%"
+                , style "left" "59%"
+                , style "width" "6%"
                 , style "position" "absolute"
                 , onClick (OnClickItem index)
                 ]
