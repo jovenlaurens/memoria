@@ -50,10 +50,6 @@ generate_one_frame position =
     Location (frameWidth * Tuple.first position + 1) (frameHeight * Tuple.second position - 1)
 
 
-
-{- the input need to be a tuple -}
-
-
 generate_frames : ( Int, Int ) -> List Location
 generate_frames size =
     let
