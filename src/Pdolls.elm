@@ -17,7 +17,12 @@ type alias DollModel =
     { number :Int
     , state : Dollstate
     , cscene : Int
+    , pig :Pigstate
     }
+
+type Pigstate 
+        = Whole
+        | Broken
 
 type Dollstate 
         = Invisible 
@@ -27,12 +32,16 @@ type Dollstate
 
 initDollModel : DollModel
 initDollModel =
-    DollModel 0 Invisible 0 
+    DollModel 0 Invisible 0 Whole
 
 updatedolltrigger : Int -> DollModel -> DollModel
 updatedolltrigger number model =
-     if model.number > number then
+     if number == 99 then
+        { model | pig = Broken}
+
+     else if model.number > number then
             model
+
      else
         { model | number = model.number + 1}
         
@@ -43,19 +52,59 @@ drawdoll_ui scene model cle =
     if cle == 2 then
         case scene of
             0 ->
-                case model.state of
-                    Invisible ->
-                        drawpowerbutton
-                    Visible ->
-                        drawpowerbutton ++ drawdoll_0
+                    drawpowerbutton ++ drawdoll_0 ++ (draw_pig_out model.pig)
 
             10 ->
-                    drawdolls model.number
+                    drawbed ++ (drawdolls model.number) ++ (drawpig model.pig)
             _ ->
                 []
     else
         []
 
+
+drawpig : Pigstate -> List (Svg Msg)
+drawpig state = 
+    case state of
+        Whole ->
+            drawwholepig
+
+        Broken ->
+            drawbrokenpig
+
+drawwholepig : List (Svg Msg)
+drawwholepig = 
+    [Svg.image
+            [ SvgAttr.x "55%"
+            , SvgAttr.y "17%"
+            , SvgAttr.width "17%"
+            , SvgAttr.xlinkHref "assets/level2/pig_in_whole.png"
+            , Svg.Events.onClick(OnClickTriggers 99)
+
+            ]
+            []]
+
+
+drawbrokenpig : List (Svg Msg)
+drawbrokenpig = 
+    [Svg.image
+            [ SvgAttr.x "54%"
+            , SvgAttr.y "17%"
+            , SvgAttr.width "17%"
+            , SvgAttr.xlinkHref "assets/level2/pig_in_broken.png"
+            ]
+            []]
+
+
+drawbed : List( Svg Msg)
+drawbed = 
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level2/bed.png"
+            ]
+            []]
 
 drawpowerbutton : List (Svg Msg)
 drawpowerbutton = 
@@ -66,7 +115,7 @@ drawpowerbutton =
             , SvgAttr.height "50"
             , SvgAttr.fillOpacity "0.0"
             , Svg.Events.onClick (Lighton 1)
-            ]
+            ] 
             []
         ]
 
@@ -74,23 +123,62 @@ drawpowerbutton =
 drawdoll_0 : List (Svg Msg)
 drawdoll_0 = 
         [Svg.rect
-            [ SvgAttr.x "1145"
-            , SvgAttr.y "480"
-            , SvgAttr.width "25"
+            [ SvgAttr.x "1090"
+            , SvgAttr.y "550"
+            , SvgAttr.width "250"
             , SvgAttr.height "50"
             , SvgAttr.fillOpacity "0.0"
             , Svg.Events.onClick (StartChange (ChangeScene 14))
             ][]
         ]
         
+draw_pig_out : Pigstate -> List (Svg Msg)
+draw_pig_out state = 
+    case state of
+        Whole ->
+            draw_pig_out_whole
+
+        Broken ->
+            draw_pig_out_broken
+
+draw_pig_out_whole : List (Svg Msg)
+draw_pig_out_whole = 
+    [Svg.image
+            [ SvgAttr.x "90%"
+            , SvgAttr.y "58%"
+            , SvgAttr.width "5%"
+            , SvgAttr.xlinkHref "assets/level2/pig_out_whole.png"
+            ]
+            []]
+
+draw_pig_out_broken : List (Svg Msg)
+draw_pig_out_broken = 
+    [Svg.image
+            [ SvgAttr.x "90%"
+            , SvgAttr.y "59%"
+            , SvgAttr.width "5%"
+            , SvgAttr.xlinkHref "assets/level2/pig_out_broken.png"
+            ]
+            []]
 
 drawdolls : Int -> List (Svg Msg)
 drawdolls number = 
-     if number > 5 then
+     if number > 4 then
         drawdolls (number - 1 )
-    
+
+     else  if number == 4 then
+            drawdolls_bottom (number - 1)
+
      else  if number >= 0 then
-         (drawonedoll number) ++ drawdolls (number - 1)
+         (drawonedoll number) ++ drawdolls_bottom (number - 1 )
+     
+     else
+         []    
+        
+drawdolls_bottom : Int -> List (Svg Msg)
+drawdolls_bottom number = 
+    if number >= 0 then
+         (drawonedoll_bottom number) ++ drawdolls_bottom (number - 1)
      
      else
          []    
@@ -100,20 +188,45 @@ drawonedoll : Int ->  List (Svg Msg)
 drawonedoll number =
     
     let
-        size  = String.fromInt (10 * 2 ^ (5 - number))
+        size_x  = String.fromFloat (20 * (1.3) ^(toFloat(5 - number)))
 
-        cx = String.fromInt (900 - (10 * (2 ^ (6 - number) - 1)))
 
-        cy = String.fromInt (500 - (10 * 2 ^ (5 - number)))
+        size_y  = String.fromFloat (30 * (1.3) ^(toFloat(5 - number)))
+
+        cx = String.fromFloat (500 - (20 * (1.6) ^(toFloat(5 - number))))
+
+        cy = String.fromFloat (260 + (20 * (1.25) ^(toFloat(5 - number))))
 
     in 
-        [Svg.rect 
-            [SvgAttr.x cx
-            ,SvgAttr.y cy
-            ,SvgAttr.width size
-            ,SvgAttr.height size
-            , SvgAttr.fill "yellow"
-            , SvgAttr.stroke "black"
-            , SvgAttr.strokeWidth "2"
-            , Svg.Events.onClick (OnClickTriggers number)
-            ][]]
+        [Svg.image
+            [ SvgAttr.x cx
+            , SvgAttr.y cy
+            , SvgAttr.width size_x
+            , SvgAttr.height size_y
+            , SvgAttr.xlinkHref "assets/level2/doll.png"
+            , Svg.Events.onClick(OnClickTriggers number)
+            ]
+            []]
+
+drawonedoll_bottom : Int ->  List (Svg Msg)
+drawonedoll_bottom number =
+    
+    let
+        size_x  = String.fromFloat (20 * (1.3) ^(toFloat(5 - number)))
+
+
+        size_y  = String.fromFloat (30 * (1.3) ^(toFloat(5 - number)))
+
+        cx = String.fromFloat (500 - (20 * (1.6) ^(toFloat(5 - number))))
+
+        cy = String.fromFloat (270 + (20 * (1.25) ^(toFloat(5 - number))))
+
+    in 
+        [Svg.image
+            [ SvgAttr.x cx
+            , SvgAttr.y cy
+            , SvgAttr.width size_x
+            , SvgAttr.height size_y
+            , SvgAttr.xlinkHref "assets/level2/doll_in_down.png"
+            ]
+            []]

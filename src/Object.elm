@@ -10,7 +10,7 @@ import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 import Pfragment exposing (FragmentModel, initfraModel)
 import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
-import Pdolls exposing (DollModel, initDollModel)
+import Pdolls exposing (DollModel, initDollModel, Pigstate(..))
 import Pcabinet exposing (CabinetModel)
 import Pcabinet exposing (initial_cab_1)
 import Pcabinet exposing (initial_cab_2)
@@ -59,6 +59,33 @@ get_time obj =
                     Debug.todo "abab"
     in
     ( modBy 12 orihour, modBy 60 oriminute )
+
+
+get_doll_number : Object -> Int
+get_doll_number obj = 
+    let
+        num =
+            case obj of
+                Doll a ->
+                    a.number
+
+                _ ->
+                    Debug.todo "abab"
+    in
+        num
+
+get_pig_state : Object -> Pigstate
+get_pig_state obj = 
+    let
+        state =
+            case obj of
+                Doll a ->
+                    a.pig
+
+                _ ->
+                    Debug.todo "abab"
+    in
+        state
 
 
 test_table : Location -> Object -> Object
