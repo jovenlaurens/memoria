@@ -7,6 +7,7 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
+import Svg.Events
 
 
 keyLength =
@@ -116,23 +117,21 @@ draw_key_set pianoKeySet =
 draw_single_key : PianoKey -> Svg Msg
 draw_single_key key =
     let
-        color =
+        deltay =
             case key.keyState of
                 Up ->
-                    "Blue"
+                    0
 
                 Down ->
-                    "Green"
+                    100
     in
-    Svg.rect
-        [ SvgAttr.width (String.fromFloat keyLength)
-        , SvgAttr.height (String.fromFloat keyWidth)
+    Svg.image
+        [ SvgAttr.width "2%"
+        , SvgAttr.height "6%"
         , SvgAttr.x (String.fromFloat key.anchor.x)
-        , SvgAttr.y (String.fromFloat key.anchor.y)
-        , SvgAttr.fill color
-        , SvgAttr.stroke "Pink"
-        , SvgAttr.strokeWidth "3"
-        , onClick (OnClickTriggers key.index)
+        , SvgAttr.y (String.fromFloat (key.anchor.y + deltay))
+        , SvgAttr.xlinkHref "assets/h1.jpg"
+        , Svg.Events.onClick (OnClickTriggers key.index)
         ]
         []
 
