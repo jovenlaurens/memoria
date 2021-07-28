@@ -3,32 +3,55 @@ module Pmirror exposing (..)
 import Debug exposing (toString)
 import Geometry exposing (..)
 import Html.Events exposing (onClick)
+import List exposing (foldr)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
 import Svg.Events
-import List exposing (foldr)
 
 
-
-type LightState 
-        = Light_2_on
-        | Light_2_off
-        | Otherobject
+{-| This module is to accomplish the puzzle of mirror game
 
 
+# Functions
+
+@docs initialMirror
+@docs test_keyboard_win_inside
+@docs refresh_keyboard
+@docs render_mirror
+@docs draw_light
+@docs draw_mirror
+
+
+# Datatype
+
+-}
+
+
+{-| Decide whether to show the light
+-}
+type LightState
+    = Light_2_on
+    | Light_2_off
+    | Otherobject
+
+
+{-| Contain the field
+-}
 type alias MirrorModel =
     { lightstate : LightState
     , frame : List Location
     , lightSet : List Line
     , mirrorSet : List Mirror
-    , stage : (PassState, PassState)
+    , stage : ( PassState, PassState )
     , keyboard : List Int
     , keyIndex : List Int
     , answer : Int
     }
 
 
+{-| This function is to initial the MirrorModel
+-}
 initialMirror : MirrorModel
 initialMirror =
     MirrorModel
@@ -39,7 +62,7 @@ initialMirror =
         , Mirror (Line (Location 350 100) (Location 350 0)) 2
         , Mirror (Line (Location 50 100) (Location 50 0)) 3
         ]
-        (NotYet, NotYet)
+        ( NotYet, NotYet )
         (List.repeat 26 0)
         (List.range 4 29)
         -1
@@ -76,57 +99,139 @@ switch_key : Int -> Int
 switch_key old =
     if old == 0 then
         1
+
     else
         0
 
 
-
 correct_answer_1 : List Int
-correct_answer_1 = [ 0, 0, 1, 1, 0, 0, 0, 1, 0, 0
-                   , 1, 0, 0, 0, 0, 0, 0, 1, 0
-                   , 0, 0, 0, 0, 0, 1, 0
-                   ]
+correct_answer_1 =
+    [ 0
+    , 0
+    , 1
+    , 1
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    ]
+
+
 correct_answer_2 : List Int
-correct_answer_2 = [ 0, 0, 1, 1, 1, 0, 0, 0, 1, 0
-                   , 1, 1, 0, 0, 0, 1, 0, 0, 1
-                   , 0, 0, 1, 0, 0, 1, 0
-                   ]
+correct_answer_2 =
+    [ 0
+    , 0
+    , 1
+    , 1
+    , 1
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    , 1
+    , 1
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 1
+    , 0
+    ]
+
 
 correct_answer_3 : List Int
-correct_answer_3 = [ 0, 0, 1, 1, 1, 1, 0, 0, 1, 0
-                   , 0, 0, 0, 0, 0, 0, 0, 0, 1
-                   , 0, 0, 1, 1, 0, 1, 0
-                   ]
+correct_answer_3 =
+    [ 0
+    , 0
+    , 1
+    , 1
+    , 1
+    , 1
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 0
+    , 1
+    , 0
+    , 0
+    , 1
+    , 1
+    , 0
+    , 1
+    , 0
+    ]
 
 
+{-| Test whether the player input the right answer of favourite character
+-}
 test_keyboard_win_inside : MirrorModel -> MirrorModel
 test_keyboard_win_inside old =
-    if List.any (\x -> x ==  old.keyboard)  [correct_answer_1, correct_answer_2, correct_answer_3] then
-        { old | stage = (Pass, Pass)}
+    if List.any (\x -> x == old.keyboard) [ correct_answer_1, correct_answer_2, correct_answer_3 ] then
+        { old | stage = ( Pass, Pass ) }
+
     else
         old
+
+
+
 --need bug
 
 
+{-| Refresh the "keyboard" when players input wrong answer
+-}
 refresh_keyboard : Int -> MirrorModel -> MirrorModel
 refresh_keyboard index old =
     if index <= 3 then
         old
+
     else
         let
             fin id keyid keyb =
                 if id == keyid then
                     switch_key keyb
+
                 else
                     keyb
-        
-            newKeyb = List.map2 (fin index) old.keyIndex old.keyboard
-        in 
-            { old | keyboard = newKeyb }
 
-
-
-
+            newKeyb =
+                List.map2 (fin index) old.keyIndex old.keyboard
+        in
+        { old | keyboard = newKeyb }
 
 
 frameWidth =
@@ -142,77 +247,129 @@ toFloatPoint ( x, y ) =
     ( Basics.toFloat x, Basics.toFloat y )
 
 
+{-| Render who is favourite game in mirror puzzle game
+-}
 render_mirror : MirrorModel -> List (Svg Msg)
 render_mirror a =
     let
-        key = if ( a.stage |> Tuple.first ) == Pass then
-                    draw_keyboard a.keyboard a.keyIndex
-              else
-                    []
+        key =
+            if (a.stage |> Tuple.first) == Pass then
+                draw_keyboard a.keyboard a.keyIndex
 
+            else
+                []
     in
-    
-       draw_frame a.frame 
-    ++ draw_mirror a.mirrorSet 
-    ++ draw_light a.lightSet
-    ++ draw_question a.stage a.answer
-    ++ key
-    ++ draw_test_info a.keyboard
-    ++ draw_test_info correct_answer_1
-    ++ [svg_text_2 500 800 600 100 (toString a.stage)]
+    draw_frame a.frame
+        ++ draw_mirror a.mirrorSet
+        ++ draw_light a.lightSet
+        ++ draw_question a.stage a.answer
+        ++ key
+        ++ draw_test_info a.keyboard
+        ++ draw_test_info correct_answer_1
+        ++ [ svg_text_2 500 800 600 100 (toString a.stage) ]
 
 
 draw_test_info : List Int -> List (Svg Msg)
 draw_test_info mirr =
     let
-        newc = ( \x y-> y ++ (toString x) ++ " ")
-        content = List.foldl newc " " mirr
+        newc =
+            \x y -> y ++ toString x ++ " "
+
+        content =
+            List.foldl newc " " mirr
     in
-    
-    [
-        svg_text_2 500 750 600 100 content
+    [ svg_text_2 500 750 600 100 content
     ]
 
 
-draw_question : (PassState, PassState) -> Int -> List (Svg Msg)
-draw_question (a, b) answer =
+draw_question : ( PassState, PassState ) -> Int -> List (Svg Msg)
+draw_question ( a, b ) answer =
     if a == NotYet then
         []
+
     else if b == NotYet then
-        [
-            svg_text_2 500 300 100 100 "Who is my favourite female character?"
+        [ svg_text_2 500 300 100 100 "Who is my favourite female character?"
         ]
+
     else
-        [
-            svg_text_2 500 300 100 100 ( toString answer )
+        [ svg_text_2 500 300 100 100 (toString answer)
         ]
 
 
 draw_keyboard : List Int -> List Int -> List (Svg Msg)
 draw_keyboard keyboard kid =
     let
-        list_x = [ 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050
-                 , 600, 650, 700, 750, 800, 850, 900, 950, 1000
-                 , 600, 650, 700, 750, 800, 850, 900
-                 ]
-        list_y = [ 400, 400, 400, 400, 400, 400, 400, 400, 400, 400
-                 , 450, 450, 450, 450, 450, 450, 450, 450, 450
-                 , 500, 500, 500, 500, 500, 500, 500
-                 ]
+        list_x =
+            [ 600
+            , 650
+            , 700
+            , 750
+            , 800
+            , 850
+            , 900
+            , 950
+            , 1000
+            , 1050
+            , 600
+            , 650
+            , 700
+            , 750
+            , 800
+            , 850
+            , 900
+            , 950
+            , 1000
+            , 600
+            , 650
+            , 700
+            , 750
+            , 800
+            , 850
+            , 900
+            ]
+
+        list_y =
+            [ 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 400
+            , 450
+            , 450
+            , 450
+            , 450
+            , 450
+            , 450
+            , 450
+            , 450
+            , 450
+            , 500
+            , 500
+            , 500
+            , 500
+            , 500
+            , 500
+            , 500
+            ]
     in
-        List.map4 draw_one_keyboard list_x list_y keyboard kid
-    
+    List.map4 draw_one_keyboard list_x list_y keyboard kid
+
 
 draw_one_keyboard : Int -> Int -> Int -> Int -> Svg Msg
 draw_one_keyboard x y sta id =
     let
-        opa = 
+        opa =
             if sta == 0 then
                 "0.2"
+
             else
                 "0.5"
     in
-    
     Svg.rect
         [ SvgAttr.x (toString x)
         , SvgAttr.y (toString y)
@@ -227,8 +384,8 @@ draw_one_keyboard x y sta id =
         []
 
 
-
-
+{-| Draw light of the mirror game
+-}
 draw_light : List Line -> List (Svg msg)
 draw_light lightSet =
     let
@@ -289,6 +446,8 @@ draw_single_mirror mirror =
         []
 
 
+{-| Draw mirror in the mirror puzzle game
+-}
 draw_mirror : List Mirror -> List (Svg Msg)
 draw_mirror mirrorSet =
     List.map draw_single_mirror mirrorSet
