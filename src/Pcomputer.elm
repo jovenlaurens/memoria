@@ -1,16 +1,25 @@
-module Pcomputer exposing (..)
+module Pcomputer exposing
+    ( initial_computer
+    , updatetrigger
+    , draw_computer
+    , ComputerModel
+    , State(..)
+    )
 
 {-| This module is to accomplish the puzzle of computer
 
 
 # Functions
 
-@docs drawbackbutton
-@docs drawclock
-@docs drawclockbutton
-@docs drawhouradjust
-@docs drawminuteadjust
-@docs drawminutehand
+@docs initial_computer
+@docs updatetrigger
+@docs draw_computer
+
+
+# Datatype
+
+@docs ComputerModel
+@docs State
 
 -}
 
@@ -21,6 +30,8 @@ import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
 
 
+{-| The state show the power of it, the scene is to show different information and the word is the password input
+-}
 type alias ComputerModel =
     { state : State
     , scene : Int
@@ -33,21 +44,15 @@ type alias Numberkey =
     }
 
 
+{-| The power state of the computer where 0 represent locked and 1 represents unlocked
+-}
 type State
     = Lowpower
     | Charged Int -- 0 is locked
 
 
-
--- 1 is unlocked
-{- type Msg
-   = Trigger Int
-   | Changescene Int
-   | Charge Int
-   | Password Int
+{-| Initialize the computer model of the puzzle
 -}
-
-
 initial_computer : ComputerModel
 initial_computer =
     ComputerModel Lowpower 0 []
@@ -68,32 +73,8 @@ initnumberkey =
     ]
 
 
-
--- refer to 0
-{- update : Msg -> ComputerModel ->  ( ComputerModel, Cmd Msg )
-   update msg model =
-       case msg of
-           Trigger a ->
-                ( (updatetrigger a model), Cmd.none )
-
-           OKChangescene a->
-               ( { model | scene = a }, Cmd.none)
-
-           OKCharge a->
-               ( { model | state = Charged a }, Cmd.none)
-
-           Password number ->
-               if ((List.length model.word) < 4) then
-                   ({ model | word = updateword number model.word }, Cmd.none )
-               else
-                   ( model, Cmd.none )
+{-| update the word input to the computer
 -}
---button index list
--- 0 - 9 -> Password 0 - 9
--- 10 -> backspace
--- 11 -> correctpw
-
-
 updatetrigger : Int -> ComputerModel -> ComputerModel
 updatetrigger a model =
     case a of
@@ -150,6 +131,8 @@ updatecorrectpw model =
 -}
 
 
+{-| Draw all the part of the computer
+-}
 draw_computer : ComputerModel -> Int -> Int -> List (Svg Msg)
 draw_computer commodel cs cle =
     case cs of
@@ -440,3 +423,36 @@ drawword word =
 
         [] ->
             []
+
+
+
+-- 1 is unlocked
+{- type Msg
+   = Trigger Int
+   | Changescene Int
+   | Charge Int
+   | Password Int
+-}
+-- refer to 0
+{- update : Msg -> ComputerModel ->  ( ComputerModel, Cmd Msg )
+   update msg model =
+       case msg of
+           Trigger a ->
+                ( (updatetrigger a model), Cmd.none )
+
+           OKChangescene a->
+               ( { model | scene = a }, Cmd.none)
+
+           OKCharge a->
+               ( { model | state = Charged a }, Cmd.none)
+
+           Password number ->
+               if ((List.length model.word) < 4) then
+                   ({ model | word = updateword number model.word }, Cmd.none )
+               else
+                   ( model, Cmd.none )
+-}
+--button index list
+-- 0 - 9 -> Password 0 - 9
+-- 10 -> backspace
+-- 11 -> correctpw
