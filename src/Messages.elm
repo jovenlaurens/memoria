@@ -1,11 +1,11 @@
 module Messages exposing (..)
 
 import Browser.Dom exposing (Viewport)
-import Debug exposing (toString)
 import Draggable
 import Geometry exposing (Location)
-import Svg exposing (Svg)
 import Svg.Attributes
+import Svg exposing (Svg)
+import Debug exposing (toString)
 
 
 type Msg
@@ -24,9 +24,7 @@ type Msg
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
-    | Lighton Int -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
-    | Increase
-    | Decrease
+    | Lighton Int  -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
 
 
 type GraMsg
@@ -38,7 +36,7 @@ type GraMsg
     | Pause --from game to menu, state = 1
     | RecallMemory --state = 2
     | MovePage Int -- 0 for prev, 1 for next
-    | Back --back one stage
+    | Back --back one stage 
     | Achievement
     | BackfromAch
       --Memory part are below
@@ -52,7 +50,6 @@ type GraMsg
 type PassState
     = Pass
     | NotYet
-
 
 svg_text_2 : Float -> Float -> Float -> Float -> String -> Svg Msg
 svg_text_2 x_ y_ wid hei content =

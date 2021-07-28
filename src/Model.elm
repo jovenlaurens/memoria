@@ -26,9 +26,8 @@ type alias Model =
     , docu : List Document
     , move_timer : Float
     , opac : Float
-    , intro : IntroPage -- 可以做掉
+    , intro : IntroPage-- 可以做掉
     , checklist : CheckList
-    , volume : Float
     }
 
 
@@ -51,12 +50,13 @@ initial =
         1
         initial_intro
         initial_checklist
-        1
+        
+
 
 
 initial_screen : Screen
 initial_screen =
-    Screen 98 1 0 -1 -1 -1
+    Screen 0 1 0 -1 -1 -1
 
 
 
@@ -75,10 +75,8 @@ type alias CheckList =
     , level1lowercab : Bool
     }
 
-
 initial_checklist : CheckList
-initial_checklist =
-    CheckList False False False False
+initial_checklist = (CheckList False False False False)
 
 
 list_index_object : Int -> List Object -> Object
