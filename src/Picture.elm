@@ -192,6 +192,15 @@ show_on_wall index =
                 , SvgAttr.xlinkHref "assets/picts/1.png"
                 ]
                 []
+
+        8 ->
+            Svg.image
+                [ SvgAttr.x "285"
+                , SvgAttr.y "387"
+                , SvgAttr.width "18.8%"
+                , SvgAttr.xlinkHref "assets/picts/8.png"
+                ]
+                []
         _ ->
             Debug.todo ""
     
@@ -227,7 +236,8 @@ render_frame list =
                 []
             ]
         frames = List.map render_picts list
-        but = [svg_rect_button 955 167 350 200 (OnClickTriggers 0)]
+        but = [svg_rect_button 955 167 350 200 (OnClickTriggers 0)
+            ,  svg_rect_button 285 387 345 200 (OnClickTriggers 3)]
         pictures = read_complete_ones list
     in
         bk ++ frames ++but ++ pictures
@@ -255,8 +265,21 @@ read_complete_ones list =
               else
                   []
             )
+        f4 = ( if pic5.state == Consumed then
+                [Svg.image
+                    [ SvgAttr.x "285"
+                    , SvgAttr.y "389"
+                    , SvgAttr.width "21.5%"
+                    , SvgAttr.xlinkHref "assets/picts/8.png"
+                    ]
+                    []
+                , svg_rect_button 285 387 345 200 ( StartChange (BeginMemory 3))
+                ]
+              else
+                  []
+            )
     in
-        f1
+        f1 ++ f4
         
     
     

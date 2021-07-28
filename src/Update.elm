@@ -10,7 +10,7 @@ import Intro exposing (get_new_intro)
 import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_cor_memory)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), get_time, test_table, get_doll_number, get_pig_state)
+import Object exposing (ClockModel, Object(..), get_time, test_table, get_doll_number, get_pig_state, get_computer_state)
 import Pbulb exposing (Color(..),  update_bulb_inside)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
@@ -104,6 +104,7 @@ update msg model =
                 |> test_bulb_win
                 |> test_doll_win
                 |> test_pig_mash
+                |> test_computer_unlock
             , Cmd.none
             )
 
@@ -484,6 +485,23 @@ test_pig_mash model =
 
          else
         model
+
+
+test_computer_unlock : Model -> Model 
+test_computer_unlock model = 
+    let
+        com =
+            list_index_object 4 model.objects
+
+        state = get_computer_state com
+
+        pic8 = list_index_picture 8 model.pictures
+    in
+        if state == (Charged 2) && pic8.state == NotShow then
+            { model | pictures = show_index_picture 8 model.pictures }
+        else
+            model
+
 
 
 show_phone_question : Object -> Object
@@ -1047,6 +1065,16 @@ try_to_unlock_picture model number =
                             model | pictures = consume_picture model.pictures 1 
                                   , underUse = 99
                         }
+                    else
+                        model
+
+                3 ->
+                    if model.underUse == 8 then --碎片的8
+                        {
+                            model | pictures = consume_picture model.pictures 8 
+                                , underUse = 99
+                        }
+
                     else
                         model
                 _ ->

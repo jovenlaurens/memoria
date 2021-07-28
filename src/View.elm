@@ -228,10 +228,6 @@ view model =
         ]
 
 
-
-
-
-
 {-| render everything
 -}
 render_documents :  List Document -> Int -> List (Html Msg)
@@ -437,7 +433,16 @@ render_level_2 model =
     ] ++ (render_window model)
 
 
-
+render_level_0 : Model -> List (Svg Msg)
+render_level_0 model =
+    [ Svg.image 
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
+            ]
+            []]
 
 render_window : Model -> List (Svg Msg)
 render_window model =
@@ -607,6 +612,16 @@ render_picture_index index =
                 ]
                 []
 
+        8 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "5%"
+                , style "left" "30%"
+                , style "width" "40%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
         10 ->
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
@@ -617,6 +632,7 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
+
         _ ->
             Debug.todo ""
 

@@ -33,6 +33,7 @@ type alias Ipad =
     , answer : Int
     }
 
+
 initialMirror : MirrorModel
 initialMirror =
     MirrorModel

@@ -3,7 +3,7 @@ module Object exposing (..)
 import Geometry exposing (Location)
 import Memory exposing (Memory)
 import Pbulb exposing (BulbModel, initial_bulb)
-import Pcomputer exposing (ComputerModel, initial_computer, initial_safebox)
+import Pcomputer exposing (ComputerModel, initial_computer,State(..),initial_safebox)
 import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
@@ -86,6 +86,19 @@ get_pig_state obj =
     in
         state
 
+
+get_computer_state : Object -> State
+get_computer_state obj = 
+    let
+        state =
+            case obj of
+                Computer a ->
+                    a.state
+
+                _ ->
+                    Debug.todo "abab"
+    in
+        state
 
 test_table : Location -> Object -> Object
 test_table loca pre =

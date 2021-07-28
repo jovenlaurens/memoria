@@ -65,7 +65,7 @@ initial_screen =
 
 initial_target : Screen
 initial_target =
-    Screen 0 1 0 -1 -1 -1
+    Screen 98 1 0 -1 -1 -1
 
 
 type alias CheckList =
@@ -78,7 +78,7 @@ type alias CheckList =
     }
 
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False True False) --临时改
+initial_checklist = (CheckList False False False False False False) --临时改
 
 
 list_index_object : Int -> List Object -> Object
