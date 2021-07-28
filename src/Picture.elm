@@ -13,6 +13,7 @@ type alias Picture =
     { state : ShowState
     , index : Int
     , lef : Int
+    , place : Int
     }
 
 
@@ -132,18 +133,19 @@ list_index_picture index list =
 
 initial_pictures : List Picture
 initial_pictures =
-    [ Picture NotShow 0 300--碎片0 for memory 1
-    , Picture NotShow 1 415--碎片1 for memory 1
-    , Picture NotShow 2 530--钥匙0 for basement
-    , Picture NotShow 3 645--碎片2 for memory 2
-    , Picture NotShow 4 760--碎片3 for memory 3
-    , Picture NotShow 5 875--碎片4 for memory 3
-    , Picture NotShow 6 990--锤子 for 2楼 小猪罐子
-    , Picture NotShow 7 1105--钥匙1 for 电箱
-    , Picture NotShow 8 1220--碎片5 for memory 4
-    , Picture NotShow 9 1335--钥匙2 for 1楼 柜子
-    , Picture NotShow 10 1450--镰刀 for 1楼 
+    [ Picture NotShow 0 300 2--碎片0 for memory 1
+    , Picture NotShow 1 415 1--碎片1 for memory 1
+    , Picture NotShow 2 530 14--钥匙0 for basement
+    , Picture NotShow 3 645 9--碎片2 for memory 2
+    , Picture NotShow 4 760 10 --碎片3 for memory 3
+    , Picture NotShow 5 875 1 --碎片4 for memory 3
+    , Picture NotShow 6 990 13 --镰刀 for 1楼 可能就没用了
+    , Picture NotShow 7 1105 14 --钥匙1 for 电箱
+    , Picture NotShow 8 1220 5 --碎片5 for memory 4
+    , Picture NotShow 9 1335 15 --钥匙2 for 1楼 柜子
+    , Picture NotShow 10 1450 13 --锤子 for 2楼 小猪罐子
     ]
+--attention: 6和10换了一下
 
 --[ 300, 415, 530, 645, 760, 875, 990, 1105, 1220, 1335, 1450 ]
 
@@ -153,7 +155,7 @@ initial_pictures =
 
 default_picture : Picture
 default_picture =
-    Picture NotShow 0 0
+    Picture NotShow 0 0 0
 
 
 render_picture_button : Svg Msg

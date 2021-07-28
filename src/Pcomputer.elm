@@ -7,6 +7,7 @@ import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
 import Memory exposing (MeState)
 import Messages exposing (GraMsg(..), Msg(..))
+import Pcabinet exposing (svg_rect_button)
 import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
@@ -32,12 +33,7 @@ type State
 
 
 -- 1 is unlocked
-{- type Msg
-   = Trigger Int
-   | Changescene Int
-   | Charge Int
-   | Password Int
--}
+
 
 
 initial_computer : ComputerModel
@@ -95,12 +91,20 @@ updatetrigger a model =
         11 ->
             updatecorrectpw model
 
+        12 ->
+            clearpw model
+
+
         _ ->
             if List.length model.word < 4 then
                 { model | word = updateword a model.word }
 
             else
                 model
+clearpw : ComputerModel -> ComputerModel
+clearpw model =
+    {model | word = []}
+
 
 
 updatebackspace : List Int -> List Int
@@ -142,8 +146,8 @@ updatecorrectpw model =
 -}
 
 
-draw_computer : ComputerModel -> Int -> Int -> List (Svg Msg)
-draw_computer commodel cs cle =
+draw_computer : ComputerModel -> Bool -> Int -> Int -> List (Svg Msg)
+draw_computer commodel l0s cs cle =
     case cs of
         0 ->
             if cle == 0 then
@@ -154,6 +158,15 @@ draw_computer commodel cs cle =
                     , SvgAttr.height "90"
                     , SvgAttr.fillOpacity "0.0"
                     , Svg.Events.onClick (StartChange (ChangeScene 5))
+                    ]
+                    []
+                , Svg.rect
+                    [ SvgAttr.x "1270"
+                    , SvgAttr.y "200"
+                    , SvgAttr.width "160"
+                    , SvgAttr.height "90"
+                    , SvgAttr.fillOpacity "0.5"
+                    , Svg.Events.onClick (StartChange (ChangeScene 13))
                     ]
                     []
                 ]
@@ -168,6 +181,9 @@ draw_computer commodel cs cle =
 
                 Charged a ->
                     drawchargedpc a commodel
+
+        13 ->
+            render_safebox l0s commodel
 
         _ ->
             Debug.todo "branch '_' not implemented"
@@ -355,28 +371,30 @@ drawnumberbutton number =
         rnumber =
             Tuple.first number.position + 3 * (Tuple.second number.position - 1)
     in
-    case number.position of
-        ( 2, 4 ) ->
-            Svg.circle
-                [ SvgAttr.cx tp
-                , SvgAttr.cy lp
-                , SvgAttr.r "20"
-                , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.stroke "black"
-                , Svg.Events.onClick (OnClickTriggers 0)
-                ]
-                []
+        case number.position of
+            ( 2, 4 ) ->
+                    Svg.circle
+                        [ SvgAttr.cx tp
+                        , SvgAttr.cy lp
+                        , SvgAttr.r "20"
+                        , SvgAttr.fillOpacity "0.0"
+                        , SvgAttr.stroke "black"
+                        , Svg.Events.onClick (OnClickTriggers 0)
+                        ]
+                        []
 
-        _ ->
-            Svg.circle
-                [ SvgAttr.cx tp
-                , SvgAttr.cy lp
-                , SvgAttr.r "20"
-                , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.stroke "black"
-                , Svg.Events.onClick (OnClickTriggers rnumber)
-                ]
-                []
+
+            _ ->
+                Svg.circle
+                    [ SvgAttr.cx tp
+                    , SvgAttr.cy lp
+                    , SvgAttr.r "20"
+                    , SvgAttr.fillOpacity "0.0"
+                    , SvgAttr.stroke "black"
+                    , Svg.Events.onClick (OnClickTriggers rnumber)
+                    ]
+                    []
+
 
 
 
@@ -435,3 +453,94 @@ drawword word =
 
         [] ->
             []
+
+
+initial_safebox : ComputerModel
+initial_safebox =
+    ComputerModel (Charged 0) 0 []
+
+
+render_safebox : Bool -> ComputerModel -> List (Svg Msg)
+render_safebox l0s commodel =
+    let
+        back =
+            [ Svg.image
+                [ SvgAttr.x "0"
+                                , SvgAttr.y "0"
+                                , SvgAttr.width "100%"
+                                , SvgAttr.height "100%"
+                                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
+                                ]
+                                []
+            , Svg.image
+                                         [ SvgAttr.x "0"
+                                         , SvgAttr.y "0"
+                                         , SvgAttr.width "100%"
+                                         , SvgAttr.height "100%"
+                                         , SvgAttr.xlinkHref "assets/level0/safebox/dark.png"
+                                         ]
+                                         []
+                                        ]
+        face = ( if commodel.state == (Charged 0) then
+                    [Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
+                        ]
+                        []
+                    , Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/button.png"
+                        ]
+                        []
+                    , Svg.circle
+                        [ SvgAttr.cx "675"
+                        , SvgAttr.cy "430"
+                        , SvgAttr.r "120"
+                        , SvgAttr.stroke "black"
+                        , SvgAttr.strokeWidth "1"
+                        , SvgAttr.fill "white"
+                        , SvgAttr.fillOpacity "0.0"
+                        , Svg.Events.onClick (OnClickTriggers 11)
+                        ]
+                        []
+                    ]
+                    ++ button_list
+                    ++ [ svg_rect_button 1057 535 78 78 (OnClickTriggers 12)
+                       ]
+                  else if l0s == False then
+                    [ Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/block.png"
+                        ]
+                        []
+                    , svg_rect_button 600 300 400 400 (OnClickTriggers 100)
+                    ]
+                  else
+                    []
+                )
+
+    in
+        back++face
+
+button_list : List (Svg Msg)
+button_list =
+    [ svg_rect_button 977 535 78 78 (OnClickTriggers 0)
+    , svg_rect_button 897 295 78 78 (OnClickTriggers 1)
+    , svg_rect_button 897 375 78 78 (OnClickTriggers 4)
+    , svg_rect_button 897 455 78 78 (OnClickTriggers 7)
+    , svg_rect_button 980 295 78 78 (OnClickTriggers 2)
+    , svg_rect_button 980 375 78 78 (OnClickTriggers 5)
+    , svg_rect_button 980 455 78 78 (OnClickTriggers 8)
+    , svg_rect_button 1063 295 78 78 (OnClickTriggers 3)
+    , svg_rect_button 1063 375 78 78 (OnClickTriggers 6)
+    , svg_rect_button 1063 455 78 78 (OnClickTriggers 9)
+    ]

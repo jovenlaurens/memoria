@@ -37,6 +37,7 @@ import Pbulb exposing (Bulb)
 import Button exposing (black_white_but)
 import Ptable exposing (draw_coffee_back)
 import Picture exposing (render_frame)
+import Pstair exposing (stair_button_level_1l)
 
 
 style =
@@ -135,10 +136,10 @@ view model =
 
                          else
                             render_object model
-                                :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
+                                :: render_button_inside model.cscreen.cscene model.objects
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
-                                ++ render_picture model.pictures
+                                ++ render_picture model.pictures model.cscreen.cscene
                         )
                     
                     ]
@@ -225,6 +226,10 @@ view model =
                     [ text (toString model.cscreen.cstate) ]
             )
         ]
+
+
+
+
 
 
 {-| render everything
@@ -314,8 +319,13 @@ render_button_level level model =
                 render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button
 
         1 ->
-            render_stair_level level
-                ++ [ drawclockbutton
+                ( if model.checklist.level1door == True then 
+                    render_stair_level level
+                  else
+                    render_locked_door
+                )
+                ++ [ trans_button_sq stair_button_level_1l
+                   , drawclockbutton
                    , render_table_button
                    ]
 
@@ -326,7 +336,9 @@ render_button_level level model =
             render_stair_level level
 
 
-
+render_locked_door : List (Html Msg)
+render_locked_door =
+    [trans_button_sq (Button 52 45.51 8 39.1 "" (OnClickTriggers 0) "block")]
 
 
 
@@ -364,6 +376,29 @@ render_object model =
     let
         cs = model.cscreen.cscene
         cle = model.cscreen.clevel
+        fur = case model.cscreen.clevel of
+                0 ->
+                    level_0_furniture
+                1 ->
+                    level_1_furniture model.checklist.level1light
+                2 ->
+                    (render_level_2 model)
+                _ ->
+                    []
+        door = if model.checklist.level1door == True && cle == 1 && cs == 0 then
+                    [
+                        Svg.image
+                                            [ SvgAttr.x "0"
+                                            , SvgAttr.y "0"
+                                            , SvgAttr.width "100%"
+                                            , SvgAttr.height "100%"
+                                            , SvgAttr.xlinkHref "assets/level1/opendoor.png"
+                                            ]
+                                            []
+                    ]
+                else
+                    []
+
     in
     
     Svg.svg
@@ -372,21 +407,7 @@ render_object model =
         , SvgAttr.viewBox "0 0 1600 900"
         ]
         ((if model.cscreen.cscene == 0 then
-            case model.cscreen.clevel of
-                0 ->
-                    level_0_furniture
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                1 ->
-                    level_1_furniture model.checklist.level1light
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                2 ->  
-                    (render_level_2 model)
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                _ ->
-                    List.foldr (render_object_inside model.checklist cs cle) [] model.objects
+                fur ++ door ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
           else
             
@@ -513,11 +534,11 @@ render_test_information model =
     ]
 -}
 
-render_picture : List Picture -> List (Html Msg)
-render_picture list =
+render_picture : List Picture -> Int -> List (Html Msg)
+render_picture list cs=
     let
         render_pict_inside pict =
-            if pict.state == Show then
+            if pict.state == Show && cs == pict.place then
                 render_picture_index pict.index
 
             else
@@ -532,6 +553,7 @@ render_picture_index : Int -> Html Msg
 render_picture_index index =
     case index of
         0 ->
+
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
                 , style "top" "54%"
@@ -563,12 +585,34 @@ render_picture_index index =
                 ]
                 []
 
+        6 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
         7 ->
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
                 , style "top" "25%"
                 , style "left" "59%"
                 , style "width" "6%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
+        10 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
                 , style "position" "absolute"
                 , onClick (OnClickItem index)
                 ]
@@ -605,7 +649,7 @@ render_object_inside cklst scne cle obj old =
 
                 Computer a ->
                     if cle == 0 then
-                        draw_computer a 0 cle
+                        draw_computer a cklst.level0safebox 0 cle
 
                     else
                         []
@@ -668,7 +712,7 @@ render_object_only model cs objects =
 
         --回头再加1,2,3,4
         Computer a ->
-            draw_computer a 5 model.cscreen.clevel
+            draw_computer a cklst.level0safebox cs model.cscreen.clevel
 
         Power a ->
             drawpowersupply a 6 model.cscreen.clevel

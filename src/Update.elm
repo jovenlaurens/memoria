@@ -83,7 +83,7 @@ update msg model =
                 )
 
             else
-                ( model, Cmd.none )
+                ( model, Cmd.none ) --need improved
 
         OnDragBy ( dx, dy ) ->
             let
@@ -418,7 +418,7 @@ test_clock_win model =
 
         pic1 = list_index_picture 1 model.pictures
     in
-    if hour == 8 && min == 15 && pic1.state == NotShow then
+    if hour == 8 && min == 15 && pic1.state == NotShow && model.checklist.level1light == True then
         { model | pictures = show_index_picture 1 model.pictures }
 
     else
@@ -655,7 +655,7 @@ update_onclicktrigger model number =
             { model | objects = update_light_mirror_set number model.objects }
 
         5 ->
-            try_to_update_computer model number
+            try_to_update_computer 5 model number --bug
 
         6 ->
             try_to_update_power model number
@@ -679,7 +679,7 @@ update_onclicktrigger model number =
             update_cab 12 number model
 
         13 ->
-            update_cab 13 number model 
+            try_to_update_computer 13 model number
 
         14 -> 
             update_doll model number 
@@ -689,12 +689,34 @@ update_onclicktrigger model number =
                 0 ->
                     charge_computer model number
 
+                1 ->
+                    try_to_unlock_door model number
+
                 _ ->
                     model
             )
 
         _ ->
             model
+
+
+try_to_unlock_door : Model -> Int -> Model
+try_to_unlock_door model number =
+    let
+        cklst = model.checklist
+    in
+
+        if number == 0 then
+            if model.underUse == 2 then
+                { model | underUse = 99
+                        , pictures = consume_picture model.pictures 2
+                        , checklist = {cklst | level1door = True}
+                }
+            else
+                model
+        else
+            model
+    
 
 
 
@@ -753,15 +775,29 @@ clear_index_picture index list =
 update_doll : Model -> Int -> Model
 update_doll model number = 
     let
+        oldudus = model.underUse
+        oldpict = model.pictures
         fin num obj =
             case obj of
                 Doll a ->
-                    Doll (updatedolltrigger num a)
+                    ( Doll (updatedolltrigger oldudus num a |> Tuple.first)
+                    , (updatedolltrigger oldudus num a |> Tuple.second))
 
                 _ ->
-                    obj
+                    ( obj, False)
+
+        (new_objects, state) = List.map (fin number) model.objects
+                        |> List.unzip
+        (newudus, newpict) = ( if List.any (\x -> x==True) state && oldudus == 10 then
+                                    ( 99, consume_picture oldpict 10  )
+                               else
+                                    (oldudus, oldpict)
+                              )
     in
-    { model | objects = List.map (fin number) model.objects }
+    { model | objects = new_objects
+            , underUse = newudus
+            , pictures = newpict
+    }
 
 
 {-refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
@@ -883,18 +919,31 @@ try_to_update_power model index =
     { model | objects = List.map toggle model.objects }
 
 
-try_to_update_computer : Model -> Int -> Model
-try_to_update_computer model number =
-    let
-        toggle computer =
-            case computer of
-                Computer cpt ->
-                    Computer (Pcomputer.updatetrigger number cpt)
+try_to_update_computer : Int -> Model -> Int -> Model
+try_to_update_computer cs model number =
+    if model.cscreen.cscene == cs then
+        let
+            toggle computer =
+                case computer of
+                    Computer cpt ->
+                        Computer (Pcomputer.updatetrigger number cpt)
 
-                _ ->
-                    computer
-    in
-    { model | objects = List.map toggle model.objects }
+                    _ ->
+                        computer
+            cklst = model.checklist
+            p1 = show_index_picture 6 model.pictures
+            p2 = show_index_picture 10 p1
+        in
+        { model | objects = List.map toggle model.objects }
+            |> (\x -> if number == 100 then
+                        { x | checklist = {cklst | level0safebox = True }
+                            , pictures = p2
+                        }
+                      else
+                        x
+            )
+    else
+        model
 
 
 
