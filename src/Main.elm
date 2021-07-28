@@ -6,6 +6,7 @@ import Browser.Events exposing (onAnimationFrameDelta, onResize)
 import Draggable
 import Messages exposing (..)
 import Model exposing (..)
+import Preload
 import Task
 import Update exposing (..)
 import View exposing (view)
@@ -23,7 +24,7 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init a =
-    ( initial, Task.perform GetViewport getViewport )
+    ( initial, Cmd.batch [Task.perform GetViewport getViewport, Preload.preload ()] )
 
 
 subscriptions : Model -> Sub Msg

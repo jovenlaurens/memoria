@@ -23,7 +23,12 @@ type alias MirrorModel =
     , lightSet : List Line
     , mirrorSet : List Mirror
     , stage : (PassState, PassState)
-    , keyboard : List Int
+    , ipad : Ipad
+    }
+
+
+type alias Ipad =
+    { keyboard : List Int
     , keyIndex : List Int
     , answer : Int
     }
@@ -34,15 +39,14 @@ initialMirror =
     MirrorModel
         Light_2_off
         (generate_frames ( 4, 4 ))
-        (List.singleton (Line (Location 400 350) (Location 0 350)))
+        (List.singleton (Line (Location 800 350) (Location 0 350)))
         [ Mirror (Line (Location 300 350) (Location 400 350)) 1
         , Mirror (Line (Location 350 100) (Location 350 0)) 2
         , Mirror (Line (Location 50 100) (Location 50 0)) 3
         ]
         (NotYet, NotYet)
-        (List.repeat 26 0)
-        (List.range 4 29)
-        -1
+        (Ipad (List.repeat 26 0) (List.range 4 29) -1)
+        
 
 
 generate_one_frame : ( Float, Float ) -> Location
@@ -70,6 +74,15 @@ generate_frames size =
         |> List.concat
         |> List.map toFloatPoint
         |> List.map generate_one_frame
+        |> List.map move
+
+
+move_x = 410
+move_y = 360
+
+move : Location -> Location
+move loca =
+    Location (loca.x + move_x) (loca.y + move_y)
 
 
 switch_key : Int -> Int
@@ -101,7 +114,7 @@ correct_answer_3 = [ 0, 0, 1, 1, 1, 1, 0, 0, 1, 0
 
 test_keyboard_win_inside : MirrorModel -> MirrorModel
 test_keyboard_win_inside old =
-    if List.any (\x -> x ==  old.keyboard)  [correct_answer_1, correct_answer_2, correct_answer_3] then
+    if List.any (\x -> x ==  old.ipad.keyboard)  [correct_answer_1, correct_answer_2, correct_answer_3] then
         { old | stage = (Pass, Pass)}
     else
         old
@@ -120,9 +133,10 @@ refresh_keyboard index old =
                 else
                     keyb
         
-            newKeyb = List.map2 (fin index) old.keyIndex old.keyboard
+            newKeyb = List.map2 (fin index) old.ipad.keyIndex old.ipad.keyboard
+            opad = old.ipad
         in 
-            { old | keyboard = newKeyb }
+            { old | ipad ={ opad | keyboard = newKeyb} }
 
 
 
@@ -130,11 +144,11 @@ refresh_keyboard index old =
 
 
 frameWidth =
-    100.0
+    72.0
 
 
 frameHeight =
-    100.0
+    72.0
 
 
 toFloatPoint : ( Int, Int ) -> ( Float, Float )
@@ -146,21 +160,60 @@ render_mirror : MirrorModel -> List (Svg Msg)
 render_mirror a =
     let
         key = if ( a.stage |> Tuple.first ) == Pass then
-                    draw_keyboard a.keyboard a.keyIndex
+                    draw_keyboard a.ipad.keyboard a.ipad.keyIndex
               else
                     []
 
+
+
     in
-    
-       draw_frame a.frame 
+       draw_mirror_back a.lightstate
+    ++ draw_frame a.frame 
     ++ draw_mirror a.mirrorSet 
     ++ draw_light a.lightSet
-    ++ draw_question a.stage a.answer
+    ++ draw_question a.stage a.ipad.answer
     ++ key
-    ++ draw_test_info a.keyboard
-    ++ draw_test_info correct_answer_1
-    ++ [svg_text_2 500 800 600 100 (toString a.stage)]
 
+
+draw_light_and_mirror : MirrorModel -> List (Svg Msg)
+draw_light_and_mirror a =
+    [
+        Svg.svg
+            []
+            []
+    ]
+
+
+
+draw_mirror_back : LightState ->  List (Svg Msg)
+draw_mirror_back lght = 
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level2/mirrorback.png"
+                ]
+                []
+            , ( if lght == Light_2_on then
+                        Svg.image
+                            [ SvgAttr.x "0"
+                            , SvgAttr.y "0"
+                            , SvgAttr.width "100%"
+                            , SvgAttr.height "100%"
+                            , SvgAttr.xlinkHref "assets/level2/mirrorliang.png"
+                            ]
+                            []
+                    
+                else
+                    Svg.rect
+                        []
+                        []
+
+            )
+            ]
+
+                
 
 draw_test_info : List Int -> List (Svg Msg)
 draw_test_info mirr =
@@ -180,7 +233,14 @@ draw_question (a, b) answer =
         []
     else if b == NotYet then
         [
-            svg_text_2 500 300 100 100 "Who is my favourite female character?"
+            Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level2/padscreen.png"
+                ]
+                []
         ]
     else
         [
@@ -191,13 +251,13 @@ draw_question (a, b) answer =
 draw_keyboard : List Int -> List Int -> List (Svg Msg)
 draw_keyboard keyboard kid =
     let
-        list_x = [ 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050
-                 , 600, 650, 700, 750, 800, 850, 900, 950, 1000
-                 , 600, 650, 700, 750, 800, 850, 900
+        list_x = [ 814, 866, 918, 970, 1020, 1070, 1118, 1169, 1220, 1270
+                 , 827, 880, 932, 983, 1033, 1082, 1131, 1183, 1233
+                 , 853, 905, 958, 1006, 1057, 1107, 1156
                  ]
-        list_y = [ 400, 400, 400, 400, 400, 400, 400, 400, 400, 400
-                 , 450, 450, 450, 450, 450, 450, 450, 450, 450
-                 , 500, 500, 500, 500, 500, 500, 500
+        list_y = [ 360, 360, 360, 361, 362, 363, 363, 364, 364, 365
+                 , 411, 410, 411, 412, 413, 413, 414, 415, 415
+                 , 461, 461, 462, 462, 462, 463, 464
                  ]
     in
         List.map4 draw_one_keyboard list_x list_y keyboard kid
@@ -208,9 +268,9 @@ draw_one_keyboard x y sta id =
     let
         opa = 
             if sta == 0 then
-                "0.2"
+                "0.0"
             else
-                "0.5"
+                "0.2"
     in
     
     Svg.rect
@@ -220,8 +280,7 @@ draw_one_keyboard x y sta id =
         , SvgAttr.height "40"
         , SvgAttr.fill "black"
         , SvgAttr.fillOpacity opa
-        , SvgAttr.strokeWidth "1"
-        , SvgAttr.stroke "black"
+        , SvgAttr.rx "4"
         , Svg.Events.onClick (OnClickTriggers id)
         ]
         []
@@ -257,9 +316,11 @@ draw_light lightSet =
         , SvgAttr.strokeWidth "2"
         , SvgAttr.stroke "blue"
         , SvgAttr.fill "none"
+        , SvgAttr.transform "rotate(-90,520,150),scale(0.75),translate(30,45)"
         ]
         []
         |> List.singleton
+
 
 
 draw_single_mirror : Mirror -> Svg Msg
@@ -284,6 +345,7 @@ draw_single_mirror mirror =
         , SvgAttr.y2 y2
         , SvgAttr.stroke "blue"
         , SvgAttr.strokeWidth "10"
+        , SvgAttr.transform "rotate(-90,520,150),scale(0.75),translate(30,45)"
         , onClick (OnClickTriggers mirror.index)
         ]
         []
@@ -300,8 +362,8 @@ draw_frame locationList =
         draw_single_frame : Location -> Svg Msg
         draw_single_frame location =
             Svg.rect
-                [ SvgAttr.width (toString (100 - 4))
-                , SvgAttr.height (toString (100 - 4))
+                [ SvgAttr.width (toString (frameWidth - 4))
+                , SvgAttr.height (toString (frameHeight - 4))
                 , SvgAttr.fill "Blue"
                 , SvgAttr.x (toString location.x)
                 , SvgAttr.y (toString location.y)

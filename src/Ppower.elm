@@ -10,6 +10,7 @@ import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
+import Pcomputer exposing (drawchargedcomputer)
 
 
 type PowerState
@@ -88,12 +89,11 @@ drawpowersupply model cs cle =
 drawpowersupply_0 : List (Svg Msg)
 drawpowersupply_0 =
     [ Svg.rect
-        [ SvgAttr.x "1500"
-        , SvgAttr.y "100"
-        , SvgAttr.width "50"
-        , SvgAttr.height "50"
-        , SvgAttr.fill "yellow"
-        , SvgAttr.rx "15"
+        [ SvgAttr.x "1470"
+        , SvgAttr.y "200"
+        , SvgAttr.width "100"
+        , SvgAttr.height "152"
+        , SvgAttr.fillOpacity "0.0"
         , Svg.Events.onClick (StartChange (ChangeScene 6))
         ]
         []
@@ -104,18 +104,57 @@ drawpowersupply_6 : PowerModel -> List (Svg Msg)
 drawpowersupply_6 model =
     case model.subscene of
         1 ->
-            drawpowersupply_6_cover
+            drawpowersupply_6_back ++ drawpowersupply_6_cover_locked
 
         2 ->
-            drawpowersupply_6_inner model.state
+            drawpowersupply_6_back ++ drawpowersupply_6_cover_unlock ++ drawswitch model.state
 
         _ ->
             Debug.todo "branch '_' not implemented"
 
 
-drawpowersupply_6_cover : List (Svg Msg)
-drawpowersupply_6_cover =
-    [ Svg.rect
+drawpowersupply_6_back : List (Svg Msg)
+drawpowersupply_6_back =
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/power/back.png"
+            ]
+            []]
+
+
+drawpowersupply_6_cover_locked : List (Svg Msg)
+drawpowersupply_6_cover_locked =
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/power/close.png"
+            ]
+            []
+    ,Svg.circle
+        [ SvgAttr.cx "805"
+        , SvgAttr.cy "424"
+        , SvgAttr.r "20"
+        , SvgAttr.fillOpacity "0.0"
+        , Svg.Events.onClick (OnClickTriggers 0)
+        ]
+        []
+    ]
+
+drawpowersupply_6_cover_unlock : List (Svg Msg)
+drawpowersupply_6_cover_unlock =
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/power/open.png"
+            ]
+            []]
+
+    
+    {- [ Svg.rect
         [ SvgAttr.x "500"
         , SvgAttr.y "100"
         , SvgAttr.width "400"
@@ -167,10 +206,10 @@ drawpowersupply_6_cover =
         , Svg.Events.onClick (OnClickTriggers 0)
         ]
         []
-    ]
+    ] -}
 
 
-drawpowersupply_6_inner : PowerState -> List (Svg Msg)
+{- drawpowersupply_6_inner : PowerState -> List (Svg Msg)
 drawpowersupply_6_inner state =
     [ Svg.rect
         [ SvgAttr.x "700"
@@ -256,47 +295,40 @@ drawpowersupply_6_inner state =
         ]
         []
     ]
-        ++ drawswitch state
+        ++ drawswitch state -}
 
 
 drawswitch : PowerState -> List (Svg Msg)
 drawswitch state =
     case state of
         Low ->
-            [ Svg.rect
-                [ SvgAttr.x "830"
-                , SvgAttr.y "410"
-                , SvgAttr.width "140"
-                , SvgAttr.height "30"
-                , SvgAttr.fill "black"
-                , Svg.Events.onClick (Charge 0)
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.xlinkHref "assets/level0/power/handledown.png"
                 ]
                 []
-            , Svg.polygon
-                [ SvgAttr.points "860,440 875,440 875,480 925,480 925,440 940,440, 940,495 860,495"
-                , SvgAttr.fill "black"
+            , Svg.rect
+                [ SvgAttr.x "779"
+                , SvgAttr.y "650"
+                , SvgAttr.width "260"
+                , SvgAttr.height "30"
+                , SvgAttr.fillOpacity "0.0"
                 , Svg.Events.onClick (Charge 0)
                 ]
                 []
             ]
 
         High ->
-            [ Svg.rect
-                [ SvgAttr.x "830"
-                , SvgAttr.y "230"
-                , SvgAttr.width "140"
-                , SvgAttr.height "30"
-                , SvgAttr.fill "black"
-                ]
-                []
-            , Svg.polygon
-                [ SvgAttr.points "860,230 875,230 875,190 925,190 925,230 940,230, 940,175 860,175"
-                , SvgAttr.fill "black"
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.xlinkHref "assets/level0/power/handle_down.png"
                 ]
                 []
             ]
 
 
-subscriptions : PowerModel -> Sub Msg
-subscriptions model =
-    Sub.none
+

@@ -1,5 +1,4 @@
 module Ppiano exposing (..)
-
 import Geometry exposing (Location)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
@@ -7,6 +6,9 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
+import Svg.Events
+import Button
+import Button exposing (test_button)
 
 
 keyLength =
@@ -34,6 +36,7 @@ type alias PianoModel =
     { pianoKeySet : List PianoKey
     , playedKey : List Int
     , currentMusic : Int
+    , winState : Bool
     }
 
 
@@ -42,7 +45,8 @@ initial =
     PianoModel
         generate_key_set
         []
-        0
+        0        
+        False
 
 
 generate_key_set_help : Int -> PianoKey
@@ -55,7 +59,7 @@ generate_key_set_help number =
             fl * keyLength
     in
     PianoKey
-        (Location x 400.0)
+        (Location (x + 400) 500.0)
         number
         Up
         0
@@ -65,7 +69,7 @@ generate_key_set : List PianoKey
 generate_key_set =
     let
         indexSet =
-            List.range 1 14
+            List.range 1 12
     in
     List.map generate_key_set_help indexSet
 
@@ -75,7 +79,7 @@ bounce_key time keySet =
     let
         bounce_key_help : Float -> PianoKey -> PianoKey
         bounce_key_help currentTime key =
-            if currentTime - key.press_time > 900 && key.keyState == Down then
+            if currentTime - key.press_time > 500 && key.keyState == Down then
                 { key | keyState = Up, press_time = 0 }
 
             else
@@ -108,31 +112,51 @@ play_audio index =
         [ text "error" ]
 
 
-draw_key_set : List PianoKey -> List (Svg Msg)
-draw_key_set pianoKeySet =
-    List.map draw_single_key pianoKeySet
+draw_key_set : PianoModel -> List (Svg Msg)
+draw_key_set piano =
+    background piano ++ List.map draw_single_key piano.pianoKeySet
+
+
+background : PianoModel -> List (Svg Msg)
+background piano =
+    let
+        link =
+            case piano.winState of
+                True ->
+                    "assets/pianokey/pianowin.png"
+
+                False ->
+                    "assets/pianokey/piano.png"
+    in
+    Svg.image
+        [ SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.xlinkHref link
+        ]
+        []
+        |> List.singleton
 
 
 draw_single_key : PianoKey -> Svg Msg
 draw_single_key key =
     let
-        color =
+        deltay =
             case key.keyState of
                 Up ->
-                    "Blue"
+                    0
 
                 Down ->
-                    "Green"
+                    100
     in
-    Svg.rect
-        [ SvgAttr.width (String.fromFloat keyLength)
-        , SvgAttr.height (String.fromFloat keyWidth)
+    Svg.image
+        [ SvgAttr.width "2%"
+        , SvgAttr.height "6%"
         , SvgAttr.x (String.fromFloat key.anchor.x)
-        , SvgAttr.y (String.fromFloat key.anchor.y)
-        , SvgAttr.fill color
-        , SvgAttr.stroke "Pink"
-        , SvgAttr.strokeWidth "3"
-        , onClick (OnClickTriggers key.index)
+        , SvgAttr.y (String.fromFloat (key.anchor.y + deltay))
+        , SvgAttr.xlinkHref "assets/h1.jpg"
+        , Svg.Events.onClick (OnClickTriggers key.index)
         ]
         []
 
@@ -140,15 +164,15 @@ draw_single_key key =
 check_order : List Int -> Bool
 check_order list =
     case list of
-        x :: x1 :: x2 :: lst ->
+        x :: x1 :: x2 :: x3 :: x4 :: x5 :: lst ->
             let
                 target =
-                    [ 1, 2, 3 ]
+                    [ 1, 1, 4, 5, 1, 4 ]
 
                 newList =
                     List.drop 1 list
             in
-            if x == 1 && x1 == 2 && x2 == 3 then
+            if [ x, x1, x2, x3, x4, x5 ] == target then
                 True
 
             else
@@ -156,3 +180,13 @@ check_order list =
 
         _ ->
             False
+
+
+render_piano_button : List (Html Msg)
+render_piano_button =
+    let
+        but =
+            Button.Button 16 60 21 10 "" (StartChange (ChangeScene 7)) ""
+    in
+    test_button but
+        |> List.singleton

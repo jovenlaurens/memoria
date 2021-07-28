@@ -25,6 +25,7 @@ type Msg
     | DragMsg (Draggable.Msg ())
     | Charge Int
     | Lighton Int  -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
+    | Plus Int
 
 
 type GraMsg
@@ -44,7 +45,8 @@ type GraMsg
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory
-    | AddLine
+     --Intro
+
 
 
 type PassState
