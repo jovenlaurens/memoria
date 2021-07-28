@@ -426,7 +426,7 @@ test_bookshelf_win_help : Object -> Bool
 test_bookshelf_win_help object =
     case object of
         Book a ->
-            if get_bookshelf_order a.bookshelf == [ 2, 1 ] ++ List.range 3 20 then
+            if get_bookshelf_order a.bookshelf == List.range 1 20 then
                 True
 
             else

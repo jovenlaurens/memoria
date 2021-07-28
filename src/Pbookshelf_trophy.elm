@@ -90,18 +90,11 @@ initial_trophy_model =
         (Trophy Right (Location 200 100))
 
 
-initial_bookshelf_help : Int -> Book
-initial_bookshelf_help number =
-    let
-        fl =
-            Basics.toFloat number
-
-        x =
-            fl * 60
-    in
+initial_bookshelf_help : Int -> Float -> Book
+initial_bookshelf_help number x =
     Book
         number
-        (Location (x + 250) 300.0)
+        (Location x 160.0)
 
 
 initial_bookshelf : Bookshelf
@@ -109,9 +102,12 @@ initial_bookshelf =
     let
         indexSet =
             [ 5, 9, 8, 6, 15, 16, 11, 14, 10, 20, 19, 17, 3, 1, 2, 12, 4, 7, 13, 18 ]
+
+        location =
+            List.map (\x -> x * 50 + 200 |> Basics.toFloat) (List.range 1 20)
     in
     Bookshelf
-        (List.map initial_bookshelf_help indexSet)
+        (List.map2 initial_bookshelf_help indexSet location)
         Invisible
         ( 1, 2 )
         Full
@@ -266,10 +262,10 @@ draw_book_index ( x, y ) choice book =
         delta_y =
             if x /= y then
                 if book.index == x then
-                    -20
+                    30
 
                 else if book.index == y && choice == Full then
-                    -20
+                    30
 
                 else
                     0
@@ -278,7 +274,7 @@ draw_book_index ( x, y ) choice book =
                 case choice of
                     One ->
                         if book.index == x then
-                            -20
+                            30
 
                         else
                             0
@@ -288,7 +284,7 @@ draw_book_index ( x, y ) choice book =
     in
     Svg.text_
         [ SvgAttr.x (String.fromFloat book.anchor.x)
-        , SvgAttr.y (String.fromFloat (book.anchor.y + delta_y))
+        , SvgAttr.y (String.fromFloat (book.anchor.y + delta_y * 2.5))
         , SvgAttr.fill "Red"
         ]
         [ text txt ]
