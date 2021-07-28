@@ -42,7 +42,7 @@ type State
 
 initial_computer : ComputerModel
 initial_computer =
-    ComputerModel Lowpower 0 []
+    ComputerModel (Charged 0) 0 []
 
 
 initnumberkey : List Numberkey
@@ -93,11 +93,12 @@ updatetrigger a model =
             { model | word = updatebackspace model.word }
 
         11 ->
-            updatecorrectpw model
+            { model | state = Charged 2 }
 
         _ ->
             if List.length model.word < 4 then
                 { model | word = updateword a model.word }
+                |>updatecorrectpw
 
             else
                 model
@@ -148,8 +149,8 @@ draw_computer commodel cs cle =
         0 ->
             if cle == 0 then
                 [ Svg.rect
-                    [ SvgAttr.x "1270"
-                    , SvgAttr.y "470"
+                    [ SvgAttr.x "1210"
+                    , SvgAttr.y "500"
                     , SvgAttr.width "160"
                     , SvgAttr.height "90"
                     , SvgAttr.fillOpacity "0.0"
@@ -164,68 +165,70 @@ draw_computer commodel cs cle =
         5 ->
             case commodel.state of
                 Lowpower ->
-                    drawlowbattery
+                    drawcomputerback ++ drawlowbattery
 
                 Charged a ->
-                    drawchargedpc a commodel
+                    drawcomputerback ++ drawchargedcomputer a commodel
+        _ ->
+            Debug.todo "branch '_' not implemented"
 
+drawchargedcomputer : Int -> ComputerModel->  List (Svg Msg) 
+drawchargedcomputer number commodel=
+    case number of
+        0 ->
+            draw_password ++ (List.map drawnumberbutton initnumberkey) ++ drawword commodel.word 
+                    ++ drawbackspace
+        1 ->
+            drawpictureload ++ drawloadtrigger
+
+        2->
+            []
         _ ->
             Debug.todo "branch '_' not implemented"
 
 
+drawpictureload : List (Svg Msg)
+drawpictureload = 
+        [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/loadpicture.png"
+            ]
+            []]
+
+drawcomputerback : List (Svg Msg)
+drawcomputerback = 
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/computer.png"
+            ]
+            []]
+
 drawlowbattery : List (Svg Msg)
 drawlowbattery =
-    [ Svg.polygon
-        [ SvgAttr.points "300,50 1200,50 1200,600 300,600"
-        , SvgAttr.fill "black"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "310,60 1190,60 1190,590 310,590"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "700,600 800,600 800,700 700,700"
-        , SvgAttr.fill "silver"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.points "550,250 950,250 950,400 550,400"
-        , SvgAttr.x "550"
-        , SvgAttr.y "250"
-        , SvgAttr.width "400"
-        , SvgAttr.height "150"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        , SvgAttr.rx "15"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "950,300 970,300 970,350 950,350"
-        , SvgAttr.fill "black"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "1"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "550"
-        , SvgAttr.y "250"
-        , SvgAttr.width "20"
-        , SvgAttr.height "150"
-        , SvgAttr.fill "red"
-        , SvgAttr.rx "15"
-        ]
-        []
-    ]
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/lowbattery.png"
+            ]
+            []]
+
+draw_password : List (Svg Msg)
+draw_password =
+    [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/password.png"
+            ]
+            []]
 
 
-drawchargedpc : Int -> ComputerModel -> List (Svg Msg)
+{- drawchargedpc : Int -> ComputerModel -> List (Svg Msg)
 drawchargedpc a model =
     case a of
         0 ->
@@ -310,8 +313,6 @@ drawchargedpc a model =
                 ]
                 []
             ]
-                ++ List.map drawnumberbutton initnumberkey
-                ++ List.map drawpassword initnumberkey
                 ++ drawword model.word
 
         1 ->
@@ -337,20 +338,41 @@ drawchargedpc a model =
             ]
 
         _ ->
-            []
+            [] -}
 
 
+drawloadtrigger : List (Svg Msg)
+drawloadtrigger = 
+    [Svg.rect
+            [ SvgAttr.x "550"
+            , SvgAttr.y "100"
+            , SvgAttr.width "500"
+            , SvgAttr.height "300"
+            , SvgAttr.fillOpacity "0.0"
+            , Svg.Events.onClick (OnClickTriggers 11)
+            ]
+            []]
 
+drawbackspace : List (Svg Msg)
+drawbackspace = 
+    [Svg.circle
+                [ SvgAttr.cx "840"
+                , SvgAttr.cy "440"
+                , SvgAttr.r "35"
+                , SvgAttr.fillOpacity "0.0"
+                , Svg.Events.onClick (OnClickTriggers 10)
+                ]
+                []]
 
 
 drawnumberbutton : Numberkey -> Svg Msg
 drawnumberbutton number =
     let
         tp =
-            String.fromInt (650 + 50 * Tuple.first number.position)
+            String.fromInt (650 + 70 * Tuple.first number.position - 3 * Tuple.second number.position)
 
         lp =
-            String.fromInt (350 + 50 * Tuple.second number.position)
+            String.fromInt (160 + 70 * Tuple.second number.position)
 
         rnumber =
             Tuple.first number.position + 3 * (Tuple.second number.position - 1)
@@ -360,9 +382,8 @@ drawnumberbutton number =
             Svg.circle
                 [ SvgAttr.cx tp
                 , SvgAttr.cy lp
-                , SvgAttr.r "20"
+                , SvgAttr.r "34"
                 , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.stroke "black"
                 , Svg.Events.onClick (OnClickTriggers 0)
                 ]
                 []
@@ -371,9 +392,8 @@ drawnumberbutton number =
             Svg.circle
                 [ SvgAttr.cx tp
                 , SvgAttr.cy lp
-                , SvgAttr.r "20"
+                , SvgAttr.r "34"
                 , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.stroke "black"
                 , Svg.Events.onClick (OnClickTriggers rnumber)
                 ]
                 []
@@ -382,37 +402,6 @@ drawnumberbutton number =
 
 --need
 
-
-drawpassword : Numberkey -> Svg Msg
-drawpassword number =
-    let
-        tp =
-            String.fromInt (650 + 50 * Tuple.first number.position)
-
-        lp =
-            String.fromInt (350 + 50 * Tuple.second number.position)
-
-        rnumber =
-            Tuple.first number.position + 3 * (Tuple.second number.position - 1)
-    in
-    case number.position of
-        ( 2, 4 ) ->
-            Svg.text_
-                [ SvgAttr.x tp
-                , SvgAttr.y lp
-                , Svg.Events.onClick (OnClickTriggers 0)
-                ]
-                [ Html.text "0" ]
-
-        _ ->
-            Svg.text_
-                [ SvgAttr.x tp
-                , SvgAttr.y lp
-                , Svg.Events.onClick (OnClickTriggers rnumber)
-                ]
-                [ Html.text (String.fromInt rnumber) ]
-
-
 drawword : List Int -> List (Svg Msg)
 drawword word =
     let
@@ -420,17 +409,18 @@ drawword word =
             List.length word
 
         x1 =
-            String.fromInt (670 + 50 * (lg - 1))
+            String.fromInt (680 + 60 * (lg - 1))
     in
     case word of
         x :: xs ->
-            [ Svg.text_
-                [ SvgAttr.x x1
-                , SvgAttr.y "290"
-                , SvgAttr.fontSize "20"
+            [Svg.circle
+                [ SvgAttr.cx x1
+                , SvgAttr.cy "180"
+                , SvgAttr.r "15"
+                , SvgAttr.fill "white"
+                , SvgAttr.fillOpacity "1.0"
                 ]
-                [ Html.text (String.fromInt x) ]
-            ]
+                []]
                 ++ drawword xs
 
         [] ->
