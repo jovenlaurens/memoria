@@ -1,4 +1,13 @@
-module Update exposing (..)
+module Update exposing (update)
+
+{-| This module is the main update module
+
+
+# Functions
+
+@docs update
+
+-}
 
 import Browser.Dom exposing (getViewport)
 import Draggable
@@ -11,25 +20,23 @@ import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_co
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time, test_table)
-import Pbulb exposing (Color(..),  update_bulb_inside)
+import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
+import Pbulb exposing (Color(..), checkoutwin, update_bulb_inside)
+import Pcabinet exposing (CabinetModel, switch_cabState)
 import Pcomputer exposing (State(..))
-import Picture exposing (Picture, ShowState(..), show_index_picture)
+import Pdolls exposing (..)
+import Pfragment exposing (FragmentState(..))
+import Picture exposing (Picture, ShowState(..), list_index_picture, show_index_picture)
+import Pmirror exposing (LightState(..), refresh_keyboard, test_keyboard_win_inside)
 import Ppiano exposing (bounce_key, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
-import Pfragment exposing(FragmentState(..))
-import Pdolls exposing (..)
-import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
 import Svg.Attributes exposing (color, speed)
 import Task
-import Pcabinet exposing (CabinetModel)
-import Pcabinet exposing (switch_cabState)
-import Pmirror exposing (refresh_keyboard)
-import Pmirror exposing (test_keyboard_win_inside, LightState(..))
-import Picture exposing (list_index_picture)
-import Pbulb exposing (checkoutwin)
 
 
+{-| Main update function
+-}
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -98,14 +105,13 @@ update msg model =
             ( update_onclicktrigger model number
                 |> test_clock_win
                 |> test_mirror_win
-              --|> test_pinao_win
+                --|> test_pinao_win
                 |> test_fragment_win
                 |> test_bulb_win
             , Cmd.none
             )
 
         OnClickItem index ->
-            
             ( pickup_picture index model
             , Cmd.none
             )
@@ -122,7 +128,7 @@ update msg model =
             )
 
         Lighton a ->
-            ( (update_lighton a model)
+            ( update_lighton a model
             , Cmd.none
             )
 
@@ -138,26 +144,32 @@ update msg model =
 test_bulb_win : Model -> Model
 test_bulb_win model =
     let
-        oldobjs = model.objects
-        ck = model.checklist
-        fin obj = ( case obj of
-                            Bul a ->
-                                if (a.state) then
-                                    True
-                                else
-                                    False
-                            _ ->
-                                False
-                      )
-        sta = (List.map fin oldobjs ) |> List.any (\x -> x == True)
+        oldobjs =
+            model.objects
+
+        ck =
+            model.checklist
+
+        fin obj =
+            case obj of
+                Bul a ->
+                    if a.state then
+                        True
+
+                    else
+                        False
+
+                _ ->
+                    False
+
+        sta =
+            List.map fin oldobjs |> List.any (\x -> x == True)
     in
-        if sta then
-            {model | checklist = {ck | level1light = True} }
-        else
-            model
-        
+    if sta then
+        { model | checklist = { ck | level1light = True } }
 
-
+    else
+        model
 
 
 animate : Model -> Float -> Model
@@ -211,9 +223,9 @@ animate model elapsed =
                 , cscreen = new_cscreen
                 , tscreen = new_tscreen
                 , move_timer = model.move_timer + elapsed
-                , objects =( bounce_key_top model.move_timer model.objects
-                                |> test_keyboard_win
-                    )
+                , objects =
+                    bounce_key_top model.move_timer model.objects
+                        |> test_keyboard_win
             }
 
         new_intro =
@@ -229,12 +241,11 @@ test_keyboard_win list =
             case obj of
                 Mirror a ->
                     Mirror (test_keyboard_win_inside a)
+
                 _ ->
                     obj
     in
-        List.map fin list
-    
-
+    List.map fin list
 
 
 update_gra_part : Model -> GraMsg -> Model
@@ -270,9 +281,6 @@ get_gra_state submsg =
 
         _ ->
             default_process
-
-
-
 
 
 renew_screen_info : GraMsg -> Screen -> Screen
@@ -349,7 +357,7 @@ renew_screen_info submsg old =
                     case ( a, b ) of
                         ( 0, 0 ) ->
                             8
-                        
+
                         ( 0, 1 ) ->
                             13
 
@@ -389,13 +397,13 @@ bounce_key_help time object =
 test_table_win : Object -> Model -> Model
 test_table_win obj model =
     let
-        cklst = model.checklist
+        cklst =
+            model.checklist
     in
-    
     case obj of
         Table a ->
             if List.all (\x -> x.state == Active) a.blockSet then
-                { model | checklist = {cklst | level1coffee = True} }
+                { model | checklist = { cklst | level1coffee = True } }
 
             else
                 model
@@ -413,7 +421,8 @@ test_clock_win model =
         ( hour, min ) =
             get_time cloc
 
-        pic1 = list_index_picture 1 model.pictures
+        pic1 =
+            list_index_picture 1 model.pictures
     in
     if hour == 8 && min == 15 && pic1.state == NotShow then
         { model | pictures = show_index_picture 1 model.pictures }
@@ -441,7 +450,6 @@ test_mirror_win model =
     let
         flag =
             List.any test_mirror_win_help model.objects
-
     in
     if flag then
         { model | objects = List.map show_phone_question model.objects }
@@ -450,20 +458,14 @@ test_mirror_win model =
         model
 
 
-
-
 show_phone_question : Object -> Object
 show_phone_question obj =
     case obj of
         Mirror a ->
-            Mirror {a | stage = (Pass, NotYet)}
+            Mirror { a | stage = ( Pass, NotYet ) }
+
         _ ->
             obj
-            
-
-
-
-
 
 
 test_mirror_win_help : Object -> Bool
@@ -483,8 +485,9 @@ test_mirror_win_help object =
         _ ->
             False
 
+
 test_fragment_win : Model -> Model
-test_fragment_win model = 
+test_fragment_win model =
     let
         fin obj =
             case obj of
@@ -494,7 +497,8 @@ test_fragment_win model =
                 _ ->
                     obj
     in
-    { model | objects = List.map (fin) model.objects }
+    { model | objects = List.map fin model.objects }
+
 
 pickup_picture : Int -> Model -> Model
 pickup_picture index model =
@@ -502,40 +506,48 @@ pickup_picture index model =
         fin id pict =
             if id == pict.index && pict.state == Show then
                 { pict | state = Picked }
+
             else
                 pict
-        new_pictures = List.map (fin index) model.pictures
 
+        new_pictures =
+            List.map (fin index) model.pictures
     in
-        { model | pictures = new_pictures }
+    { model | pictures = new_pictures }
 
 
 select_picture : Int -> Model -> Model
 select_picture index model =
-        List.foldr (select_picture_inside index) model model.pictures
-
+    List.foldr (select_picture_inside index) model model.pictures
 
 
 select_picture_inside : Int -> Picture -> Model -> Model
 select_picture_inside id pict mod =
     let
-        udus = mod.underUse
+        udus =
+            mod.underUse
     in
-            if id == pict.index && pict.state == Picked then
-                if udus == 99 then
-                    { mod | underUse = id
-                           , pictures = choose_index_picture id mod.pictures
-                    }
-                else if id == udus then
-                    { mod | underUse = 99
-                          , pictures = unchoose_index_picture id mod.pictures
-                    }
-                else
-                    { mod | pictures = change_index_picture id udus mod.pictures
-                            , underUse = id
-                    }
-            else
-                mod
+    if id == pict.index && pict.state == Picked then
+        if udus == 99 then
+            { mod
+                | underUse = id
+                , pictures = choose_index_picture id mod.pictures
+            }
+
+        else if id == udus then
+            { mod
+                | underUse = 99
+                , pictures = unchoose_index_picture id mod.pictures
+            }
+
+        else
+            { mod
+                | pictures = change_index_picture id udus mod.pictures
+                , underUse = id
+            }
+
+    else
+        mod
 
 
 unchoose_index_picture : Int -> List Picture -> List Picture
@@ -543,11 +555,12 @@ unchoose_index_picture index list =
     let
         fin id pict =
             if id == pict.index then
-                {pict | state = Picked}
+                { pict | state = Picked }
+
             else
-                pict     
+                pict
     in
-        List.map (fin index) list
+    List.map (fin index) list
 
 
 choose_index_picture : Int -> List Picture -> List Picture
@@ -555,28 +568,28 @@ choose_index_picture index list =
     let
         fin id pict =
             if id == pict.index then
-                {pict | state = UnderUse}
+                { pict | state = UnderUse }
+
             else
-                pict     
+                pict
     in
-        List.map (fin index) list
+    List.map (fin index) list
+
 
 change_index_picture : Int -> Int -> List Picture -> List Picture
 change_index_picture index udu list =
     let
         fin id udus pict =
             if id == pict.index then
-                {pict | state = UnderUse}
+                { pict | state = UnderUse }
+
             else if udus == pict.index then
-                {pict | state = Picked}
+                { pict | state = Picked }
+
             else
                 pict
     in
-        List.map (fin index udu) list
-    
-
-
-
+    List.map (fin index udu) list
 
 
 dragConfig : Draggable.Config () Msg
@@ -602,16 +615,17 @@ the meaning of dir:
 update_onclicktrigger : Model -> Int -> Model
 update_onclicktrigger model number =
     let
-        cklst = model.checklist
+        cklst =
+            model.checklist
     in
-    
     case model.cscreen.cscene of
         1 ->
             updateclock model number
 
         2 ->
-            { model | checklist = { cklst | level1liquid = True } 
-                    ,  pictures = show_index_picture 0 model.pictures
+            { model
+                | checklist = { cklst | level1liquid = True }
+                , pictures = show_index_picture 0 model.pictures
             }
 
         3 ->
@@ -634,72 +648,64 @@ update_onclicktrigger model number =
 
         9 ->
             update_fra model number
-        
+
         10 ->
             { model | objects = try_update_bookshelf number model.objects }
 
         11 ->
             { model | objects = try_to_update_trophy model.objects }
-        
+
         12 ->
             update_cab 12 number model
 
         13 ->
-            update_cab 13 number model 
+            update_cab 13 number model
 
-        14 -> 
-            update_doll model number 
+        14 ->
+            update_doll model number
 
         0 ->
-            (case model.cscreen.clevel of
+            case model.cscreen.clevel of
                 0 ->
                     charge_computer model number
 
                 _ ->
                     model
-            )
 
         _ ->
             model
-
-
 
 
 update_cab : Int -> Int -> Model -> Model
 update_cab cs number model =
     let
         fin cse num obj =
-            case (cse, num, obj) of
+            case ( cse, num, obj ) of
                 ( 12, 1, Cabinet a ) ->
-                    Cabinet {a | lower = switch_cabState a.lower} 
+                    Cabinet { a | lower = switch_cabState a.lower }
+
                 _ ->
                     obj
-        new_obj = List.map (fin cs number) model.objects
+
+        new_obj =
+            List.map (fin cs number) model.objects
     in
-        { model | objects = new_obj}
-        
+    { model | objects = new_obj }
 
 
 
-{-update_cab_lock : Int -> Int -> Int -> Model -> Model
-update_cab_lock cs number udus model =
-    let
-        ck = model.checklist
-    in
-        case (cs, number) of
-            (12, 1) ->
-                { model | checklist = {ck | level1lowercab = (not ck.level1lowercab)}}
-            _ ->
-                model-}
-            
+{- update_cab_lock : Int -> Int -> Int -> Model -> Model
+   update_cab_lock cs number udus model =
+       let
+           ck = model.checklist
+       in
+           case (cs, number) of
+               (12, 1) ->
+                   { model | checklist = {ck | level1lowercab = (not ck.level1lowercab)}}
+               _ ->
+                   model
+-}
 --need add
-    
- 
-
-
-        
-        
-
 
 
 clear_index_picture : Int -> List Picture -> List Picture
@@ -708,16 +714,15 @@ clear_index_picture index list =
         fin id pict =
             if id == pict.index && pict.state == UnderUse then
                 { pict | state = Consumed }
-            else
-                pict    
-    in
-        List.map (fin index) list
-    
 
+            else
+                pict
+    in
+    List.map (fin index) list
 
 
 update_doll : Model -> Int -> Model
-update_doll model number = 
+update_doll model number =
     let
         fin num obj =
             case obj of
@@ -730,14 +735,17 @@ update_doll model number =
     { model | objects = List.map (fin number) model.objects }
 
 
-{-refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
-refresh_cabinet which cab number underuse =
-    if number == 0 {-&& underuse == -} then
-        ({ cab | upper = (switch_cabState cab.upper)}, False)
-    else if number == 1 then
-        ({ cab | upper = (switch_cabState cab.upper)}, False)
-    else
-        Debug.todo ""-}
+
+{- refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
+   refresh_cabinet which cab number underuse =
+       if number == 0 {-&& underuse == -} then
+           ({ cab | upper = (switch_cabState cab.upper)}, False)
+       else if number == 1 then
+           ({ cab | upper = (switch_cabState cab.upper)}, False)
+       else
+           Debug.todo ""
+-}
+
 
 try_update_bookshelf : Int -> List Object -> List Object
 try_update_bookshelf choice objectLst =
@@ -769,7 +777,6 @@ try_to_update_trophy objlst =
     List.map try_to_update_trophy_help objlst
 
 
-
 update_fra : Model -> Int -> Model
 update_fra model number =
     let
@@ -783,13 +790,14 @@ update_fra model number =
     in
     { model | objects = List.map (fin number) model.objects }
 
+
 update_bulb : Model -> Int -> Model
 update_bulb model number =
     let
         fin num obj =
             case obj of
                 Bul a ->
-                    Bul ((update_bulb_inside num a)  |> checkoutwin )
+                    Bul (update_bulb_inside num a |> checkoutwin)
 
                 _ ->
                     obj
@@ -865,16 +873,19 @@ try_to_update_computer model number =
 
 
 --needupdate_lighton : Int -> Model -> Model
+
+
 update_lighton number model =
     case number of
         0 ->
-           lighton_mirror model
+            lighton_mirror model
 
-        1 -> 
+        1 ->
             lighton_doll model
 
         _ ->
             model
+
 
 lighton_mirror : Model -> Model
 lighton_mirror model =
@@ -882,27 +893,31 @@ lighton_mirror model =
         toggle mirror =
             case mirror of
                 Mirror a ->
-                    Mirror { a | lightstate = Light_2_on}
+                    Mirror { a | lightstate = Light_2_on }
 
                 _ ->
                     mirror
     in
-    { model | objects = List.map toggle model.objects }  
+    { model | objects = List.map toggle model.objects }
+
 
 
 --need
+
+
 lighton_doll : Model -> Model
 lighton_doll model =
     let
         toggle dolls =
             case dolls of
                 Doll a ->
-                    Doll { a| state = Visible}
+                    Doll { a | state = Visible }
 
                 _ ->
                     dolls
     in
     { model | objects = List.map toggle model.objects }
+
 
 charge_computer : Model -> Int -> Model
 charge_computer model number =
@@ -952,36 +967,40 @@ updateclock model number =
 
 try_to_unlock_picture : Model -> Int -> Model
 try_to_unlock_picture model number =
-            case number of
-                0 ->
-                    if model.underUse == 0 then --碎片的0
-                        {
-                            model | pictures = consume_picture model.pictures 0 
-                                , underUse = 99
-                        }
-                    else if model.underUse == 1 then --碎片的1
-                        {
-                            model | pictures = consume_picture model.pictures 1 
-                                  , underUse = 99
-                        }
-                    else
-                        model
-                _ ->
-                    model
+    case number of
+        0 ->
+            if model.underUse == 0 then
+                --碎片的0
+                { model
+                    | pictures = consume_picture model.pictures 0
+                    , underUse = 99
+                }
 
+            else if model.underUse == 1 then
+                --碎片的1
+                { model
+                    | pictures = consume_picture model.pictures 1
+                    , underUse = 99
+                }
+
+            else
+                model
+
+        _ ->
+            model
 
 
 consume_picture : List Picture -> Int -> List Picture
 consume_picture list index =
-        let
-            consume id pic =
-                if pic.index == id then
-                    { pic | state = Consumed }
+    let
+        consume id pic =
+            if pic.index == id then
+                { pic | state = Consumed }
 
-                else
-                    pic
-        in
-        List.map (consume index) list
+            else
+                pic
+    in
+    List.map (consume index) list
 
 
 updatetime : Int -> ClockModel -> Object
@@ -1017,25 +1036,26 @@ check_pict_state model =
 
 check_use_picture : Picture -> Model -> Model
 check_use_picture pict model =
-    {-let
-        from_picked_to_stored index pic =
-            if pic.index == index then
-                { pic | state = Stored }
+    {- let
+           from_picked_to_stored index pic =
+               if pic.index == index then
+                   { pic | state = Stored }
 
-            else
-                pic
-    in
-    if pict.state == UnderUse && model.underUse == Blank then
-        { model | underUse = Pict (Picture pict.state pict.index) }
+               else
+                   pic
+       in
+       if pict.state == UnderUse && model.underUse == Blank then
+           { model | underUse = Pict (Picture pict.state pict.index) }
 
-    else if pict.state == Picked then
-        { model
-            | inventory = insert_new_item (Pict (Picture Stored pict.index)) model.inventory
-            , pictures = List.map (from_picked_to_stored pict.index) model.pictures
-        }
+       else if pict.state == Picked then
+           { model
+               | inventory = insert_new_item (Pict (Picture Stored pict.index)) model.inventory
+               , pictures = List.map (from_picked_to_stored pict.index) model.pictures
+           }
 
-    else-}
-        model
+       else
+    -}
+    model
 
 
 update_light_mirror_set : Int -> List Object -> List Object
@@ -1054,10 +1074,10 @@ update_light_mirror index object =
                 newLightSet =
                     refresh_lightSet (List.singleton (Line (Location 400 350) (Location 0 350))) newMirrorSet
             in
-            Mirror ({ a | mirrorSet = newMirrorSet, lightSet = newLightSet }
-                        |> refresh_keyboard index
-                    )
-                        
+            Mirror
+                ({ a | mirrorSet = newMirrorSet, lightSet = newLightSet }
+                    |> refresh_keyboard index
+                )
 
         _ ->
             object

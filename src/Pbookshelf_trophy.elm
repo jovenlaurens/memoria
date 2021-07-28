@@ -1,15 +1,52 @@
-module Pbookshelf_trophy exposing (..)
+module Pbookshelf_trophy exposing
+    ( render_trophy_button
+    , render_bookshelf_button
+    , initial_book_model
+    , initial_trophy_model
+    , rotate_trophy
+    , draw_trophy
+    , draw_bookshelf
+    , draw_bookshelf_index
+    , update_bookshelf
+    , Direction(..)
+    , BookletModel
+    , TrophyModel
+    )
+
+{-| This module is to accomplish the puzzle of bookshelf game
+
+
+# Functions
+
+@docs render_trophy_button
+@docs render_bookshelf_button
+@docs initial_book_model
+@docs initial_trophy_model
+@docs rotate_trophy
+@docs draw_trophy
+@docs draw_bookshelf
+@docs draw_bookshelf_index
+@docs update_bookshelf
+
+
+# Datatype
+
+@docs Direction
+@docs BookletModel
+
+-}
 
 import Button exposing (test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 
 
+{-| Render the button to switch the scene from main to the trophy puzzle game scene
+-}
 render_trophy_button : Html Msg
 render_trophy_button =
     let
@@ -19,6 +56,8 @@ render_trophy_button =
     test_button enter
 
 
+{-| Render the button to switch the scene from main to the bookshelf order puzzle game scene
+-}
 render_bookshelf_button : Html Msg
 render_bookshelf_button =
     let
@@ -28,16 +67,13 @@ render_bookshelf_button =
     test_button enter
 
 
+{-| The face of the trophy, when it is turned to Front, the bookshelf will be unlocked
+-}
 type Direction
     = Left
     | Right
     | Front
     | Rear
-
-
-type ViewState
-    = Visible
-    | Invisible
 
 
 type BookChoice
@@ -59,28 +95,35 @@ type alias Book =
 
 type alias Bookshelf =
     { books : List Book
-    , viewState : ViewState
     , changeIndex : ( Int, Int )
     , choiceState : BookChoice
     }
 
 
+{-| The puzzle model for bookshelf and trophy game
+-}
 type alias BookletModel =
     { bookshelf : Bookshelf
     }
 
 
+{-| The puzzle model for trophy game
+-}
 type alias TrophyModel =
     { trophy : Trophy
     }
 
 
+{-| Initialize the booklet model
+-}
 initial_book_model : BookletModel
 initial_book_model =
     BookletModel
         initial_bookshelf
 
 
+{-| Initialize the trophy model
+-}
 initial_trophy_model : TrophyModel
 initial_trophy_model =
     TrophyModel
@@ -109,11 +152,12 @@ initial_bookshelf =
     in
     Bookshelf
         (List.map initial_bookshelf_help indexSet)
-        Invisible
         ( 1, 1 )
         Full
 
 
+{-| Update the face of trophy when being clicked
+-}
 rotate_trophy : Trophy -> Trophy
 rotate_trophy old =
     let
@@ -134,6 +178,8 @@ rotate_trophy old =
     { old | face = newdir }
 
 
+{-| Update the bookshelf include the choice state, choices books and mainly the book order
+-}
 update_bookshelf : Int -> Bookshelf -> Bookshelf
 update_bookshelf num old =
     let
@@ -214,8 +260,10 @@ foldl_help ( b1, b2 ) shelfItem newlst =
         { b2 | index = b1.index } :: newlst
 
 
-draw_trophy : Trophy -> List (Svg Msg)
-draw_trophy trophy =
+{-| Draw the trophy
+-}
+draw_trophy : List (Svg Msg)
+draw_trophy =
     Svg.rect
         [ SvgAttr.width "200"
         , SvgAttr.height "200"
@@ -230,6 +278,8 @@ draw_trophy trophy =
         |> List.singleton
 
 
+{-| Draw the index of book
+-}
 draw_bookshelf_index : Bookshelf -> List (Svg Msg)
 draw_bookshelf_index bookshelf =
     List.map draw_book_index bookshelf.books
@@ -265,6 +315,8 @@ draw_book book =
         []
 
 
+{-| Draw the bookshelf in the bookshelf puzzle
+-}
 draw_bookshelf : Bookshelf -> List (Svg Msg)
 draw_bookshelf bookshelf =
     List.map draw_book bookshelf.books

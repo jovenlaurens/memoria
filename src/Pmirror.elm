@@ -1,14 +1,13 @@
-module Pmirror exposing (..)
-
-import Debug exposing (toString)
-import Geometry exposing (..)
-import Html.Events exposing (onClick)
-import List exposing (foldr)
-import Messages exposing (..)
-import Svg exposing (Svg)
-import Svg.Attributes as SvgAttr exposing (y1)
-import Svg.Events
-
+module Pmirror exposing
+    ( initialMirror
+    , test_keyboard_win_inside
+    , refresh_keyboard
+    , render_mirror
+    , draw_light
+    , draw_mirror
+    , LightState(..)
+    , MirrorModel
+    )
 
 {-| This module is to accomplish the puzzle of mirror game
 
@@ -25,10 +24,22 @@ import Svg.Events
 
 # Datatype
 
+@docs LightState
+@docs MirrorModel
+
 -}
 
+import Debug exposing (toString)
+import Geometry exposing (..)
+import Html.Events exposing (onClick)
+import List exposing (foldr)
+import Messages exposing (..)
+import Svg exposing (Svg)
+import Svg.Attributes as SvgAttr exposing (y1)
+import Svg.Events
 
-{-| Decide whether to show the light
+
+{-| The type of whether the light from the mirror hit the target correctly
 -}
 type LightState
     = Light_2_on
@@ -36,7 +47,11 @@ type LightState
     | Otherobject
 
 
-{-| Contain the field
+{-| Contain the fields to play the mirror model :
+lightSet : List
+Line contain all the light line.
+answer : Int
+Is the answer for the the question who is my favourite character.
 -}
 type alias MirrorModel =
     { lightstate : LightState

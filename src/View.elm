@@ -1,4 +1,13 @@
-module View exposing (..)
+module View exposing (view)
+
+{-| This module is the main view module
+
+
+# Functions
+
+@docs view
+
+-}
 
 import Button exposing (Button, black_white_but, test_button, trans_button_sq)
 import Debug exposing (toString)
@@ -27,7 +36,7 @@ import Pmirror exposing (LightState(..), render_mirror)
 import Ppiano exposing (PianoModel, draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
-import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_button)
+import Ptable exposing (draw_block, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
@@ -37,6 +46,8 @@ style =
     Html.Attributes.style
 
 
+{-| The view function for main
+-}
 view : Model -> Html Msg
 view model =
     let
@@ -648,7 +659,7 @@ render_object_only model cs objects =
             render_cabinet model.cscreen.cscene model.cscreen.clevel a
 
         Trophy a ->
-            draw_trophy a.trophy
+            draw_trophy
 
         Book a ->
             draw_bookshelf a.bookshelf ++ draw_bookshelf_index a.bookshelf

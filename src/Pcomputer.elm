@@ -1,13 +1,21 @@
 module Pcomputer exposing (..)
 
-import Browser
-import Debug exposing (toString)
+{-| This module is to accomplish the puzzle of computer
+
+
+# Functions
+
+@docs drawbackbutton
+@docs drawclock
+@docs drawclockbutton
+@docs drawhouradjust
+@docs drawminuteadjust
+@docs drawminutehand
+
+-}
+
 import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
-import Memory exposing (MeState)
 import Messages exposing (GraMsg(..), Msg(..))
-import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
@@ -338,9 +346,6 @@ drawchargedpc a model =
 
         _ ->
             []
-
-
-
 
 
 drawnumberbutton : Numberkey -> Svg Msg
