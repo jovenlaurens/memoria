@@ -34,16 +34,18 @@ initDollModel : DollModel
 initDollModel =
     DollModel 0 Invisible 0 Whole
 
-updatedolltrigger : Int -> DollModel -> DollModel
-updatedolltrigger number model =
-     if number == 99 then
-        { model | pig = Broken}
+
+--bug
+updatedolltrigger : Int -> Int -> DollModel -> (DollModel, Bool)
+updatedolltrigger udus number model =
+     if number == 99 && udus == 10 then
+        ({ model | pig = Broken}, True)
 
      else if model.number > number then
-            model
+        ( model, False )
 
      else
-        { model | number = model.number + 1}
+        ({ model | number = model.number + 1}, False)
         
 
 drawdoll_ui : Int -> DollModel -> Int -> List (Svg Msg)
@@ -97,14 +99,23 @@ drawbrokenpig =
 
 drawbed : List( Svg Msg)
 drawbed = 
-    [Svg.image
+    [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
             , SvgAttr.xlinkHref "assets/level2/bed.png"
             ]
-            []]
+            []
+    , Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level2/bedlight.png" --need
+            ]
+            []
+    ]
 
 drawpowerbutton : List (Svg Msg)
 drawpowerbutton = 

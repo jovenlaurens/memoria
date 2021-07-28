@@ -14,12 +14,12 @@ import Object exposing (ClockModel, Object(..), get_time, test_table, get_doll_n
 import Pbulb exposing (Color(..),  update_bulb_inside)
 import Pcomputer exposing (State(..))
 import Picture exposing (Picture, ShowState(..), show_index_picture)
-import Ppiano exposing (bounce_key, press_key)
+import Ppiano exposing (bounce_key, check_order, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
 import Pfragment exposing(FragmentState(..))
 import Pdolls exposing (..)
-import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
+import Pbookshelf_trophy exposing (get_bookshelf_order, rotate_trophy, update_bookshelf)
 import Svg.Attributes exposing (color, speed)
 import Task
 import Pcabinet exposing (CabinetModel)
@@ -83,7 +83,7 @@ update msg model =
                 )
 
             else
-                ( model, Cmd.none )
+                ( model, Cmd.none ) --need improved
 
         OnDragBy ( dx, dy ) ->
             let
@@ -105,6 +105,8 @@ update msg model =
                 |> test_doll_win
                 |> test_pig_mash
                 |> test_computer_unlock
+                |> test_bookshelf_win
+
             , Cmd.none
             )
 
@@ -142,16 +144,20 @@ update msg model =
 test_bulb_win : Model -> Model
 test_bulb_win model =
     let
-        oldobjs = model.objects
-        ck = model.checklist
-        fin obj = ( case obj of
-                            Bul a ->
-                                if (a.state) then
-                                    True
-                                else
-                                    False
-                            _ ->
-                                False
+        oldobjs = 
+            model.objects
+
+        ck = 
+            model.checklist
+        fin obj = 
+            ( case obj of
+                    Bul a ->
+                        if (a.state) then
+                            True
+                        else
+                            False
+                    _ ->
+                            False
                       )
         sta = (List.map fin oldobjs ) |> List.any (\x -> x == True)
     in
@@ -215,7 +221,8 @@ animate model elapsed =
                 , cscreen = new_cscreen
                 , tscreen = new_tscreen
                 , move_timer = model.move_timer + elapsed
-                , objects =( bounce_key_top model.move_timer model.objects
+                , objects =
+                    ( bounce_key_top model.move_timer model.objects
                                 |> test_keyboard_win
                     )
             }
@@ -393,7 +400,8 @@ bounce_key_help time object =
 test_table_win : Object -> Model -> Model
 test_table_win obj model =
     let
-        cklst = model.checklist
+        cklst = 
+            model.checklist
     in
     
     case obj of
@@ -417,13 +425,15 @@ test_clock_win model =
         ( hour, min ) =
             get_time cloc
 
-        pic1 = list_index_picture 1 model.pictures
+        pic1 = 
+            list_index_picture 1 model.pictures
     in
-    if hour == 8 && min == 15 && pic1.state == NotShow then
+    if hour == 8 && min == 15 && pic1.state == NotShow && model.checklist.level1light == True then
         { model | pictures = show_index_picture 1 model.pictures }
 
     else
         model
+
 
 
 {-| the any should be replaced by custom type because if clock win the mirror will also show the picture
@@ -439,6 +449,32 @@ test_clock_win model =
 --        Piano a->
 --            let
 
+
+test_bookshelf_win_help : Object -> Bool
+test_bookshelf_win_help object =
+    case object of
+        Book a ->
+            if get_bookshelf_order a.bookshelf == List.range 1 20 then
+                True
+
+            else
+                False
+
+        _ ->
+            False
+
+
+test_bookshelf_win : Model -> Model
+test_bookshelf_win model =
+    let
+        flag =
+            List.any test_bookshelf_win_help model.objects
+    in
+    if flag then
+        { model | pictures = show_index_picture 3 model.pictures }
+
+    else
+        model
 
 test_mirror_win : Model -> Model
 test_mirror_win model =
@@ -498,10 +534,10 @@ test_computer_unlock model =
         pic8 = list_index_picture 8 model.pictures
     in
         if state == (Charged 2) && pic8.state == NotShow then
-        { model | pictures = show_index_picture 8 model.pictures }
+            { model | pictures = show_index_picture 8 model.pictures }
+        else
+            model
 
-         else
-        model
 
 
 show_phone_question : Object -> Object
@@ -673,7 +709,7 @@ update_onclicktrigger model number =
             { model | objects = update_light_mirror_set number model.objects }
 
         5 ->
-            try_to_update_computer model number
+            try_to_update_computer 5 model number --bug
 
         6 ->
             try_to_update_power model number
@@ -688,7 +724,12 @@ update_onclicktrigger model number =
             update_fra model number
         
         10 ->
-            { model | objects = try_update_bookshelf number model.objects }
+            case number of
+                100 ->
+                    { model | objects = try_to_update_trophy model.objects }
+
+                _ ->
+                    { model | objects = try_update_bookshelf number model.objects }
 
         11 ->
             { model | objects = try_to_update_trophy model.objects }
@@ -697,7 +738,7 @@ update_onclicktrigger model number =
             update_cab 12 number model
 
         13 ->
-            update_cab 13 number model 
+            try_to_update_computer 13 model number
 
         14 -> 
             update_doll model number 
@@ -707,12 +748,34 @@ update_onclicktrigger model number =
                 0 ->
                     charge_computer model number
 
+                1 ->
+                    try_to_unlock_door model number
+
                 _ ->
                     model
             )
 
         _ ->
             model
+
+
+try_to_unlock_door : Model -> Int -> Model
+try_to_unlock_door model number =
+    let
+        cklst = model.checklist
+    in
+
+        if number == 0 then
+            if model.underUse == 2 then
+                { model | underUse = 99
+                        , pictures = consume_picture model.pictures 2
+                        , checklist = {cklst | level1door = True}
+                }
+            else
+                model
+        else
+            model
+    
 
 
 
@@ -771,15 +834,29 @@ clear_index_picture index list =
 update_doll : Model -> Int -> Model
 update_doll model number = 
     let
+        oldudus = model.underUse
+        oldpict = model.pictures
         fin num obj =
             case obj of
                 Doll a ->
-                    Doll (updatedolltrigger num a)
+                    ( Doll (updatedolltrigger oldudus num a |> Tuple.first)
+                    , (updatedolltrigger oldudus num a |> Tuple.second))
 
                 _ ->
-                    obj
+                    ( obj, False)
+
+        (new_objects, state) = List.map (fin number) model.objects
+                        |> List.unzip
+        (newudus, newpict) = ( if List.any (\x -> x==True) state && oldudus == 10 then
+                                    ( 99, consume_picture oldpict 10  )
+                               else
+                                    (oldudus, oldpict)
+                              )
     in
-    { model | objects = List.map (fin number) model.objects }
+    { model | objects = new_objects
+            , underUse = newudus
+            , pictures = newpict
+    }
 
 
 {-refresh_cabinet : Int -> CabinetModel -> Int -> Grid -> (CabinetModel, Bool)
@@ -812,8 +889,8 @@ try_to_update_trophy objlst =
         try_to_update_trophy_help : Object -> Object
         try_to_update_trophy_help obj =
             case obj of
-                Trophy a ->
-                    Trophy { a | trophy = rotate_trophy a.trophy }
+                Book a ->
+                    Book { a | trophy = rotate_trophy a.trophy }
 
                 _ ->
                     obj
@@ -858,7 +935,13 @@ try_to_update_piano_help : Int -> Float -> Object -> Object
 try_to_update_piano_help index time object =
     case object of
         Piano a ->
-            Piano { a | currentMusic = index, pianoKeySet = press_key index time a.pianoKeySet }
+           Piano
+                { a
+                    | currentMusic = index
+                    , pianoKeySet = press_key index time a.pianoKeySet
+                    , playedKey = List.append a.playedKey [ index ]
+                    , winState = check_order a.playedKey
+                }
 
         _ ->
             object
@@ -901,18 +984,31 @@ try_to_update_power model index =
     { model | objects = List.map toggle model.objects }
 
 
-try_to_update_computer : Model -> Int -> Model
-try_to_update_computer model number =
-    let
-        toggle computer =
-            case computer of
-                Computer cpt ->
-                    Computer (Pcomputer.updatetrigger number cpt)
+try_to_update_computer : Int -> Model -> Int -> Model
+try_to_update_computer cs model number =
+    if model.cscreen.cscene == cs then
+        let
+            toggle computer =
+                case computer of
+                    Computer cpt ->
+                        Computer (Pcomputer.updatetrigger number cpt)
 
-                _ ->
-                    computer
-    in
-    { model | objects = List.map toggle model.objects }
+                    _ ->
+                        computer
+            cklst = model.checklist
+            p1 = show_index_picture 6 model.pictures
+            p2 = show_index_picture 10 p1
+        in
+        { model | objects = List.map toggle model.objects }
+            |> (\x -> if number == 100 then
+                        { x | checklist = {cklst | level0safebox = True }
+                            , pictures = p2
+                        }
+                      else
+                        x
+            )
+    else
+        model
 
 
 
@@ -1020,7 +1116,7 @@ try_to_unlock_picture model number =
                         model
 
                 3 ->
-                    if model.underUse == 8 then --碎片的0
+                    if model.underUse == 8 then --碎片的8
                         {
                             model | pictures = consume_picture model.pictures 8 
                                 , underUse = 99

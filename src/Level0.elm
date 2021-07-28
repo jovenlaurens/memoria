@@ -12,21 +12,14 @@ import Svg.Events
 -}
 level_0_furniture : List (Svg Msg)
 level_0_furniture =
-    drawFloor
-        ++ drawCeiling
-        ++ drawStair
-        ++ drawDoor
-        ++ drawPiano
-        ++ drawPainting
-        ++ drawWardrobe
-        ++ drawRack
-        ++ drawTelephone
-        ++ drawChair
-        ++ drawDesk
-        ++ drawLeftBox
-        ++ drawRightBox
-        ++ drawMonitor
-
+    [ Svg.image 
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
+            ]
+            []]
 
 drawFloor : List (Svg msg)
 drawFloor =

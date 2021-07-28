@@ -73,10 +73,12 @@ type alias CheckList =
     , level1coffee : Bool
     , level1liquid : Bool
     , level1lowercab : Bool
+    , level1door : Bool
+    , level0safebox : Bool
     }
 
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False)
+initial_checklist = (CheckList False False False False True False) --临时改
 
 
 list_index_object : Int -> List Object -> Object
