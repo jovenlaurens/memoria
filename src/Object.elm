@@ -2,18 +2,17 @@ module Object exposing (..)
 
 import Geometry exposing (Location)
 import Memory exposing (Memory)
+import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
 import Pbulb exposing (BulbModel, initial_bulb)
+import Pcabinet exposing (CabinetModel, initial_cab_1, initial_cab_2)
 import Pcomputer exposing (ComputerModel, initial_computer)
+import Pdolls exposing (DollModel, initDollModel)
+import Pfragment exposing (FragmentModel, initfraModel)
 import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-import Pfragment exposing (FragmentModel, initfraModel)
-import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
-import Pdolls exposing (DollModel, initDollModel)
-import Pcabinet exposing (CabinetModel)
-import Pcabinet exposing (initial_cab_1)
-import Pcabinet exposing (initial_cab_2)
+
 
 type Object
     = Clock ClockModel
@@ -29,7 +28,6 @@ type Object
     | Trophy TrophyModel
     | Doll DollModel
     | Cabinet CabinetModel
-
 
 
 type alias ScreenModel =
@@ -69,12 +67,10 @@ test_table loca pre =
                 Table initial_table
 
             else
-                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca } 
-                    
+                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca }
 
         _ ->
             pre
-
 
 
 initial_objects : List Object
@@ -88,12 +84,12 @@ initial_objects =
     , Power initPowerModel --5    6        0
     , Piano Ppiano.initial --6    7        0
     , Bul initial_bulb --7    8        1
-    , Fra initfraModel -- 8   9  0  
+    , Fra initfraModel -- 8   9  0
     , Book Pbookshelf_trophy.initial_book_model -- 9  10 0
     , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
     , Cabinet initial_cab_1 -- 11 12 1
     , Cabinet initial_cab_2 -- 12 13 2
-    , Doll initDollModel -- 13  14  2 
+    , Doll initDollModel -- 13  14  2
     ]
 
 

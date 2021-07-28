@@ -11,7 +11,7 @@ import Memory exposing (MeState(..), find_cor_pict, list_index_memory, unlock_co
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (ClockModel, Object(..), get_time, test_table)
-import Pbookshelf_trophy exposing (rotate_trophy, update_bookshelf)
+import Pbookshelf_trophy exposing (get_bookshelf_order, rotate_trophy, update_bookshelf)
 import Pbulb exposing (Color(..), checkoutwin, update_bulb_inside)
 import Pcabinet exposing (CabinetModel, switch_cabState)
 import Pcomputer exposing (State(..))
@@ -94,9 +94,9 @@ update msg model =
             ( update_onclicktrigger model number
                 |> test_clock_win
                 |> test_mirror_win
-                |> test_piano_win
                 |> test_fragment_win
                 |> test_bulb_win
+                |> test_bookshelf_win
             , Cmd.none
             )
 
@@ -422,11 +422,25 @@ test_clock_win model =
 
 {-| the any should be replaced by custom type because if clock win the mirror will also show the picture
 -}
-test_piano_win : Model -> Model
-test_piano_win model =
+test_bookshelf_win_help : Object -> Bool
+test_bookshelf_win_help object =
+    case object of
+        Book a ->
+            if get_bookshelf_order a.bookshelf == [ 2, 1 ] ++ List.range 3 20 then
+                True
+
+            else
+                False
+
+        _ ->
+            False
+
+
+test_bookshelf_win : Model -> Model
+test_bookshelf_win model =
     let
         flag =
-            List.any test_piano_win_help model.objects
+            List.any test_bookshelf_win_help model.objects
     in
     if flag then
         { model | pictures = show_index_picture 3 model.pictures }
@@ -435,14 +449,28 @@ test_piano_win model =
         model
 
 
-test_piano_win_help : Object -> Bool
-test_piano_win_help object =
-    case object of
-        Piano a ->
-            check_order a.playedKey
 
-        _ ->
-            False
+--test_piano_win : Model -> Model
+--test_piano_win model =
+--    let
+--        flag =
+--            List.any test_piano_win_help model.objects
+--    in
+--    if flag then
+--        { model | pictures = show_index_picture 3 model.pictures }
+--
+--    else
+--        model
+--
+--
+--test_piano_win_help : Object -> Bool
+--test_piano_win_help object =
+--    case object of
+--        Piano a ->
+--            check_order a.playedKey
+--
+--        _ ->
+--            False
 
 
 test_mirror_win : Model -> Model
@@ -819,7 +847,13 @@ try_to_update_piano_help : Int -> Float -> Object -> Object
 try_to_update_piano_help index time object =
     case object of
         Piano a ->
-            Piano { a | currentMusic = index, pianoKeySet = press_key index time a.pianoKeySet, playedKey = List.append a.playedKey [ index ] }
+            Piano
+                { a
+                    | currentMusic = index
+                    , pianoKeySet = press_key index time a.pianoKeySet
+                    , playedKey = List.append a.playedKey [ index ]
+                    , winState = check_order a.playedKey
+                }
 
         _ ->
             object

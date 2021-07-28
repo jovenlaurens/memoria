@@ -15,7 +15,7 @@ import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_m
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
-import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf, draw_bookshelf_index, draw_trophy, render_trophy_button)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
 import Pbulb exposing (Bulb, render_bulb)
 import Pcabinet exposing (render_cabinet)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
@@ -629,7 +629,7 @@ render_object_only model cs objects =
             drawpowersupply a 6 model.cscreen.clevel
 
         Piano a ->
-            draw_key_set a.pianoKeySet
+            draw_key_set a
 
         Bul a ->
             render_bulb 8 a
@@ -644,7 +644,7 @@ render_object_only model cs objects =
             draw_trophy a.trophy
 
         Book a ->
-            draw_bookshelf a.bookshelf ++ draw_bookshelf_index a.bookshelf ++ draw_trophy a.trophy
+            draw_bookshelf_or_trophy a
 
         Doll a ->
             drawdoll_ui 10 a model.cscreen.clevel

@@ -81,13 +81,13 @@ initial_book_model : BookletModel
 initial_book_model =
     BookletModel
         initial_bookshelf
-        (Trophy Left (Location 200 100))
+        (Trophy Right (Location 200 100))
 
 
 initial_trophy_model : TrophyModel
 initial_trophy_model =
     TrophyModel
-        (Trophy Left (Location 200 100))
+        (Trophy Right (Location 200 100))
 
 
 initial_bookshelf_help : Int -> Book
@@ -108,7 +108,7 @@ initial_bookshelf : Bookshelf
 initial_bookshelf =
     let
         indexSet =
-            List.range 1 20
+            [ 5, 9, 8, 6, 15, 16, 11, 14, 10, 20, 19, 17, 3, 1, 2, 12, 4, 7, 13, 18 ]
     in
     Bookshelf
         (List.map initial_bookshelf_help indexSet)
@@ -116,6 +116,11 @@ initial_bookshelf =
         ( 1, 2 )
         Full
         (Trophy Right (Location 200 100))
+
+
+get_bookshelf_order : Bookshelf -> List Int
+get_bookshelf_order bookshelf =
+    List.map (\x -> x.index) bookshelf.books
 
 
 rotate_trophy : Trophy -> Trophy
@@ -326,8 +331,8 @@ draw_book ( x, y ) choice book =
         []
 
 
-draw_bookshelf : Bookshelf -> List (Svg Msg)
-draw_bookshelf bookshelf =
+draw_bookshelf_or_trophy : BookletModel -> List (Svg Msg)
+draw_bookshelf_or_trophy bookshelf =
     let
         state =
             case bookshelf.trophy.face of
@@ -336,6 +341,14 @@ draw_bookshelf bookshelf =
 
                 _ ->
                     "assets/trophy/trophy_bg.png"
+
+        mainTarget =
+            case bookshelf.trophy.face of
+                Front ->
+                    List.map (draw_book bookshelf.bookshelf.changeIndex bookshelf.bookshelf.choiceState) bookshelf.bookshelf.books
+
+                _ ->
+                    draw_trophy bookshelf.trophy
     in
     [ Svg.image
         [ SvgAttr.x "0"
@@ -346,4 +359,4 @@ draw_bookshelf bookshelf =
         ]
         []
     ]
-        ++ List.map (draw_book bookshelf.changeIndex bookshelf.choiceState) bookshelf.books
+        ++ mainTarget

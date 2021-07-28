@@ -36,6 +36,7 @@ type alias PianoModel =
     { pianoKeySet : List PianoKey
     , playedKey : List Int
     , currentMusic : Int
+    , winState : Bool
     }
 
 
@@ -45,6 +46,7 @@ initial =
         generate_key_set
         []
         0
+        False
 
 
 generate_key_set_help : Int -> PianoKey
@@ -67,7 +69,7 @@ generate_key_set : List PianoKey
 generate_key_set =
     let
         indexSet =
-            List.range 1 14
+            List.range 1 12
     in
     List.map generate_key_set_help indexSet
 
@@ -110,9 +112,31 @@ play_audio index =
         [ text "error" ]
 
 
-draw_key_set : List PianoKey -> List (Svg Msg)
-draw_key_set pianoKeySet =
-    List.map draw_single_key pianoKeySet
+draw_key_set : PianoModel -> List (Svg Msg)
+draw_key_set piano =
+    background piano ++ List.map draw_single_key piano.pianoKeySet
+
+
+background : PianoModel -> List (Svg Msg)
+background piano =
+    let
+        link =
+            case piano.winState of
+                True ->
+                    "assets/pianokey/pianowin.png"
+
+                False ->
+                    "assets/pianokey/piano.png"
+    in
+    Svg.image
+        [ SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.xlinkHref link
+        ]
+        []
+        |> List.singleton
 
 
 draw_single_key : PianoKey -> Svg Msg
