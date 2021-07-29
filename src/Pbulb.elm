@@ -1,47 +1,74 @@
-module Pbulb exposing (Color(..),Bulb, BulbModel, initial_bulb, render_bulb, update_bulb_inside, checkoutwin)
+module Pbulb exposing
+    ( initial_bulb
+    , render_bulb
+    , update_bulb_inside
+    , checkoutwin
+    , Bulb
+    , Color(..)
+    , BulbModel
+    )
 
-import Button exposing (test_button)
-import Html exposing (Html, div)
-import Html.Attributes as HtmlAttr
-import Html.Events exposing (onClick)
-import Messages exposing (Msg(..))
+{-| This module is to accomplish the puzzle of bookshelf game
+
+
+# Functions
+
+@docs initial_bulb
+@docs render_bulb
+@docs update_bulb_inside
+@docs checkoutwin
+
+
+# Datatype
+
+@docs Bulb
+@docs Color
+@docs BulbModel
+
+-}
+
+import Debug exposing (toString)
+import Messages exposing (GraMsg(..), Msg(..), svg_text_2)
+import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Svg
-import Svg exposing (Svg)
-import Messages exposing (GraMsg(..))
-import Messages exposing (svg_text_2)
-import Debug exposing (toString)
 
 
-
-
-
+{-| The color for the bulb
+-}
 type Color
     = Red
     | None
 
 
+{-| The model for each bulb in the bulb puzzle
+-}
 type alias Bulb =
     { position : ( Int, Int )
     , color : Color
     }
 
 
+{-| The state is whether it was lit
+
+    state : Bool
+
+the bulb entry contains all the bulb
+
+    bulb : List Bulb
+
+-}
 type alias BulbModel =
     { state : Bool
     , bulb : List Bulb
     }
 
 
+{-| Initialize the bulbmodel
+-}
 initial_bulb : BulbModel
 initial_bulb =
     BulbModel False initbulb
-
-
-
---type Msg
---  = Changecolor Int
 
 
 initbulb : List Bulb
@@ -58,6 +85,8 @@ initbulb =
     ]
 
 
+{-| Update bulb model
+-}
 update_bulb_inside : Int -> BulbModel -> BulbModel
 update_bulb_inside number model =
     let
@@ -135,52 +164,51 @@ changecolor cl =
             None
 
 
-
-
-
-
+{-| Render each single bulb
+-}
 render_bulb : Int -> BulbModel -> List (Svg Msg)
 render_bulb cs model =
     case cs of
         0 ->
-            [ Svg.rect 
-                    [SvgAttr.x "1150"
-                    ,SvgAttr.y "160"
-                    ,SvgAttr.width "300"
-                    ,SvgAttr.height "120"
-                    ,SvgAttr.fillOpacity "0.0"
-                    ,Svg.Events.onClick((StartChange(ChangeScene 8)))
-                    ]
-                    []
+            [ Svg.rect
+                [ SvgAttr.x "1150"
+                , SvgAttr.y "160"
+                , SvgAttr.width "300"
+                , SvgAttr.height "120"
+                , SvgAttr.fillOpacity "0.0"
+                , Svg.Events.onClick (StartChange (ChangeScene 8))
+                ]
+                []
             ]
 
         8 ->
-            drawbulb_image ++ (List.map drawlight model.bulb)
-            ++ render_test model
+            drawbulb_image
+                ++ List.map drawlight model.bulb
+                ++ render_test model
 
         _ ->
             []
 
+
 render_test : BulbModel -> List (Svg Msg)
 render_test bmodel =
-    [ svg_text_2 1000 600 100 100 (toString bmodel.state)]
-
+    [ svg_text_2 1000 600 100 100 (toString bmodel.state) ]
 
 
 drawlight : Bulb -> Svg Msg
 drawlight bulb =
     let
         tp =
-            String.concat [ String.fromFloat ((12.2) * (toFloat (Tuple.first bulb.position)) + 22.0), "%" ]
+            String.concat [ String.fromFloat (12.2 * toFloat (Tuple.first bulb.position) + 22.0), "%" ]
 
         lp =
-            String.concat [ String.fromInt (23 * Tuple.second bulb.position - 7 ), "%" ]
+            String.concat [ String.fromInt (23 * Tuple.second bulb.position - 7), "%" ]
 
         number =
             Tuple.second bulb.position + 3 * (Tuple.first bulb.position - 1)
-    in  
-         if bulb.color == Red then
-            Svg.image
+    in
+    if bulb.color == Red then
+        Svg.image
             [ SvgAttr.x tp
             , SvgAttr.y lp
             , SvgAttr.width "200"
@@ -189,8 +217,9 @@ drawlight bulb =
             , Svg.Events.onClick (OnClickTriggers number)
             ]
             []
-         else
-            Svg.rect
+
+    else
+        Svg.rect
             [ SvgAttr.x tp
             , SvgAttr.y lp
             , SvgAttr.width "200"
@@ -199,15 +228,16 @@ drawlight bulb =
             , Svg.Events.onClick (OnClickTriggers number)
             ]
             []
-        
 
 
 drawbulb_image : List (Svg Msg)
 drawbulb_image =
-    [Svg.image 
+    [ Svg.image
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
         , SvgAttr.height "100%"
         , SvgAttr.xlinkHref "assets/level1/bulbs.png"
-        ][]]
+        ]
+        []
+    ]

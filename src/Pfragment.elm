@@ -1,113 +1,155 @@
 module Pfragment exposing (..)
 
-import Browser
+{-| This module is to accomplish the puzzle of fragment
+
+
+# Functions
+
+@docs initial_computer
+@docs updatetrigger
+@docs draw_computer
+
+
+# Datatype
+
+@docs ComputerModel
+@docs State
+
+-}
 import Debug exposing (toString)
-import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick, onInput)
+import Messages exposing (GraMsg(..), Msg(..))
+import String exposing (toInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Platform.Cmd exposing (none)
-import String exposing (toInt)
 import Svg.Events
 import Messages exposing (GraMsg(..), Msg(..))
 
 type alias Fragment =
-    { position : (Int, Int)
+    { position : ( Int, Int )
     , number : Int
     }
 
-type FragmentState 
-        = Seperated
-        | Done
+
+type FragmentState
+    = Seperated
+    | Done
+
 
 type alias FragmentModel =
     { fragment : List Fragment
     , state : FragmentState
     }
 
+
 initfraModel : FragmentModel
 initfraModel =
-    FragmentModel [(Fragment (1,1) 7), (Fragment (1,2) 1), (Fragment (1,3) 14), (Fragment (1,4) 6)
-                  ,(Fragment (2,1) 4), (Fragment (2,2) 2), (Fragment (2,3) 8), (Fragment (2,4) 10)
-                  ,(Fragment (3,1) 3), (Fragment (3,3) 5), (Fragment (3,4) 12), (Fragment (4,4) 9)
-                  ,(Fragment (4,1) 13), (Fragment (4,2) 15), (Fragment (4,3) 11)] Seperated
+    FragmentModel
+        [ Fragment ( 1, 1 ) 7
+        , Fragment ( 1, 2 ) 1
+        , Fragment ( 1, 3 ) 14
+        , Fragment ( 1, 4 ) 6
+        , Fragment ( 2, 1 ) 4
+        , Fragment ( 2, 2 ) 2
+        , Fragment ( 2, 3 ) 8
+        , Fragment ( 2, 4 ) 10
+        , Fragment ( 3, 1 ) 3
+        , Fragment ( 3, 3 ) 5
+        , Fragment ( 3, 4 ) 12
+        , Fragment ( 4, 4 ) 9
+        , Fragment ( 4, 1 ) 13
+        , Fragment ( 4, 2 ) 15
+        , Fragment ( 4, 3 ) 11
+        ]
+        Seperated
 
 
-checkoutwin : FragmentModel -> FragmentModel 
-checkoutwin model = 
+checkoutwin : FragmentModel -> FragmentModel
+checkoutwin model =
     let
-        fra = model.fragment 
+        fra =
+            model.fragment
 
-        toggle fragment = 
-             if (4 * (Tuple.first fragment.position - 1) + (Tuple.second fragment.position)) == fragment.number then
+        toggle fragment =
+            if (4 * (Tuple.first fragment.position - 1) + Tuple.second fragment.position) == fragment.number then
                 0
-             else
+
+            else
                 1
 
-        lnumber = List.sum (List.map toggle fra)
+        lnumber =
+            List.sum (List.map toggle fra)
     in
-         if lnumber == 0 then
-            {model | state = Done}
-         else
-            model
+    if lnumber == 0 then
+        { model | state = Done }
 
-getposlist : List Fragment -> List Int 
+    else
+        model
+
+
+getposlist : List Fragment -> List Int
 getposlist fra =
-        let
-            toggle fragment = 
-                4 * (Tuple.first fragment.position - 1) + (Tuple.second fragment.position)    
-        in
-            List.sort (List.map toggle fra)
-        
-poscompare : List Int -> Int
-poscompare fra = 
-       136 - (List.sum fra)
+    let
+        toggle fragment =
+            4 * (Tuple.first fragment.position - 1) + Tuple.second fragment.position
+    in
+    List.sort (List.map toggle fra)
 
+
+poscompare : List Int -> Int
+poscompare fra =
+    136 - List.sum fra
 
 
 getemptypos : List Fragment -> Int
 getemptypos fra =
     poscompare (getposlist fra)
 
+
 updatefra : Int -> Int -> FragmentModel -> FragmentModel
 updatefra  clknumber index fra =
-        if (modBy 4 index) == 0 then
+        if clknumber == 99 then
+            {fra | state = Done}
+        else if (modBy 4 index) == 0 then
             fra
                 |> checkoutclick clknumber (index - 1) index
                 |> checkoutclick clknumber (index - 4) index
                 |> checkoutclick clknumber (index + 4) index
 
-        else if (modBy 4 index) == 1  then
-            fra
-                |> checkoutclick clknumber (index + 1) index
-                |> checkoutclick clknumber (index - 4) index
-                |> checkoutclick clknumber (index + 4) index
-        else
-            fra
-                |> checkoutclick clknumber (index + 1) index
-                |> checkoutclick clknumber (index - 4) index
-                |> checkoutclick clknumber (index + 4) index
-                |> checkoutclick clknumber (index - 1) index
+    else if modBy 4 index == 1 then
+        fra
+            |> checkoutclick clknumber (index + 1) index
+            |> checkoutclick clknumber (index - 4) index
+            |> checkoutclick clknumber (index + 4) index
 
-checkoutclick :  Int -> Int -> Int -> FragmentModel -> FragmentModel           
-checkoutclick clknumber index oindex fra= 
-         
-         let
-            (ox,oy) = findpos oindex
+    else
+        fra
+            |> checkoutclick clknumber (index + 1) index
+            |> checkoutclick clknumber (index - 4) index
+            |> checkoutclick clknumber (index + 4) index
+            |> checkoutclick clknumber (index - 1) index
 
-            (cx,cy) = findpos clknumber
 
-            toggle fragment = 
-                if (fragment.position == (cx,cy)) then
-                    {fragment  | position = (ox,oy)}
-                else 
-                    fragment
-         in         
-            if clknumber == index then
-                {fra| fragment = (List.map toggle fra.fragment)}
+checkoutclick : Int -> Int -> Int -> FragmentModel -> FragmentModel
+checkoutclick clknumber index oindex fra =
+    let
+        ( ox, oy ) =
+            findpos oindex
+
+        ( cx, cy ) =
+            findpos clknumber
+
+        toggle fragment =
+            if fragment.position == ( cx, cy ) then
+                { fragment | position = ( ox, oy ) }
+
             else
-                fra
+                fragment
+    in
+    if clknumber == index then
+        { fra | fragment = List.map toggle fra.fragment }
+
+    else
+        fra
 
 
 findpos : Int -> ( Int , Int )
@@ -149,10 +191,11 @@ drawhrd : FragmentModel -> List (Svg Msg)
 drawhrd model = 
     case model.state of
         Seperated ->
-                  drawpictureframe ++ (drawFragment model.fragment)
+                  drawpictureframe ++ drawFragment model.fragment ++ drawframe ++ drawButton model.fragment
+                  ++ drawcheatingbutton
 
         Done -> 
-            drawpassview
+            drawpictureframe
 
 drawpassview : List (Svg Msg)
 drawpassview = 
@@ -162,95 +205,85 @@ drawpassview =
             , SvgAttr.width "400"
             , SvgAttr.height "700"
             , SvgAttr.xlinkHref "assets/f1.jpg"
-            , SvgAttr.stroke "black"
-            , SvgAttr.strokeWidth "2"
             ][]]
 
 
 drawpictureframe : List (Svg Msg)
 drawpictureframe = 
-            [Svg.rect 
-                    [SvgAttr.x "600"
-                    ,SvgAttr.y "200"
-                    ,SvgAttr.width "400"
-                    ,SvgAttr.height "400"
-                    , SvgAttr.fill "white"
-                    , SvgAttr.stroke "black"
-                    , SvgAttr.strokeWidth "5"
-                    ][]]
+        [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/fragment/h_back.png"
+            ][]
 
+            ]
+drawframe : List (Svg Msg)
+drawframe =
+        [Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.xlinkHref "assets/level0/fragment/h_up.png"
+            ][]
+            ]
 drawFragment : List Fragment -> List (Svg Msg)
 drawFragment fra = 
     List.map drawoneFragment fra
-    
+
+drawButton : List Fragment -> List (Svg Msg)
+drawButton fra =
+    List.map drawoneFragment_button fra
+
+
 drawoneFragment : Fragment -> Svg Msg
 drawoneFragment fra =
     let
-        cx = String.fromInt (500 + 100 * (Tuple.second fra.position))
+        cx = String.fromInt (415 + 150 * (Tuple.second fra.position))
 
-        cy = String.fromInt (100 + 100 * (Tuple.first fra.position))
+        cy = String.fromInt (5 + 150 * (Tuple.first fra.position))
 
-        num = (4 * (Tuple.first fra.position - 1) + (Tuple.second fra.position))
-
-        ulr = 
-            case fra.number of  
-                1 ->
-                    "assets/h1.jpg"
-                
-                2 ->
-                    "assets/h2.jpg"
-                
-                3 ->
-                    "assets/h3.jpg"
-                
-                4 ->
-                    "assets/h4.jpg"
-            
-                5 ->
-                    "assets/h5.jpg"
-        
-                6 ->
-                    "assets/h6.jpg"
-    
-                7 ->
-                    "assets/h7.jpg"
-                
-                8 ->
-                    "assets/h8.jpg"
-                
-                9 ->
-                    "assets/h9.jpg"
-                
-                10 ->
-                    "assets/h10.jpg"
-                
-                11 ->
-                    "assets/h11.jpg"
-            
-                12 ->
-                    "assets/h12.jpg"
-        
-                13 ->
-                    "assets/h13.jpg"
-    
-                14 ->
-                    "assets/h14.jpg"
-
-                15 -> 
-                    "assets/h15.jpg"
-
-                _->
-                    ""
-
+        ulr =
+            "assets/level0/fragment/m2_" ++ toString(fra.number)++ ".jpg"
 
     in
         Svg.image 
             [ SvgAttr.x cx
             , SvgAttr.y cy
-            , SvgAttr.width "100"
-            , SvgAttr.height "100"
+            , SvgAttr.width "140"
             , SvgAttr.xlinkHref ulr
-            , SvgAttr.stroke "black"
-            , SvgAttr.strokeWidth "2"
+            ][]
+
+
+drawoneFragment_button : Fragment -> Svg Msg
+drawoneFragment_button fra =
+    let
+        cx = String.fromInt (415 + 148 * (Tuple.second fra.position))
+
+        cy = String.fromInt (5 + 148 * (Tuple.first fra.position))
+
+        num = (4 * (Tuple.first fra.position - 1) + (Tuple.second fra.position))
+
+
+    in
+        Svg.rect
+            [ SvgAttr.x cx
+            , SvgAttr.y cy
+            , SvgAttr.width "145"
+            , SvgAttr.height "145"
+            , SvgAttr.fillOpacity "0.0"
             , Svg.Events.onClick (OnClickTriggers num)
             ][]
+
+
+drawcheatingbutton : List (Svg Msg)
+drawcheatingbutton =
+        [Svg.rect
+            [ SvgAttr.x "90%"
+            , SvgAttr.y "60%"
+            , SvgAttr.width "5%"
+            , SvgAttr.height "5%"
+            , SvgAttr.opacity "0.0"
+            , SvgAttr.fill "silver"
+            , Svg.Events.onClick (OnClickTriggers 99)
+            ][]]

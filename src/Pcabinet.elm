@@ -27,13 +27,10 @@ type alias CabinetModel =
     }
 
 
-initial_cab_1 : CabinetModel
-initial_cab_1 =
+initial_cab : CabinetModel
+initial_cab =
     CabinetModel 12 Close Close (Bottle Gone) 
 
-initial_cab_2 : CabinetModel
-initial_cab_2 =
-    CabinetModel 13 Close Close (Bottle Close)
 
 
 

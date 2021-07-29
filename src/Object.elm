@@ -3,7 +3,7 @@ module Object exposing (..)
 import Geometry exposing (Location)
 import Memory exposing (Memory)
 import Pbulb exposing (BulbModel, initial_bulb)
-import Pcomputer exposing (ComputerModel, initial_computer,State(..))
+import Pcomputer exposing (ComputerModel, initial_computer,State(..),initial_safebox)
 import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
@@ -11,9 +11,9 @@ import Ptable exposing (TableModel, blockLength, change_block_state, distance, i
 import Pfragment exposing (FragmentModel, initfraModel)
 import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
 import Pdolls exposing (DollModel, initDollModel, Pigstate(..))
-import Pcabinet exposing (CabinetModel)
-import Pcabinet exposing (initial_cab_1)
-import Pcabinet exposing (initial_cab_2)
+import Pcabinet exposing (CabinetModel, initial_cab)
+import Pfragment exposing (FragmentState)
+
 
 type Object
     = Clock ClockModel
@@ -29,6 +29,7 @@ type Object
     | Trophy TrophyModel
     | Doll DollModel
     | Cabinet CabinetModel
+    | Scr Int
 
 
 
@@ -101,6 +102,19 @@ get_computer_state obj =
     in
         state
 
+get_fragment_state : Object -> FragmentState
+get_fragment_state obj = 
+    let
+        state =
+            case obj of
+                Fra a ->
+                    a.state
+
+                _ ->
+                    Debug.todo "abab"
+    in
+        state
+
 test_table : Location -> Object -> Object
 test_table loca pre =
     case pre of
@@ -131,9 +145,10 @@ initial_objects =
     , Fra initfraModel -- 8   9  0  
     , Book Pbookshelf_trophy.initial_book_model -- 9  10 0
     , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
-    , Cabinet initial_cab_1 -- 11 12 1
-    , Cabinet initial_cab_2 -- 12 13 2
-    , Doll initDollModel -- 13  14  2 
+    , Cabinet initial_cab -- 11 12 1
+    , Computer initial_safebox -- 12 13 0
+    , Doll initDollModel -- 13  14  2
+    , Scr -1 --14 15 0
     ]
 
 

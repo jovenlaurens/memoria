@@ -1,6 +1,15 @@
 module View exposing (..)
 
-import Button exposing (Button, test_button, trans_button_sq)
+{-| This module is the main view module
+
+
+# Functions
+
+@docs view
+
+-}
+
+import Button exposing (Button, black_white_but, test_button, trans_button_sq)
 import Debug exposing (toString)
 import Document exposing (Document, render_document_detail, render_newspaper_index)
 import Draggable
@@ -11,12 +20,12 @@ import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Intro exposing (render_intro)
 import Level0 exposing (..)
-import Memory exposing (MeState(..), Memory, draw_frame_and_memory, list_index_memory, render_memory)
+import Memory exposing (MeState(..), Memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
 import Pbulb exposing (render_bulb)
-import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminuteadjust, drawminutehand)
+import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
 import Pcomputer exposing (draw_computer)
 import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
 import Pmirror exposing (draw_frame, draw_light, draw_mirror)
@@ -25,7 +34,7 @@ import Ppower exposing (drawpowersupply)
 import Pstair exposing (render_stair_level)
 import Ptable exposing (draw_block, drawpath, render_table_button)
 import Pfragment exposing (..)
-import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf, draw_bookshelf_index, draw_trophy, render_bookshelf_button, render_trophy_button)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
 import Pdolls exposing (drawdoll_ui)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
@@ -37,12 +46,16 @@ import Pbulb exposing (Bulb)
 import Button exposing (black_white_but)
 import Ptable exposing (draw_coffee_back)
 import Picture exposing (render_frame)
+import Pstair exposing (stair_button_level_1l)
+import Ppiano exposing (render_piano_button)
 
 
 style =
     Html.Attributes.style
 
 
+{-| The view function for main
+-}
 view : Model -> Html Msg
 view model =
     let
@@ -63,16 +76,16 @@ view model =
             else
                 ( 0, 0.5 * (h - het) )
 
-        bkgdColor =
-            --need
-            if model.cscreen.cstate == 20 then
-                "#ffffff"
-
-            else
-                "#ffffff"
-
         gcontent =
             get_Gcontent model.gradient
+        (bkgdColor,opa) =
+                                                   --need
+                                                   if gcontent == OnlyWord  then
+                                                       ("#ffffff",1)
+
+                                                   else
+                                                       ("#000000",model.opac)
+
     in
     div
         [ style "width" "100%"
@@ -81,30 +94,16 @@ view model =
         , style "left" "0"
         , style "top" "0"
         , style "background-color" "#000000"
+        --, style ""
         ]
-        [ if gcontent == OnlyWord then
-            div
-                [ style "width" (String.fromFloat wid ++ "px")
-                , style "height" (String.fromFloat het ++ "px")
-                , style "position" "absolute"
-                , style "left" (String.fromFloat lef ++ "px")
-                , style "top" (String.fromFloat to ++ "px")
-                , style "background-color" bkgdColor
-                ]
-                []
-
-          else
-            div
-                []
-                []
-        , div
+        [ div
             [ style "width" (String.fromFloat wid ++ "px")
             , style "height" (String.fromFloat het ++ "px")
             , style "position" "absolute"
             , style "left" (String.fromFloat lef ++ "px")
             , style "top" (String.fromFloat to ++ "px")
             , style "background-color" bkgdColor
-            , style "opacity" (toString model.opac)
+            , style "opacity" (toString opa)
             ]
             (case model.cscreen.cstate of
                 98 ->
@@ -135,17 +134,22 @@ view model =
 
                          else
                             render_object model
-                                :: {- render_draggable model.spcPosition :: -} render_button_inside model.cscreen.cscene model.objects
+                                :: render_button_inside model.cscreen.cscene model.objects
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
-                                ++ render_picture model.pictures
+                                ++ render_picture model.pictures model.cscreen.cscene
                         )
-                    
-                    ]
+
+                    ]++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
+                           ] --test
                         ++ render_ui_button 0
 
                 1 ->
-                    render_ui_button 1
+                    [ (menu_back 1 1)
+                    , (menu_back 1 2)
+                    , (menu_back 1 3)
+                    ]
+                    ++ render_ui_button 1
 
                 2 ->
                     [ render_wall_1
@@ -219,7 +223,9 @@ view model =
 
                 20 ->
                     render_ui_button 20
-                        ++ render_memory model.cscreen.cmemory model.cscreen.cpage
+                        ++ render_memory model.cscreen.cmemory model.cscreen.cpage gcontent model.opac
+                        ++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
+                           ] --test
 
                 _ ->
                     [ text (toString model.cscreen.cstate) ]
@@ -259,24 +265,6 @@ render_wall_1 =
         []
 
 
-render_draggable : ( Float, Float ) -> Html Msg
-render_draggable position =
-    let
-        translate =
-            "translate(" ++ String.fromFloat (Tuple.first position) ++ "px, " ++ String.fromFloat (Tuple.second position) ++ "px)"
-    in
-    Html.div
-        ([ style "transform" translate
-         , style "padding" "16px"
-         , style "background-color" "lightgray"
-         , style "width" "64px"
-         , style "cursor" "move"
-         , Draggable.mouseTrigger () DragMsg
-         ]
-            ++ Draggable.touchTriggers () DragMsg
-        )
-        [ Html.text "Drag me" ]
-
 
 render_level : Model -> List (Html Msg)
 render_level model =
@@ -306,16 +294,27 @@ render_button_level level model =
             let
                 face =
                     get_trophy model.objects
+                screen =
+                    if model.choice.end /= -1 then
+                        [ test_button ( Button 10 5 40 40 "" (StartChange ( ChangeScene 15 ) )"block")]
+                    else
+                        []
+
             in
             if face then
-                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button ++ List.singleton render_bookshelf_button
+                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button ++ screen
 
             else
-                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button
+                render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button ++ screen
 
         1 ->
-            render_stair_level level
-                ++ [ drawclockbutton
+                ( if model.checklist.level1door == True then
+                    render_stair_level level
+                  else
+                    render_locked_door
+                )
+                ++ [ trans_button_sq stair_button_level_1l
+                   , drawclockbutton
                    , render_table_button
                    ]
 
@@ -326,27 +325,17 @@ render_button_level level model =
             render_stair_level level
 
 
-
-
-
-
-render_piano_button : List (Html Msg)
-render_piano_button =
-    let
-        but =
-            Button.Button 10 10 10 10 "" (StartChange (ChangeScene 7)) ""
-    in
-    test_button but
-        |> List.singleton
-
+render_locked_door : List (Html Msg)
+render_locked_door =
+    [trans_button_sq (Button 52 45.51 8 39.1 "" (OnClickTriggers 0) "block")]
 
 render_mirror_button : List (Html Msg)
 render_mirror_button =
     let
         but =
-            Button.Button 17 71 10 2 "" (StartChange (ChangeScene 4)) ""
+            Button.Button 17 68 10 7 "" (StartChange (ChangeScene 4)) ""
     in
-    test_button but
+    trans_button_sq but
         |> List.singleton
 
 
@@ -364,29 +353,38 @@ render_object model =
     let
         cs = model.cscreen.cscene
         cle = model.cscreen.clevel
+        fur = case cle of
+                0 ->
+                    level_0_furniture model.choice.end model.checklist.level0light
+                1 ->
+                    level_1_furniture model.checklist.level1light
+                2 ->
+                    (render_level_2 model)
+                _ ->
+                    []
+        door = if model.checklist.level1door == True && cle == 1 && cs == 0 then
+                    [
+                        Svg.image
+                            [ SvgAttr.x "0"
+                            , SvgAttr.y "0"
+                            , SvgAttr.width "100%"
+                            , SvgAttr.height "100%"
+                            , SvgAttr.xlinkHref "assets/level1/opendoor.png"
+                            ]
+                            []
+                    ]
+                else
+                    []
+
     in
-    
+
     Svg.svg
         [ SvgAttr.width "100%"
         , SvgAttr.height "100%"
         , SvgAttr.viewBox "0 0 1600 900"
         ]
         ((if model.cscreen.cscene == 0 then
-            case model.cscreen.clevel of
-                0 ->
-                    render_level_0 model
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                1 ->
-                    level_1_furniture model.checklist.level1light
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                2 ->  
-                    (render_level_2 model)
-                        ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
-
-                _ ->
-                    List.foldr (render_object_inside model.checklist cs cle) [] model.objects
+                fur ++ door ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
           else
             
@@ -397,8 +395,8 @@ render_object model =
         )
 
 render_level_2 : Model -> List (Svg Msg)
-render_level_2 model = 
-    [ Svg.image 
+render_level_2 model =
+    [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
@@ -418,7 +416,7 @@ render_level_2 model =
 
 render_level_0 : Model -> List (Svg Msg)
 render_level_0 model =
-    [ Svg.image 
+    [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
@@ -452,23 +450,23 @@ render_window model =
                 []
 
 findlightstate : List(LightState) -> LightState
-findlightstate list = 
+findlightstate list =
         case list of
             x :: xs ->
                  if (x == Light_2_on || x == Light_2_off) then
                         x
                  else
                     findlightstate xs
-            
+
             x ->
                 Otherobject
-            
+
 
 
 
 render_window_off : List (Svg Msg)
-render_window_off = 
-    [ Svg.image 
+render_window_off =
+    [ Svg.image
             [ SvgAttr.x "30"
             , SvgAttr.y "400"
             , SvgAttr.width "40%"
@@ -480,8 +478,8 @@ render_window_off =
     ]
 
 render_window_on : List (Svg Msg)
-render_window_on = 
-    [ Svg.image 
+render_window_on =
+    [ Svg.image
             [ SvgAttr.x "30"
             , SvgAttr.y "400"
             , SvgAttr.width "40%"
@@ -522,11 +520,11 @@ render_test_information model =
     ]
 -}
 
-render_picture : List Picture -> List (Html Msg)
-render_picture list =
+render_picture : List Picture -> Int -> List (Html Msg)
+render_picture list cs=
     let
         render_pict_inside pict =
-            if pict.state == Show then
+            if pict.state == Show && cs == pict.place then
                 render_picture_index pict.index
 
             else
@@ -541,6 +539,7 @@ render_picture_index : Int -> Html Msg
 render_picture_index index =
     case index of
         0 ->
+
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
                 , style "top" "54%"
@@ -561,12 +560,54 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
-        2 -> 
+        2 ->
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
                 , style "top" "28%"
                 , style "left" "33%"
                 , style "width" "2%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
+        3 ->
+            Html.img
+                [ src ("assets/picts/" ++ toString index ++ ".png")
+                , style "top" "19%"
+                , style "left" "35%"
+                , style "width" "36%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
+        4 ->
+            Html.img
+                [ src ("assets/picts/" ++ toString index ++ ".png")
+                , style "top" "50%"
+                , style "left" "35%"
+                , style "width" "36%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+        5 ->
+            Html.img
+                [ src ("assets/picts/" ++ toString index ++ ".png")
+                , style "top" "30%"
+                , style "left" "35%"
+                , style "width" "36%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+        6 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
                 , style "position" "absolute"
                 , onClick (OnClickItem index)
                 ]
@@ -582,6 +623,7 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
+
         8 ->
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
@@ -592,7 +634,28 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
-        
+        9 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "59%"
+                , style "left" "47%"
+                , style "width" "8%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
+        10 ->
+            Html.img
+                [ src ("assets/picts/"++(toString index)++".png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                , onClick (OnClickItem index)
+                ]
+                []
+
         _ ->
             Debug.todo ""
 
@@ -625,7 +688,7 @@ render_object_inside cklst scne cle obj old =
 
                 Computer a ->
                     if cle == 0 then
-                        draw_computer a 0 cle
+                        draw_computer a cklst.level0safebox 0 cle
 
                     else
                         []
@@ -640,7 +703,7 @@ render_object_inside cklst scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
-                
+
                 Cabinet a ->
                     render_cabinet scne cle a
 
@@ -650,7 +713,7 @@ render_object_inside cklst scne cle obj old =
 
                      else
                         []
-                    
+
                 Doll a ->
                     drawdoll_ui 0 a cle
 
@@ -680,7 +743,7 @@ render_object_only model cs objects =
             ]
 
         Table a ->
-            
+
             draw_block cklst.level1light cklst.level1coffee cklst.level1liquid a.blockSet
 
         Frame a ->
@@ -688,31 +751,74 @@ render_object_only model cs objects =
 
         --回头再加1,2,3,4
         Computer a ->
-            draw_computer a 5 model.cscreen.clevel
+            draw_computer a cklst.level0safebox cs model.cscreen.clevel
 
         Power a ->
             drawpowersupply a 6 model.cscreen.clevel
 
         Piano a ->
-            draw_key_set a.pianoKeySet
+            draw_key_set a
 
         Bul a ->
             render_bulb 8 a
-        
+
         Fra a ->
             render_fra 9 a model.cscreen.clevel
 
         Cabinet a ->
             render_cabinet model.cscreen.cscene model.cscreen.clevel a
-        
+
         Trophy a ->
             draw_trophy a.trophy
 
         Book a ->
-            draw_bookshelf a.bookshelf ++ draw_bookshelf_index a.bookshelf
+            draw_bookshelf_or_trophy a
 
         Doll a ->
             drawdoll_ui 10 a model.cscreen.clevel
+        Scr a ->
+            draw_screen model.choice.end
+
+draw_screen : Int -> List (Svg Msg)
+draw_screen end =
+    let
+        pict =
+            case end of
+                0 ->
+                    Svg.image
+                            [ SvgAttr.x "0"
+                            , SvgAttr.y "0"
+                            , SvgAttr.width "100%"
+                            , SvgAttr.height "100%"
+                            , SvgAttr.xlinkHref "assets/level0/sc1.png"
+                            ]
+                            []
+                1 ->
+                    Svg.image
+                            [ SvgAttr.x "0"
+                            , SvgAttr.y "0"
+                            , SvgAttr.width "100%"
+                            , SvgAttr.height "100%"
+                            , SvgAttr.xlinkHref "assets/level0/sc2.png"
+                            ]
+                            []
+                2 ->
+                    Svg.image
+                            [ SvgAttr.x "0"
+                            , SvgAttr.y "0"
+                            , SvgAttr.width "100%"
+                            , SvgAttr.height "100%"
+                            , SvgAttr.xlinkHref "assets/level0/sc3.png"
+                            ]
+                            []
+                _ ->
+                    Svg.rect
+                        []
+                        []
+    in
+        [pict]
+
+
 
 
 render_object_only_html : Int -> List Object -> List (Html Msg)
@@ -724,6 +830,17 @@ render_object_only_html cs objs =
     case tar of
         Bul a ->
             render_bulb 8 a ++ [ text "sdfgh" ]
+
+        Piano a ->
+            [ div
+                [ Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "position" "absolute"
+                , Html.Attributes.style "left" "300px"
+                , Html.Attributes.style "top" "450px"
+                ]
+                [ Html.text (Debug.toString a.pianoKeySet) ]
+            ]
 
         _ ->
             []
@@ -789,8 +906,11 @@ render_ui_button cstate =
         backAchi =
             Button 2 2 4 4 "Back" (StartChange Pause) "block"
 
-        testMemory =
+        testMemory1 =
             Button 14 2 4 4 "test" (StartChange (BeginMemory 0)) "block"
+
+        testMemory2 =
+            Button 14 8 4 4 "test" (StartChange (BeginMemory 1)) "block"
 
         testBack =
             Button 14 2 4 4 "main" (StartChange EndMemory) "block"
@@ -798,7 +918,8 @@ render_ui_button cstate =
     case cstate of
         0 ->
             [ test_button pause
-            , test_button reset
+            , test_button testMemory1
+            , test_button testMemory2
             ]
 
         1 ->
@@ -831,13 +952,11 @@ render_ui_button cstate =
         11 ->
             [ test_button pause
             , test_button reset
-            , test_button testMemory
             ]
 
         12 ->
             [ test_button pause
             , test_button reset
-            , test_button testMemory
             ]
 
         20 ->
@@ -848,6 +967,18 @@ render_ui_button cstate =
 
         _ ->
             []
+
+menu_back : Float -> Int -> Html Msg
+menu_back opa ind =
+    Html.img
+                [ src ("assets/intro/"++(toString ind)++".png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                , style "opacity" (toString opa)
+                ]
+                []
 
 
 play_piano_audio : Int -> List Object -> List (Html Msg)
@@ -870,5 +1001,4 @@ play_piano_audio currentScene objectSet =
 
 
 
-        
-        
+

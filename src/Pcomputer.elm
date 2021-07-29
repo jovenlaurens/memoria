@@ -1,18 +1,40 @@
-module Pcomputer exposing (..)
+module Pcomputer exposing
+    ( initial_computer
+    , updatetrigger
+    , draw_computer
+    , ComputerModel
+    , State(..)
+    ,drawchargedcomputer
+    ,initial_safebox
+    )
 
-import Browser
-import Debug exposing (toString)
+{-| This module is to accomplish the puzzle of computer
+
+
+# Functions
+
+@docs initial_computer
+@docs updatetrigger
+@docs draw_computer
+
+
+# Datatype
+
+@docs ComputerModel
+@docs State
+
+-}
+
 import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
-import Memory exposing (MeState)
 import Messages exposing (GraMsg(..), Msg(..))
-import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
+import Pcabinet exposing (svg_rect_button)
+import String exposing (fromInt)
 
-
+{-| The state show the power of it, the scene is to show different information and the word is the password input
+-}
 type alias ComputerModel =
     { state : State
     , scene : Int
@@ -25,24 +47,18 @@ type alias Numberkey =
     }
 
 
+{-| The power state of the computer where 0 represent locked and 1 represents unlocked
+-}
 type State
     = Lowpower
     | Charged Int -- 0 is locked
 
 
-
--- 1 is unlocked
-{- type Msg
-   = Trigger Int
-   | Changescene Int
-   | Charge Int
-   | Password Int
+{-| Initialize the computer model of the puzzle
 -}
-
-
 initial_computer : ComputerModel
 initial_computer =
-    ComputerModel (Charged 0) 0 []
+    ComputerModel Lowpower 0 []
 
 
 initnumberkey : List Numberkey
@@ -60,32 +76,8 @@ initnumberkey =
     ]
 
 
-
--- refer to 0
-{- update : Msg -> ComputerModel ->  ( ComputerModel, Cmd Msg )
-   update msg model =
-       case msg of
-           Trigger a ->
-                ( (updatetrigger a model), Cmd.none )
-
-           OKChangescene a->
-               ( { model | scene = a }, Cmd.none)
-
-           OKCharge a->
-               ( { model | state = Charged a }, Cmd.none)
-
-           Password number ->
-               if ((List.length model.word) < 4) then
-                   ({ model | word = updateword number model.word }, Cmd.none )
-               else
-                   ( model, Cmd.none )
+{-| update the word input to the computer
 -}
---button index list
--- 0 - 9 -> Password 0 - 9
--- 10 -> backspace
--- 11 -> correctpw
-
-
 updatetrigger : Int -> ComputerModel -> ComputerModel
 updatetrigger a model =
     case a of
@@ -95,13 +87,19 @@ updatetrigger a model =
         11 ->
             { model | state = Charged 2 }
 
+        12 ->
+            clearpw model
+
         _ ->
             if List.length model.word < 4 then
-                { model | word = updateword a model.word }
-                |>updatecorrectpw
+                { model | word = updateword a model.word } |> updatecorrectpw
 
             else
                 model
+clearpw : ComputerModel -> ComputerModel
+clearpw model =
+    {model | word = []}
+
 
 
 updatebackspace : List Int -> List Int
@@ -143,8 +141,10 @@ updatecorrectpw model =
 -}
 
 
-draw_computer : ComputerModel -> Int -> Int -> List (Svg Msg)
-draw_computer commodel cs cle =
+{-| Draw all the part of the computer
+-}
+draw_computer : ComputerModel -> Bool -> Int -> Int -> List (Svg Msg)
+draw_computer commodel l0s cs cle =
     case cs of
         0 ->
             if cle == 0 then
@@ -155,6 +155,15 @@ draw_computer commodel cs cle =
                     , SvgAttr.height "90"
                     , SvgAttr.fillOpacity "0.0"
                     , Svg.Events.onClick (StartChange (ChangeScene 5))
+                    ]
+                    []
+                , Svg.rect
+                    [ SvgAttr.x "1200"
+                    , SvgAttr.y "210"
+                    , SvgAttr.width "110"
+                    , SvgAttr.height "90"
+                    , SvgAttr.fillOpacity "0.0"
+                    , Svg.Events.onClick (StartChange (ChangeScene 13))
                     ]
                     []
                 ]
@@ -169,14 +178,18 @@ draw_computer commodel cs cle =
 
                 Charged a ->
                     drawcomputerback ++ drawchargedcomputer a commodel
+
+        13 ->
+            render_safebox l0s commodel
+
         _ ->
             Debug.todo "branch '_' not implemented"
 
-drawchargedcomputer : Int -> ComputerModel->  List (Svg Msg) 
+drawchargedcomputer : Int -> ComputerModel->  List (Svg Msg)
 drawchargedcomputer number commodel=
     case number of
         0 ->
-            draw_password ++ (List.map drawnumberbutton initnumberkey) ++ drawword commodel.word 
+            draw_password ++ (List.map drawnumberbutton initnumberkey) ++ drawword commodel.word
                     ++ drawbackspace
         1 ->
             drawpictureload ++ drawloadtrigger
@@ -188,7 +201,7 @@ drawchargedcomputer number commodel=
 
 
 drawpictureload : List (Svg Msg)
-drawpictureload = 
+drawpictureload =
         [Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
@@ -198,7 +211,7 @@ drawpictureload =
             []]
 
 drawcomputerback : List (Svg Msg)
-drawcomputerback = 
+drawcomputerback =
     [Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
@@ -342,7 +355,7 @@ drawchargedpc a model =
 
 
 drawloadtrigger : List (Svg Msg)
-drawloadtrigger = 
+drawloadtrigger =
     [Svg.rect
             [ SvgAttr.x "550"
             , SvgAttr.y "100"
@@ -354,7 +367,7 @@ drawloadtrigger =
             []]
 
 drawbackspace : List (Svg Msg)
-drawbackspace = 
+drawbackspace =
     [Svg.circle
                 [ SvgAttr.cx "840"
                 , SvgAttr.cy "440"
@@ -400,7 +413,39 @@ drawnumberbutton number =
 
 
 
+
 --need
+
+
+drawpassword : Numberkey -> Svg Msg
+drawpassword number =
+    let
+        tp =
+            String.fromInt (650 + 50 * Tuple.first number.position)
+
+        lp =
+            String.fromInt (350 + 50 * Tuple.second number.position)
+
+        rnumber =
+            Tuple.first number.position + 3 * (Tuple.second number.position - 1)
+    in
+    case number.position of
+        ( 2, 4 ) ->
+            Svg.text_
+                [ SvgAttr.x tp
+                , SvgAttr.y lp
+                , Svg.Events.onClick (OnClickTriggers 0)
+                ]
+                [ Html.text "0" ]
+
+        _ ->
+            Svg.text_
+                [ SvgAttr.x tp
+                , SvgAttr.y lp
+                , Svg.Events.onClick (OnClickTriggers rnumber)
+                ]
+                [ Html.text (String.fromInt rnumber) ]
+
 
 drawword : List Int -> List (Svg Msg)
 drawword word =
@@ -425,3 +470,94 @@ drawword word =
 
         [] ->
             []
+
+
+initial_safebox : ComputerModel
+initial_safebox =
+    ComputerModel (Charged 0) 0 []
+
+
+render_safebox : Bool -> ComputerModel -> List (Svg Msg)
+render_safebox l0s commodel =
+    let
+        back =
+            [ Svg.image
+                [ SvgAttr.x "0"
+                                , SvgAttr.y "0"
+                                , SvgAttr.width "100%"
+                                , SvgAttr.height "100%"
+                                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
+                                ]
+                                []
+            , Svg.image
+                                         [ SvgAttr.x "0"
+                                         , SvgAttr.y "0"
+                                         , SvgAttr.width "100%"
+                                         , SvgAttr.height "100%"
+                                         , SvgAttr.xlinkHref "assets/level0/safebox/dark.png"
+                                         ]
+                                         []
+                                        ]
+        face = ( if commodel.state == (Charged 0) then
+                    [Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
+                        ]
+                        []
+                    , Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/button.png"
+                        ]
+                        []
+                    , Svg.circle
+                        [ SvgAttr.cx "675"
+                        , SvgAttr.cy "430"
+                        , SvgAttr.r "120"
+                        , SvgAttr.stroke "black"
+                        , SvgAttr.strokeWidth "1"
+                        , SvgAttr.fill "white"
+                        , SvgAttr.fillOpacity "0.0"
+                        , Svg.Events.onClick (OnClickTriggers 11)
+                        ]
+                        []
+                    ]
+                    ++ button_list
+                    ++ [ svg_rect_button 1057 535 78 78 (OnClickTriggers 12)
+                       ]
+                  else if l0s == False then
+                    [ Svg.image
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        , SvgAttr.xlinkHref "assets/level0/safebox/block.png"
+                        ]
+                        []
+                    , svg_rect_button 600 300 400 400 (OnClickTriggers 100)
+                    ]
+                  else
+                    []
+                )
+
+    in
+        back++face
+
+button_list : List (Svg Msg)
+button_list =
+    [ svg_rect_button 977 535 78 78 (OnClickTriggers 0)
+    , svg_rect_button 897 295 78 78 (OnClickTriggers 1)
+    , svg_rect_button 897 375 78 78 (OnClickTriggers 4)
+    , svg_rect_button 897 455 78 78 (OnClickTriggers 7)
+    , svg_rect_button 980 295 78 78 (OnClickTriggers 2)
+    , svg_rect_button 980 375 78 78 (OnClickTriggers 5)
+    , svg_rect_button 980 455 78 78 (OnClickTriggers 8)
+    , svg_rect_button 1063 295 78 78 (OnClickTriggers 3)
+    , svg_rect_button 1063 375 78 78 (OnClickTriggers 6)
+    , svg_rect_button 1063 455 78 78 (OnClickTriggers 9)
+    ]

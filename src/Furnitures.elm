@@ -1,4 +1,16 @@
-module Furnitures exposing (..)
+module Furnitures exposing
+    ( level_1_furniture
+    , drawFloor
+    )
+
+{-| This module is the repo of all the furniture in the level 1 in svg style
+
+
+# Functions
+
+@docs level_1_furniture
+
+-}
 
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
@@ -46,7 +58,7 @@ level_1_furniture sta =
             , SvgAttr.xlinkHref "assets/memory_menu.png"
             ]
             []-} --ui dont need now
-    
+
     {-drawWindow
         ++ drawTable
         ++ drawFloor
@@ -219,6 +231,8 @@ drawLamps =
     ]
 
 
+{-| Draw the floor of leve1 one in svg style
+-}
 drawFloor : List (Svg msg)
 drawFloor =
     [ Svg.line

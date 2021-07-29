@@ -10,22 +10,73 @@ import Svg.Events
 
 {-| level 0 furniture
 -}
-level_0_furniture : List (Svg Msg)
-level_0_furniture =
-    drawFloor
-        ++ drawCeiling
-        ++ drawStair
-        ++ drawDoor
-        ++ drawPiano
-        ++ drawPainting
-        ++ drawWardrobe
-        ++ drawRack
-        ++ drawTelephone
-        ++ drawChair
-        ++ drawDesk
-        ++ drawLeftBox
-        ++ drawRightBox
-        ++ drawMonitor
+level_0_furniture : Int -> Bool -> List (Svg Msg)
+level_0_furniture end li=
+    let
+        back =
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
+                ]
+                []]
+        screen =
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level0/cs0/screen.png"
+                ]
+                []
+            , Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref ("assets/level0/cs0/lightr.png")
+                    ]
+                    []
+            ]
+
+        show =
+            case end of
+                0 ->
+                    "s1"
+                1 ->
+                    "s2"
+                2 ->
+                    "s3"
+                _ ->
+                    ""
+        s = if end /= 0 then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref ("assets/level0/cs0/" ++ show ++ ".png")
+                    ]
+                    []]
+            else
+                []
+        lightr =
+            if li == True then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref ("assets/level0/cs0/l.png")
+                    ]
+                    []
+                ]
+            else
+                []
+    in
+        back ++ s ++ screen ++ lightr
 
 
 drawFloor : List (Svg msg)
