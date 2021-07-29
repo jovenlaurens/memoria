@@ -94,6 +94,12 @@ render_memory cm cp cg opa =
                 1 ->
                     textBase_1
 
+                2 ->
+                    textBase_2
+
+                3->
+                    textBase_3     
+
                 _ ->
                     []
 
@@ -258,6 +264,12 @@ render_choice index page opa=
                 2 ->
                     ( "Anna Karenina", "Scarlett O 'Hara", "Not very clear." )
 
+                3 ->
+                    ( "Related to an important person.", "These numbers are interesting!", "No meaning.")
+
+                4 ->
+                    ( "Someone you are missing?", "You are unwilling to stay here", "You just struggle with something")
+                
                 _ ->
                     ( "", "", "" )
     in
@@ -398,7 +410,105 @@ textBase_1 =
     , Page "But I love her." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 53
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End 54
     ]
+textBase_2 : List Page
+textBase_2 =
+    [ Page "We’ve just moved into a new house, two floors, with an additional basement." "" "assets/intro.png" "assets/blank.png" Dialogue 0
+    , Page "There are so many things need to arrange, so tired." "" "assets/intro.png" "assets/girl/3.png" Dialogue 1
+    , Page "Maria is unlocking her safe box in the basement, " "" "assets/intro.png" "assets/girl/3.png" Dialogue 2
+    , Page "and she seems to trust me quite much. " "" "assets/intro.png" "assets/girl/3.png" Dialogue 3
+    , Page "1,9,8,6……" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 4
+    , Page "Does this password mean anything else?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 5
+    , Page "" "" "assets/intro.png" "" (Choose 3) 6
 
+    -- 4A: Related to an important person.
+    , Page "Yeah, it’s someone’s year of birth." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 7
+    , Page "I have been using it as my password for a long time." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 8
+    , Page "A person more important than me??" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 9
+    , Page "Perhaps." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 10
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 11
+
+    -- 4B: These numbers are interesting!
+    , Page "Can you find something interesting?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 12
+    , Page "If we rotate them, we will get four new numbers!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 13
+    , Page "And that’s just my computer password." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14
+    , Page "What a coincidence!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15
+    , Page "Your ideas are lovely." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 16
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 17
+
+    -- 4C: No meaning.
+    , Page "Nothing interesting, actually." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
+    , Page "If you want, I can also tell you my computer password, just transpose it." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 19
+    , Page "These things are not important at all." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 20
+    , Page "So, what do you think is important in our life?" "I" "assets/intro.png" "assets/girl/9.png" Dialogue 21
+    , Page "I haven’t found it yet." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 22
+    , Page "Maybe we can work it out together, for our future." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 23
+    , Page "I will try my best." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 24
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 25
+    ]
+
+
+
+textBase_3 : List Page
+textBase_3 =
+    [ Page "We have been lived together for one year," "" "assets/intro.png" "assets/blank.png" Dialogue 0
+    , Page "but it seems that Maria changed a lot." "" "assets/intro.png" "assets/girl/3.png" Dialogue 1
+    , Page "She always locked herself in the basement, working on something." "" "assets/intro.png" "assets/girl/3.png" Dialogue 2
+    , Page "She also likes sitting by my piano, and practicing it." "" "assets/intro.png" "assets/girl/3.png" Dialogue 3
+    , Page "Maria, can we talk?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 4
+    , Page "About what?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 5
+    , Page "Why do you always hide in the basement?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 6
+    , Page "I'm worried about you." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 7
+    , Page "You don't have any idea?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 8
+    , Page "" "" "assets/intro.png" "" (Choose 4) 9
+
+    -- 5A: Someone you are missing?
+    , Page "I guess you are missing someone you can’t contact?" "I" "assets/intro.png" "assets/blank.png" Dialogue 10
+    , Page "Partially, actually, I’m still confused." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 11
+    , Page "About what? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 12
+    , Page "The ideal love…… " "Maria" "assets/intro.png"  "assets/girl/3.png" Dialogue 13
+    , Page "But you have been with me for a whole year! " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 14
+    , Page "What do you mean?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 15
+    , Page "I know, I know……" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 16
+    , Page "(Maria is in pain. I can see tears start to fall.)" "" "assets/intro.png" "assets/girl/3.png" Dialogue 17
+    , Page "Jerome, my dear." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
+    , Page "I’m here." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 19
+    , Page "Never leave me, you promise?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 20
+    , Page "I promise." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 21
+    , Page "Today’s Maria is different, but I just felt relieved after she asked for me to stay." "" "assets/intro.png" "assets/girl/9.png" Dialogue 22
+    , Page "Everything will be good." "" "assets/intro.png" "assets/girl/9.png" Dialogue 23
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 24
+
+    -- 5B: You are unwilling to stay here
+    , Page "So, Maria, staying in the basement is not your intention, isn’t it?" "I" "assets/intro.png" "assets/girl/6.png" Dialogue 25
+    , Page "Somehow like this, I can feel my sadness when I work in the basement." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 26
+    , Page "But did you work at home by yourself before?" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 27
+    , Page "I tried, but failed." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 28
+    , Page "Give me some time to relax, please……" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 29
+    , Page "Oh, my dear, I can give you plenty of time." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 30
+    , Page "Will you give me space in your heart?" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 31
+    , Page "(I was so tired. It seems that Maria and I are people from two worlds." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 32
+    , Page "It’s hard for me to give her everything she wants.)" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 33
+    , Page "Give me some time to relax, please……" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 34
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 35
+
+    -- 5C: You just struggle with something
+    , Page "If you need help, Maria, just call me." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 36
+    , Page "I will stay with you." "I" "assets/intro.png" "assets/girl/7.png" Dialogue 37
+    , Page "I can’t leave you to bear everything alone." "I" "assets/intro.png" "assets/girl/7.png" Dialogue 38
+    , Page "It’s my fortune to meet with you, Jerome," "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 39
+    , Page "but, leave me alone for a while, please." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 40
+    , Page "Maria, don’t treat yourself like this, I beg you……" "I" "assets/intro.png" "assets/girl/6.png" Dialogue 41
+    , Page "Can you understand this kind of feeling?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 42
+    , Page "Something is just gnawing my heart, weighing down my spirit." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 43
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 44
+
+
+    , Page "..." "" "assets/intro.png" "" Dialogue 45
+    , Page "......" "" "assets/intro.png" "" Dialogue 46
+    , Page "........." "I" "assets/intro.png" "" Dialogue 47
+    , Page "Something appears in the basement. Now, go for it." "I" "assets/intro.png" "" End 48
+
+    ]
 
 sub_0_2 : List Page
 sub_0_2 =

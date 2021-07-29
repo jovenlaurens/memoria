@@ -499,6 +499,23 @@ renew_screen_info submsg old choices =
 
                         ( 2, 2 ) ->
                             43
+                        ( 3, 0 ) ->
+                            7
+                        
+                        ( 3, 1 ) ->
+                            12
+                    
+                        ( 3, 2 ) ->
+                            18
+                        
+                        ( 4, 0 ) ->
+                            10
+                        
+                        ( 4, 1 ) ->
+                            25
+                    
+                        ( 4, 2 ) ->
+                            36
                         _ ->
                             22
             in
@@ -918,7 +935,7 @@ update_onclicktrigger model number =
             { model | objects = update_light_mirror_set number model.objects }
 
         5 ->
-            try_to_update_computer 5 model number --bug
+            try_to_update_computer model number --bug
 
         6 ->
             try_to_update_power model number
@@ -947,7 +964,7 @@ update_onclicktrigger model number =
             update_cab 12 number model
 
         13 ->
-            try_to_update_computer 13 model number
+            try_to_update_sfbox model number
 
         14 ->
             update_doll model number
@@ -1185,14 +1202,30 @@ try_to_update_power model index =
     { model | objects = List.map toggle model.objects }
 
 
-try_to_update_computer : Int -> Model -> Int -> Model
-try_to_update_computer cs model number =
-    if model.cscreen.cscene == cs then
+try_to_update_computer : Model -> Int -> Model
+try_to_update_computer model number =
+    if model.cscreen.cscene == 5 then
         let
             toggle computer =
                 case computer of
                     Computer cpt ->
                         Computer (Pcomputer.updatetrigger number cpt)
+
+                    _ ->
+                        computer
+        in
+        { model | objects = List.map toggle model.objects }
+    else
+        model
+
+try_to_update_sfbox : Model -> Int -> Model
+try_to_update_sfbox model number =
+    if model.cscreen.cscene == 13 then
+        let
+            toggle computer =
+                case computer of
+                    Computer cpt ->
+                        Computer (Pcomputer.updatesafetrigger number cpt)
 
                     _ ->
                         computer
@@ -1210,6 +1243,7 @@ try_to_update_computer cs model number =
             )
     else
         model
+
 
 
 
