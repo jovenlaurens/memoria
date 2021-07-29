@@ -1,18 +1,28 @@
 module Button exposing (..)
 
+{-| This module is the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
+
+
+# Functions
+
+@docs test_button
+@docs trans_button_sq
+
+#Datatypes
+
+@docs Button
+
+-}
+
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Messages exposing (Msg)
-import Svg.Attributes exposing (display)
-import Html.Attributes exposing (class)
 
 
-
---in a word, it's the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
-
-
+{-| The button type needs argument of button its left top width height content effect(mostly Msg) and display to generate the Html button
+-}
 type alias Button =
     { lef : Float
     , to : Float
@@ -24,7 +34,7 @@ type alias Button =
     }
 
 
-{-| The style of transparent button
+{-| The style of transparent button according text on it
 -}
 test_button : Button -> Html Msg
 test_button but =
@@ -45,12 +55,13 @@ test_button but =
         , style "opacity" "0.5"
         ]
         [ text but.content ]
- 
+
+
 stylesheet : Html msg
 stylesheet =
-        Html.node "style"
-                []
-                [ text """
+    Html.node "style"
+        []
+        [ text """
         .button {
             background-color: #4CAF50; /* Green */
             border: none;
@@ -75,6 +86,8 @@ stylesheet =
         }""" ]
 
 
+{-| The style of transparent button
+-}
 trans_button_sq : Button -> Html Msg
 trans_button_sq but =
     button
@@ -93,6 +106,7 @@ trans_button_sq but =
         ]
         []
 
+
 black_white_but : Button -> Html Msg
 black_white_but but =
     button
@@ -109,6 +123,7 @@ black_white_but but =
         , onClick but.effect
         ]
         []
+
 
 
 --circle?

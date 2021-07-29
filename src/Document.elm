@@ -1,16 +1,45 @@
-module Document exposing (..)
+module Document exposing
+    ( initial_docu
+    , render_document_detail
+    , render_newspaper_index
+    , Document
+    )
 
-import Button exposing (Button, trans_button_sq)
+{-| This module is for all the function and the view of the document part
+
+
+# Functions
+
+@docs initial_docu
+@docs render_document_detail
+@docs render_newspaper_index
+
+#Datatypes
+
+@docs Document
+
+-}
+
+import Button exposing (Button, test_button)
 import Html exposing (Html)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
-import Memory exposing (MeState(..))
 import Messages exposing (GraMsg(..), Msg(..))
 import Picture exposing (ShowState(..))
-import Button exposing (test_button)
 
 
+{-| The showstate defines the showing state of Document Picked means is collected, underuse will zoom it out and consumed means it will disappear
 
+    type ShowState
+        = NotShow
+        | Show
+        | Picked
+        | UnderUse
+        | Consumed
+
+The index defines what scene it will appear
+Belong define what inventory box it belongs to
+
+-}
 type alias Document =
     { showState : ShowState
     , index : Int
@@ -45,55 +74,54 @@ list_index_docu index list =
                 Document Show 0 0
 
 
-
-
-
+{-| The function to render the document detail like the driving licence
+-}
 render_document_detail : Int -> List (Html Msg)
 render_document_detail index =
     case index of
         1 ->
             [ Html.img
-                        [ src "assets/level1/drawerclose.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
+                [ src "assets/level1/drawerclose.png"
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "100%"
+                , style "position" "absolute"
+                ]
+                []
             , Html.img
-                        [ src "assets/level1/drivinglicencebig.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-            , drawbackbutton_
-            ]
-        2 ->
-            [ Html.img
-                        [ src "assets/level1/drawerclose.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-            , Html.img
-                        [ src "assets/level1/cafecard.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
+                [ src "assets/level1/drivinglicencebig.png"
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "100%"
+                , style "position" "absolute"
+                ]
+                []
             , drawbackbutton_
             ]
 
+        2 ->
+            [ Html.img
+                [ src "assets/level1/drawerclose.png"
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "100%"
+                , style "position" "absolute"
+                ]
+                []
+            , Html.img
+                [ src "assets/level1/cafecard.png"
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "height" "100%"
+                , style "position" "absolute"
+                ]
+                []
+            , drawbackbutton_
+            ]
 
         _ ->
             []
@@ -103,6 +131,9 @@ drawbackbutton_ : Html Msg
 drawbackbutton_ =
     test_button (Button 3 75 10 5 "←" (StartChange Back) "block")
 
+
+{-| Render the newspaper which show the death of the the character
+-}
 render_newspaper_index : Int -> List Document -> Html Msg
 render_newspaper_index index list =
     let
@@ -112,7 +143,7 @@ render_newspaper_index index list =
     if tar.showState == Show then
         case tar.index of
             0 ->
-               Html.button
+                Html.button
                     [ style "top" "14%"
                     , style "left" "39%"
                     , style "height" "50%"
@@ -152,8 +183,3 @@ render_newspaper_index index list =
         Html.embed
             []
             []
-
-
-
-
-
