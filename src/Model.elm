@@ -92,7 +92,7 @@ type alias CheckList =
     }
 
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False True False False False) --临时改
+initial_checklist = (CheckList False False False False False False False False) --临时改
 
 
 list_index_object : Int -> List Object -> Object
