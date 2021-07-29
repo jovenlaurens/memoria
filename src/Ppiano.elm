@@ -150,7 +150,6 @@ draw_single_key_up =
     in
     [ Svg.polygon
         [ SvgAttr.points (String.fromFloat (x - 3 * keyLength) ++ "," ++ String.fromFloat y ++ " " ++ String.fromFloat (x - 2 * keyLength) ++ "," ++ String.fromFloat y ++ " " ++ String.fromFloat (x - 2 * keyLength + 2.2 * keyLength) ++ "," ++ String.fromFloat (y - 320) ++ " " ++ String.fromFloat (x - 3 * keyLength + 2.4 * keyLength) ++ "," ++ String.fromFloat (y - 320) ++ " ")
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -183,7 +182,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 320)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -223,7 +221,6 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -264,7 +261,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -296,7 +292,6 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -329,7 +324,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 320)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -369,7 +363,6 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -402,7 +395,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -435,7 +427,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 320)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -476,7 +467,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -517,7 +507,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -550,7 +539,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -583,7 +571,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 320)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -624,7 +611,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -657,7 +643,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 160)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -690,7 +675,6 @@ draw_single_key_up =
                 ++ String.fromFloat (y - 320)
                 ++ " "
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -730,7 +714,6 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -770,7 +753,6 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
@@ -802,8 +784,7 @@ draw_single_key_up =
                 ++ ","
                 ++ String.fromFloat (y - 160)
             )
-        , SvgAttr.fill "red"
-        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.fillOpacity "0"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
         ]
@@ -827,7 +808,6 @@ draw_single_key_down key =
         , SvgAttr.height (String.fromFloat keyWidth ++ "px")
         , SvgAttr.x (String.fromFloat key.anchor.x)
         , SvgAttr.y (String.fromFloat (key.anchor.y + deltay))
-        , SvgAttr.fill "red"
         , SvgAttr.fillOpacity "0.3"
         , SvgAttr.stroke "white"
         , SvgAttr.strokeWidth "1"
