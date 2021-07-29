@@ -19,6 +19,7 @@ module Pclock exposing
 @docs drawhouradjust
 @docs drawminuteadjust
 @docs drawminutehand
+@docs drawhourhand
 
 -}
 

@@ -8,7 +8,7 @@ module Intro exposing
 
 # Functions
 
-@docs initial_intro, render_intro, update_intropate, get_new_intro, update_intropage
+@docs initial_intro, render_intro, get_new_intro, update_intropage
 
 #Datatypes
 

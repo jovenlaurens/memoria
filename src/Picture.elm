@@ -1,11 +1,19 @@
-module Picture exposing (Picture, ShowState(..), show_index_picture, render_inventory, initial_pictures, render_picture_button, render_frame, read_complete_ones, list_index_picture)
+module Picture exposing
+    ( show_index_picture, render_inventory, initial_pictures, render_picture_button, render_frame, read_complete_ones, list_index_picture
+    , Picture, ShowState(..)
+    )
 
 {-| The module for picture fragments as hints and the inventory box
 
 
 # Functions
 
-@docs Picture, ShowState, show_index_picture, render_inventory, initial_pictures, render_picture_button, render_frame, read_complete_ones, list_index_picture
+@docs show_index_picture, render_inventory, initial_pictures, render_picture_button, render_frame, read_complete_ones, list_index_picture
+
+
+# Datatypes
+
+@docs Picture, ShowState
 
 -}
 

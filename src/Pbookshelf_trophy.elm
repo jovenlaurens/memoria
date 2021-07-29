@@ -6,9 +6,10 @@ module Pbookshelf_trophy exposing
     , draw_trophy
     , draw_bookshelf_index
     , update_bookshelf
+    , draw_bookshelf_or_trophy
+    , get_bookshelf_order
     , Direction(..)
-    , BookletModel
-    , TrophyModel, draw_bookshelf_or_trophy, get_bookshelf_order
+    , BookletModel, TrophyModel
     )
 
 {-| This module is to accomplish the puzzle of bookshelf game
@@ -21,15 +22,16 @@ module Pbookshelf_trophy exposing
 @docs initial_trophy_model
 @docs rotate_trophy
 @docs draw_trophy
-@docs draw_bookshelf
 @docs draw_bookshelf_index
 @docs update_bookshelf
+@docs draw_bookshelf_or_trophy
+@docs get_bookshelf_order
 
 
 # Datatype
 
 @docs Direction
-@docs BookletModel
+@docs BookletModel, TrophyModel
 
 -}
 

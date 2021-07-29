@@ -2,10 +2,11 @@ module Pcomputer exposing
     ( initial_computer
     , updatetrigger
     , draw_computer
+    , drawchargedcomputer
+    , initial_safebox
+    , updatesafetrigger
     , ComputerModel
     , State(..)
-    ,drawchargedcomputer
-    ,initial_safebox, updatesafetrigger
     )
 
 {-| This module is to accomplish the puzzle of computer
@@ -16,6 +17,9 @@ module Pcomputer exposing
 @docs initial_computer
 @docs updatetrigger
 @docs draw_computer
+@docs drawchargedcomputer
+@docs initial_safebox
+@docs updatesafetrigger
 
 
 # Datatype
@@ -27,11 +31,12 @@ module Pcomputer exposing
 
 import Html exposing (..)
 import Messages exposing (GraMsg(..), Msg(..))
+import Pcabinet exposing (svg_rect_button)
+import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
-import Pcabinet exposing (svg_rect_button)
-import String exposing (fromInt)
+
 
 {-| The state show the power of it, the scene is to show different information and the word is the password input
 -}
@@ -42,6 +47,7 @@ type alias ComputerModel =
     , word : List Int
     , sfword : List Int
     }
+
 
 type alias Numberkey =
     { position : ( Int, Int )
@@ -59,7 +65,7 @@ type State
 -}
 initial_computer : ComputerModel
 initial_computer =
-   ComputerModel Lowpower  (Charged 0) 0 [] []
+    ComputerModel Lowpower (Charged 0) 0 [] []
 
 
 initnumberkey : List Numberkey
@@ -95,13 +101,13 @@ updatetrigger a model =
             else
                 model
 
+
 updatesafetrigger : Int -> ComputerModel -> ComputerModel
 updatesafetrigger a model =
     case a of
-
         11 ->
-             updatecorrectsfpw model
-        
+            updatecorrectsfpw model
+
         12 ->
             clearpw model
 
@@ -112,10 +118,10 @@ updatesafetrigger a model =
             else
                 model
 
+
 clearpw : ComputerModel -> ComputerModel
 clearpw model =
-    {model | sfword = []}
-
+    { model | sfword = [] }
 
 
 updatebackspace : List Int -> List Int
@@ -127,6 +133,7 @@ updateword : Int -> List Int -> List Int
 updateword number word =
     number :: word
 
+
 updatecorrectpw : ComputerModel -> ComputerModel
 updatecorrectpw model =
     -- here is the standard password input,
@@ -136,6 +143,7 @@ updatecorrectpw model =
 
     else
         model
+
 
 updatecorrectsfpw : ComputerModel -> ComputerModel
 updatecorrectsfpw model =
@@ -210,197 +218,214 @@ draw_computer commodel l0s cs cle =
         _ ->
             Debug.todo "branch '_' not implemented"
 
-drawchargedcomputer : Int -> ComputerModel->  List (Svg Msg)
-drawchargedcomputer number commodel=
+
+drawchargedcomputer : Int -> ComputerModel -> List (Svg Msg)
+drawchargedcomputer number commodel =
     case number of
         0 ->
-            draw_password ++ (List.map drawnumberbutton initnumberkey) ++ drawword commodel.word
-                    ++ drawbackspace
+            draw_password
+                ++ List.map drawnumberbutton initnumberkey
+                ++ drawword commodel.word
+                ++ drawbackspace
+
         1 ->
             drawpictureload ++ drawloadtrigger
 
-        2->
+        2 ->
             []
+
         _ ->
             Debug.todo "branch '_' not implemented"
 
 
 drawpictureload : List (Svg Msg)
 drawpictureload =
-        [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/loadpicture.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/loadpicture.png"
+        ]
+        []
+    ]
+
 
 drawcomputerback : List (Svg Msg)
 drawcomputerback =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/computer.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/computer.png"
+        ]
+        []
+    ]
+
 
 drawlowbattery : List (Svg Msg)
 drawlowbattery =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/lowbattery.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/lowbattery.png"
+        ]
+        []
+    ]
+
 
 draw_password : List (Svg Msg)
 draw_password =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/password.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/password.png"
+        ]
+        []
+    ]
+
 
 
 {- drawchargedpc : Int -> ComputerModel -> List (Svg Msg)
-drawchargedpc a model =
-    case a of
-        0 ->
-            [ Svg.polygon
-                [ SvgAttr.points "300,50 1200,50 1200,600 300,600"
-                , SvgAttr.fill "black"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "1"
-                ]
-                []
-            , Svg.polygon
-                [ SvgAttr.points "310,60 1190,60 1190,590 310,590"
-                , SvgAttr.fill "white"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "1"
-                ]
-                []
-            , Svg.polygon
-                [ SvgAttr.points "700,600 800,600 800,700 700,700"
-                , SvgAttr.fill "silver"
-                ]
-                []
-            , Svg.text_
-                [ SvgAttr.x "680"
-                , SvgAttr.y "150"
-                , SvgAttr.fontSize "30"
-                ]
-                [ Html.text "Password" ]
-            , Svg.line
-                [ SvgAttr.x1 "650"
-                , SvgAttr.y1 "300"
-                , SvgAttr.x2 "695"
-                , SvgAttr.y2 "300"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "2"
-                ]
-                []
-            , Svg.line
-                [ SvgAttr.x1 "700"
-                , SvgAttr.y1 "300"
-                , SvgAttr.x2 "745"
-                , SvgAttr.y2 "300"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "2"
-                ]
-                []
-            , Svg.line
-                [ SvgAttr.x1 "750"
-                , SvgAttr.y1 "300"
-                , SvgAttr.x2 "795"
-                , SvgAttr.y2 "300"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "2"
-                ]
-                []
-            , Svg.line
-                [ SvgAttr.x1 "800"
-                , SvgAttr.y1 "300"
-                , SvgAttr.x2 "845"
-                , SvgAttr.y2 "300"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "2"
-                ]
-                []
-            , Svg.circle
-                [ SvgAttr.cx "800"
-                , SvgAttr.cy "550"
-                , SvgAttr.r "20"
-                , SvgAttr.fillOpacity "0.0"
-                , SvgAttr.stroke "black"
-                , Svg.Events.onClick (OnClickTriggers 10)
-                ]
-                []
-            , Svg.rect
-                [ SvgAttr.x "850"
-                , SvgAttr.y "300"
-                , SvgAttr.width "50"
-                , SvgAttr.height "20"
-                , SvgAttr.stroke "black"
-                , SvgAttr.rx "15"
-                , Svg.Events.onClick (OnClickTriggers 11)
-                ]
-                []
-            ]
-                ++ drawword model.word
+   drawchargedpc a model =
+       case a of
+           0 ->
+               [ Svg.polygon
+                   [ SvgAttr.points "300,50 1200,50 1200,600 300,600"
+                   , SvgAttr.fill "black"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "1"
+                   ]
+                   []
+               , Svg.polygon
+                   [ SvgAttr.points "310,60 1190,60 1190,590 310,590"
+                   , SvgAttr.fill "white"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "1"
+                   ]
+                   []
+               , Svg.polygon
+                   [ SvgAttr.points "700,600 800,600 800,700 700,700"
+                   , SvgAttr.fill "silver"
+                   ]
+                   []
+               , Svg.text_
+                   [ SvgAttr.x "680"
+                   , SvgAttr.y "150"
+                   , SvgAttr.fontSize "30"
+                   ]
+                   [ Html.text "Password" ]
+               , Svg.line
+                   [ SvgAttr.x1 "650"
+                   , SvgAttr.y1 "300"
+                   , SvgAttr.x2 "695"
+                   , SvgAttr.y2 "300"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "2"
+                   ]
+                   []
+               , Svg.line
+                   [ SvgAttr.x1 "700"
+                   , SvgAttr.y1 "300"
+                   , SvgAttr.x2 "745"
+                   , SvgAttr.y2 "300"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "2"
+                   ]
+                   []
+               , Svg.line
+                   [ SvgAttr.x1 "750"
+                   , SvgAttr.y1 "300"
+                   , SvgAttr.x2 "795"
+                   , SvgAttr.y2 "300"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "2"
+                   ]
+                   []
+               , Svg.line
+                   [ SvgAttr.x1 "800"
+                   , SvgAttr.y1 "300"
+                   , SvgAttr.x2 "845"
+                   , SvgAttr.y2 "300"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "2"
+                   ]
+                   []
+               , Svg.circle
+                   [ SvgAttr.cx "800"
+                   , SvgAttr.cy "550"
+                   , SvgAttr.r "20"
+                   , SvgAttr.fillOpacity "0.0"
+                   , SvgAttr.stroke "black"
+                   , Svg.Events.onClick (OnClickTriggers 10)
+                   ]
+                   []
+               , Svg.rect
+                   [ SvgAttr.x "850"
+                   , SvgAttr.y "300"
+                   , SvgAttr.width "50"
+                   , SvgAttr.height "20"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.rx "15"
+                   , Svg.Events.onClick (OnClickTriggers 11)
+                   ]
+                   []
+               ]
+                   ++ drawword model.word
 
-        1 ->
-            [ Svg.polygon
-                [ SvgAttr.points "300,50 1200,50 1200,600 300,600"
-                , SvgAttr.fill "black"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "1"
-                ]
-                []
-            , Svg.polygon
-                [ SvgAttr.points "310,60 1190,60 1190,590 310,590"
-                , SvgAttr.fill "white"
-                , SvgAttr.stroke "black"
-                , SvgAttr.strokeWidth "1"
-                ]
-                []
-            , Svg.polygon
-                [ SvgAttr.points "700,600 800,600 800,700 700,700"
-                , SvgAttr.fill "silver"
-                ]
-                []
-            ]
+           1 ->
+               [ Svg.polygon
+                   [ SvgAttr.points "300,50 1200,50 1200,600 300,600"
+                   , SvgAttr.fill "black"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "1"
+                   ]
+                   []
+               , Svg.polygon
+                   [ SvgAttr.points "310,60 1190,60 1190,590 310,590"
+                   , SvgAttr.fill "white"
+                   , SvgAttr.stroke "black"
+                   , SvgAttr.strokeWidth "1"
+                   ]
+                   []
+               , Svg.polygon
+                   [ SvgAttr.points "700,600 800,600 800,700 700,700"
+                   , SvgAttr.fill "silver"
+                   ]
+                   []
+               ]
 
-        _ ->
-            [] -}
+           _ ->
+               []
+-}
 
 
 drawloadtrigger : List (Svg Msg)
 drawloadtrigger =
-    [Svg.rect
-            [ SvgAttr.x "550"
-            , SvgAttr.y "100"
-            , SvgAttr.width "500"
-            , SvgAttr.height "300"
-            , SvgAttr.fillOpacity "0.0"
-            , Svg.Events.onClick (OnClickTriggers 11)
-            ]
-            []]
+    [ Svg.rect
+        [ SvgAttr.x "550"
+        , SvgAttr.y "100"
+        , SvgAttr.width "500"
+        , SvgAttr.height "300"
+        , SvgAttr.fillOpacity "0.0"
+        , Svg.Events.onClick (OnClickTriggers 11)
+        ]
+        []
+    ]
+
 
 drawbackspace : List (Svg Msg)
 drawbackspace =
-    [Svg.circle
-                [ SvgAttr.cx "840"
-                , SvgAttr.cy "440"
-                , SvgAttr.r "35"
-                , SvgAttr.fillOpacity "0.0"
-                , Svg.Events.onClick (OnClickTriggers 10)
-                ]
-                []]
+    [ Svg.circle
+        [ SvgAttr.cx "840"
+        , SvgAttr.cy "440"
+        , SvgAttr.r "35"
+        , SvgAttr.fillOpacity "0.0"
+        , Svg.Events.onClick (OnClickTriggers 10)
+        ]
+        []
+    ]
 
 
 drawnumberbutton : Numberkey -> Svg Msg
@@ -435,7 +460,6 @@ drawnumberbutton number =
                 , Svg.Events.onClick (OnClickTriggers rnumber)
                 ]
                 []
-
 
 
 
@@ -483,14 +507,15 @@ drawword word =
     in
     case word of
         x :: xs ->
-            [Svg.circle
+            [ Svg.circle
                 [ SvgAttr.cx x1
                 , SvgAttr.cy "180"
                 , SvgAttr.r "15"
                 , SvgAttr.fill "white"
                 , SvgAttr.fillOpacity "1.0"
                 ]
-                []]
+                []
+            ]
                 ++ drawword xs
 
         [] ->
@@ -508,70 +533,73 @@ render_safebox l0s commodel =
         back =
             [ Svg.image
                 [ SvgAttr.x "0"
-                                , SvgAttr.y "0"
-                                , SvgAttr.width "100%"
-                                , SvgAttr.height "100%"
-                                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
-                                ]
-                                []
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
+                ]
+                []
             , Svg.image
-                                         [ SvgAttr.x "0"
-                                         , SvgAttr.y "0"
-                                         , SvgAttr.width "100%"
-                                         , SvgAttr.height "100%"
-                                         , SvgAttr.xlinkHref "assets/level0/safebox/dark.png"
-                                         ]
-                                         []
-                                        ]
-        face = ( if commodel.safestate == (Charged 0) then
-                    [Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
-                        ]
-                        []
-                    , Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/safebox/button.png"
-                        ]
-                        []
-                    , Svg.circle
-                        [ SvgAttr.cx "675"
-                        , SvgAttr.cy "430"
-                        , SvgAttr.r "120"
-                        , SvgAttr.stroke "black"
-                        , SvgAttr.strokeWidth "1"
-                        , SvgAttr.fill "white"
-                        , SvgAttr.fillOpacity "0.0"
-                        , Svg.Events.onClick (OnClickTriggers 11)
-                        ]
-                        []
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level0/safebox/dark.png"
+                ]
+                []
+            ]
+
+        face =
+            if commodel.safestate == Charged 0 then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
                     ]
+                    []
+                , Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level0/safebox/button.png"
+                    ]
+                    []
+                , Svg.circle
+                    [ SvgAttr.cx "675"
+                    , SvgAttr.cy "430"
+                    , SvgAttr.r "120"
+                    , SvgAttr.stroke "black"
+                    , SvgAttr.strokeWidth "1"
+                    , SvgAttr.fill "white"
+                    , SvgAttr.fillOpacity "0.0"
+                    , Svg.Events.onClick (OnClickTriggers 11)
+                    ]
+                    []
+                ]
                     ++ button_list
                     ++ [ svg_rect_button 1057 535 78 78 (OnClickTriggers 12)
                        ]
-                  else if l0s == False then
-                    [ Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/safebox/block.png"
-                        ]
-                        []
-                    , svg_rect_button 600 300 400 400 (OnClickTriggers 100)
-                    ]
-                  else
-                    []
-                )
 
+            else if l0s == False then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level0/safebox/block.png"
+                    ]
+                    []
+                , svg_rect_button 600 300 400 400 (OnClickTriggers 100)
+                ]
+
+            else
+                []
     in
-        back++face
+    back ++ face
+
 
 button_list : List (Svg Msg)
 button_list =

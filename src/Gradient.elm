@@ -1,15 +1,18 @@
-module Gradient exposing (Screen,ColorState(..),Gcontent(..),ProcessState(..),GradientState(..),default_process,default_word_change,get_Gcontent)
+module Gradient exposing
+    ( default_process, default_word_change, get_Gcontent
+    , Screen, ColorState(..), Gcontent(..), ProcessState(..), GradientState(..)
+    )
 
 {-| This module aims to completer the gradient effect of animation when changing the scenes
 
 
 # Functions
 
-@docs refresh_lightSet,rotate_mirror,default_process,default_word_change,get_Gcontent
+@docs default_process, default_word_change, get_Gcontent
 
 #Datatypes
 
-@docs Screen,ColorState,Gcontent,ProcessState,GradientState
+@docs Screen, ColorState, Gcontent, ProcessState, GradientState
 
 -}
 
@@ -26,6 +29,7 @@ module Gradient exposing (Screen,ColorState(..),Gcontent(..),ProcessState(..),Gr
         }
 
 The cstate refers to the players' state like pause or playing, the clevel refer to the current level, cscene refers to different puzzle, other entries apply similar to the inventory box.
+
 -}
 type alias Screen =
     { cstate : Int
@@ -36,12 +40,14 @@ type alias Screen =
     , cdocu : Int
     }
 
+
 {-| The ColorState contributes to the gradient effect
 -}
 type ColorState
     = White
     | Black
     | Useless
+
 
 {-| The Gcontent works for different gradient content
 -}
@@ -50,6 +56,7 @@ type Gcontent
     | OnlyWord
     | NoUse
 
+
 {-| The Process State mainly clarify how the gradient works
 -}
 type ProcessState
@@ -57,11 +64,13 @@ type ProcessState
     | Appear Gcontent
     | KeepSame
 
+
 {-| Speed and colorState
 -}
 type GradientState
     = Process Float ColorState ProcessState -- speed and colorState
     | Normal
+
 
 {-| Default gradient process
 -}
@@ -69,11 +78,13 @@ default_process : GradientState
 default_process =
     Process 0.05 Black (Disappear Whole)
 
+
 {-| Default word change
 -}
 default_word_change : GradientState
 default_word_change =
     Process 0.1 White (Disappear OnlyWord)
+
 
 {-| Get current changing state
 -}

@@ -5,8 +5,8 @@ module Ppiano exposing
     , bounce_key
     , press_key
     , draw_key_set
+    , render_piano_button
     , PianoModel
-    ,render_piano_button
     )
 
 {-| This module is to accomplish the puzzle of playing piano
@@ -20,6 +20,7 @@ module Ppiano exposing
 @docs bounce_key
 @docs press_key
 @docs draw_key_set
+@docs render_piano_button
 
 
 # Datatype
@@ -155,6 +156,7 @@ play_audio index =
         , loop False
         ]
         [ text "error" ]
+
 
 {-| Render the piano keys
 -}

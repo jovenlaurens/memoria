@@ -1,14 +1,11 @@
-module Main exposing
-    ( main
-    , init, subscriptions
-    )
+module Main exposing (main, init, subscriptions)
 
 {-| This Main of the project
 
 
 # Function
 
-@docs main
+@docs main, init, subscriptions
 
 -}
 

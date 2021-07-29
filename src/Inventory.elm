@@ -1,6 +1,12 @@
 module Inventory exposing (Inventory)
 
 {-| This module use for inventory
+
+
+# Type
+
+@docs Inventory
+
 -}
 
 import Debug exposing (toString)

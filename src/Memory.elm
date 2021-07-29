@@ -1,6 +1,6 @@
 module Memory exposing
-    ( MeState(..), State(..), Memory
-    , initial_memory, render_memory
+    ( initial_memory, render_memory
+    , MeState(..), State(..), Memory
     )
 
 {-| This module is for all the function and the view of the document part
@@ -8,7 +8,7 @@ module Memory exposing
 
 # Functions
 
-@docs MeState, State, Memory
+@docs initial_memory, render_memory
 
 #Datatypes
 

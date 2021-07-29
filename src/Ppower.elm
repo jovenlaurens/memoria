@@ -1,6 +1,20 @@
-module Ppower exposing (PowerModel, PowerState(..), drawpowersupply, initPowerModel, updatetrigger)
+module Ppower exposing
+    ( drawpowersupply, initPowerModel, updatetrigger
+    , PowerModel, PowerState(..)
+    )
 
-{-| This module is for all the function and the view of the document part
+{-| This module is for all the function and the view of the power puzzle
+
+
+# Datatypes
+
+@docs drawpowersupply, initPowerModel, updatetrigger
+
+
+# Functions
+
+@docs PowerModel, PowerState
+
 -}
 
 import Browser
@@ -16,6 +30,8 @@ import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
 
 
+{-| The power state
+-}
 type PowerState
     = Low
     | High

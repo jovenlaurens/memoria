@@ -44,5 +44,6 @@ initial_scene =
 
 {-| Default Scene
 -}
+defaultScene : Scene
 defaultScene =
     Scene [] ""

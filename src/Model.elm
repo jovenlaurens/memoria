@@ -1,6 +1,20 @@
-module Model exposing (CheckList, ChooseList, Model, initial, initial_target, list_index_object)
+module Model exposing
+    ( CheckList, ChooseList, Model
+    , initial, initial_target, list_index_object
+    )
 
 {-| This module is for all the function and the view of the document part
+
+
+# Datatypes
+
+@docs CheckList, ChooseList, Model
+
+
+# Functions
+
+@docs initial, initial_target, list_index_object
+
 -}
 
 import Document exposing (Document, initial_docu)

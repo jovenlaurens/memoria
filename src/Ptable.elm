@@ -1,28 +1,33 @@
 module Ptable exposing
-    ( initial_table
+    ( blockLength
+    , initial_table
     , render_table_button
     , draw_coffee_back
     , change_block_state
     , distance
     , draw_block
+    , drawpath
     , BlockState(..)
     , TableModel
-    , blockLength, drawpath
     )
 
 {-| This module is to accomplish the puzzle of one touch game
 
 
+# Value
+
+@docs blockLength
+
+
 # Functions
 
 @docs initial_table
-@docs three_block_set
-@docs ushape_block_set
 @docs render_table_button
 @docs draw_coffee_back
 @docs change_block_state
 @docs distance
 @docs draw_block
+@docs drawpath
 
 
 # Datatype
