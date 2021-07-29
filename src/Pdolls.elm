@@ -72,8 +72,11 @@ updatedolltrigger udus number model =
      else if model.number > number then
         ( model, False )
 
-     else
+    else if number /= 99  then
         ({ model | number = model.number + 1}, False)
+    
+    else
+        (model, False)   
         
 
 {-| Render the doll

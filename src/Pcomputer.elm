@@ -5,7 +5,7 @@ module Pcomputer exposing
     , ComputerModel
     , State(..)
     ,drawchargedcomputer
-    ,initial_safebox
+    ,initial_safebox, updatesafetrigger
     )
 
 {-| This module is to accomplish the puzzle of computer
@@ -37,10 +37,11 @@ import String exposing (fromInt)
 -}
 type alias ComputerModel =
     { state : State
+    , safestate : State
     , scene : Int
     , word : List Int
+    , sfword : List Int
     }
-
 
 type alias Numberkey =
     { position : ( Int, Int )
@@ -58,7 +59,7 @@ type State
 -}
 initial_computer : ComputerModel
 initial_computer =
-    ComputerModel Lowpower 0 []
+   ComputerModel Lowpower  (Charged 0) 0 [] []
 
 
 initnumberkey : List Numberkey
@@ -87,18 +88,33 @@ updatetrigger a model =
         11 ->
             { model | state = Charged 2 }
 
-        12 ->
-            clearpw model
-
         _ ->
             if List.length model.word < 4 then
                 { model | word = updateword a model.word } |> updatecorrectpw
 
             else
                 model
+
+updatesafetrigger : Int -> ComputerModel -> ComputerModel
+updatesafetrigger a model =
+    case a of
+
+        11 ->
+             updatecorrectsfpw model
+        
+        12 ->
+            clearpw model
+
+        _ ->
+            if List.length model.sfword < 4 then
+                { model | sfword = updateword a model.sfword }
+
+            else
+                model
+
 clearpw : ComputerModel -> ComputerModel
 clearpw model =
-    {model | word = []}
+    {model | sfword = []}
 
 
 
@@ -111,13 +127,22 @@ updateword : Int -> List Int -> List Int
 updateword number word =
     number :: word
 
-
 updatecorrectpw : ComputerModel -> ComputerModel
 updatecorrectpw model =
     -- here is the standard password input,
     -- the order of the password is reversed
     if model.word == [ 1, 2, 3, 4 ] then
         { model | state = Charged 1 }
+
+    else
+        model
+
+updatecorrectsfpw : ComputerModel -> ComputerModel
+updatecorrectsfpw model =
+    -- here is the standard password input,
+    -- the order of the password is reversed
+    if model.sfword == [ 1, 2, 3, 4 ] then
+        { model | safestate = Charged 1 }
 
     else
         model
@@ -474,7 +499,7 @@ drawword word =
 
 initial_safebox : ComputerModel
 initial_safebox =
-    ComputerModel (Charged 0) 0 []
+    ComputerModel Lowpower (Charged 0) 0 [] []
 
 
 render_safebox : Bool -> ComputerModel -> List (Svg Msg)
@@ -498,7 +523,7 @@ render_safebox l0s commodel =
                                          ]
                                          []
                                         ]
-        face = ( if commodel.state == (Charged 0) then
+        face = ( if commodel.safestate == (Charged 0) then
                     [Svg.image
                         [ SvgAttr.x "0"
                         , SvgAttr.y "0"
