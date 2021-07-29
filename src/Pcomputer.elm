@@ -256,7 +256,7 @@ drawcomputerback =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/computer.png"
+        , SvgAttr.xlinkHref "assets/level0/computer.jpg"
         ]
         []
     ]

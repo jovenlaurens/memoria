@@ -25,7 +25,7 @@ level_0_furniture end li =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
+                , SvgAttr.xlinkHref "assets/level0/cs0/level0.jpg"
                 ]
                 []
             ]

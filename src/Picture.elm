@@ -259,7 +259,7 @@ render_frame list =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/frames.png"
+                , SvgAttr.xlinkHref "assets/level1/frames.jpg"
                 ]
                 []
             , Svg.image

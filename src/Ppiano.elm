@@ -171,10 +171,10 @@ background piano =
         link =
             case piano.winState of
                 True ->
-                    "assets/pianokey/pianowin.png"
+                    "assets/pianokey/pianowin.jpg"
 
                 False ->
-                    "assets/pianokey/piano.png"
+                    "assets/pianokey/piano.jpg"
     in
     Svg.image
         [ SvgAttr.width "100%"

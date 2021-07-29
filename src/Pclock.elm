@@ -57,7 +57,7 @@ drawclock cs =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/clock.png"
+                , SvgAttr.xlinkHref "assets/level1/clock.jpg"
                 ]
                 []
 
