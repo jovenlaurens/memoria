@@ -3,8 +3,8 @@ module Pdolls exposing
     , updatedolltrigger
     , drawdoll_ui
     , DollModel
-    , Pigstate(..)
     , Dollstate(..)
+    , Pigstate(..)
     )
 
 {-| This module is to accomplish the puzzle of doll
@@ -20,7 +20,7 @@ module Pdolls exposing
 # Datatype
 
 @docs DollModel
-@docs Doolstate
+@docs Dollstate
 @docs Pigstate
 
 -}
