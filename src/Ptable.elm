@@ -249,7 +249,7 @@ draw_back sta =
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
         , SvgAttr.height "100%"
-        , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+        , SvgAttr.xlinkHref "assets/level1/tablebig.jpg"
         ]
         []
         :: light
