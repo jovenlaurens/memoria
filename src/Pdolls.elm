@@ -1,10 +1,29 @@
-module Pdolls exposing (..)
+module Pdolls exposing
+    ( initDollModel
+    , updatedolltrigger
+    , drawdoll_ui
+    , DollModel
+    , Dollstate(..)
+    )
 
-import Browser
-import Debug exposing (toString)
-import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
+{-| This module is to accomplish the puzzle of doll
+
+
+# Functions
+
+@docs initDollModel
+@docs updatedolltrigger
+@docs drawdoll_ui
+
+
+# Datatype
+
+@docs DollModel
+@docs Doolstate
+
+-}
+
+import Messages exposing (GraMsg(..), Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import String exposing (fromInt)
@@ -13,29 +32,37 @@ import Svg.Attributes exposing (..)
 import Messages exposing (GraMsg(..), Msg(..))
 
 
+{-| The number
+-}
 type alias DollModel =
-    { number :Int
+    { number : Int
     , state : Dollstate
     , cscene : Int
     , pig :Pigstate
     }
 
-type Pigstate 
+type Pigstate
         = Whole
         | Broken
 
-type Dollstate 
-        = Invisible 
-        | Visible
+
+{-| Indicate whether the doll is visible
+-}
+type Dollstate
+    = Invisible
+    | Visible
 
 
-
+{-| Initialize the doll model
+-}
 initDollModel : DollModel
 initDollModel =
     DollModel 0 Invisible 0 Whole
 
 
 --bug
+{-| Change the number entry of the doll in order to show it in different size
+-}
 updatedolltrigger : Int -> Int -> DollModel -> (DollModel, Bool)
 updatedolltrigger udus number model =
      if number == 99 && udus == 10 then
@@ -48,6 +75,8 @@ updatedolltrigger udus number model =
         ({ model | number = model.number + 1}, False)
         
 
+{-| Render the doll
+-}
 drawdoll_ui : Int -> DollModel -> Int -> List (Svg Msg)
 drawdoll_ui scene model cle =
     
@@ -65,7 +94,7 @@ drawdoll_ui scene model cle =
 
 
 drawpig : Pigstate -> List (Svg Msg)
-drawpig state = 
+drawpig state =
     case state of
         Whole ->
             drawwholepig
@@ -74,7 +103,7 @@ drawpig state =
             drawbrokenpig
 
 drawwholepig : List (Svg Msg)
-drawwholepig = 
+drawwholepig =
     [Svg.image
             [ SvgAttr.x "55%"
             , SvgAttr.y "17%"
@@ -87,7 +116,7 @@ drawwholepig =
 
 
 drawbrokenpig : List (Svg Msg)
-drawbrokenpig = 
+drawbrokenpig =
     [Svg.image
             [ SvgAttr.x "54%"
             , SvgAttr.y "17%"
@@ -98,7 +127,7 @@ drawbrokenpig =
 
 
 drawbed : List( Svg Msg)
-drawbed = 
+drawbed =
     [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
@@ -126,7 +155,7 @@ drawpowerbutton =
             , SvgAttr.height "50"
             , SvgAttr.fillOpacity "0.0"
             , Svg.Events.onClick (Lighton 1)
-            ] 
+            ]
             []
         ]
 
@@ -142,9 +171,9 @@ drawdoll_0 =
             , Svg.Events.onClick (StartChange (ChangeScene 14))
             ][]
         ]
-        
+
 draw_pig_out : Pigstate -> List (Svg Msg)
-draw_pig_out state = 
+draw_pig_out state =
     case state of
         Whole ->
             draw_pig_out_whole
@@ -153,7 +182,7 @@ draw_pig_out state =
             draw_pig_out_broken
 
 draw_pig_out_whole : List (Svg Msg)
-draw_pig_out_whole = 
+draw_pig_out_whole =
     [Svg.image
             [ SvgAttr.x "90%"
             , SvgAttr.y "58%"
@@ -163,7 +192,7 @@ draw_pig_out_whole =
             []]
 
 draw_pig_out_broken : List (Svg Msg)
-draw_pig_out_broken = 
+draw_pig_out_broken =
     [Svg.image
             [ SvgAttr.x "90%"
             , SvgAttr.y "59%"
@@ -182,12 +211,12 @@ drawdolls number =
 
      else  if number >= 0 then
          (drawonedoll number) ++ drawdolls_bottom (number - 1 )
-     
+
      else
-         []    
-        
+         []
+
 drawdolls_bottom : Int -> List (Svg Msg)
-drawdolls_bottom number = 
+drawdolls_bottom number =
     if number >= 0 then
          (drawonedoll_bottom number) ++ drawdolls_bottom (number - 1)
      
@@ -208,7 +237,7 @@ drawonedoll number =
 
         cy = String.fromFloat (260 + (20 * (1.25) ^(toFloat(5 - number))))
 
-    in 
+    in
         [Svg.image
             [ SvgAttr.x cx
             , SvgAttr.y cy
@@ -221,7 +250,7 @@ drawonedoll number =
 
 drawonedoll_bottom : Int ->  List (Svg Msg)
 drawonedoll_bottom number =
-    
+
     let
         size_x  = String.fromFloat (20 * (1.3) ^(toFloat(5 - number)))
 
@@ -232,7 +261,7 @@ drawonedoll_bottom number =
 
         cy = String.fromFloat (270 + (20 * (1.25) ^(toFloat(5 - number))))
 
-    in 
+    in
         [Svg.image
             [ SvgAttr.x cx
             , SvgAttr.y cy

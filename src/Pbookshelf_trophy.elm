@@ -1,5 +1,28 @@
 module Pbookshelf_trophy exposing (..)
 
+{-| This module is to accomplish the puzzle of bookshelf game
+
+
+# Functions
+
+@docs render_trophy_button
+@docs render_bookshelf_button
+@docs initial_book_model
+@docs initial_trophy_model
+@docs rotate_trophy
+@docs draw_trophy
+@docs draw_bookshelf
+@docs draw_bookshelf_index
+@docs update_bookshelf
+
+
+# Datatype
+
+@docs Direction
+@docs BookletModel
+
+-}
+
 import Button exposing (test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
@@ -30,6 +53,8 @@ render_trophy_button =
 --    test_button enter
 
 
+{-| The face of the trophy, when it is turned to Front, the bookshelf will be unlocked
+-}
 type Direction
     = Left
     | Right
@@ -68,17 +93,23 @@ type alias Bookshelf =
     }
 
 
+{-| The puzzle model for bookshelf and trophy game
+-}
 type alias BookletModel =
     { bookshelf : Bookshelf
     , trophy : Trophy
     }
 
 
+{-| The puzzle model for trophy game
+-}
 type alias TrophyModel =
     { trophy : Trophy
     }
 
 
+{-| Initialize the booklet model
+-}
 initial_book_model : BookletModel
 initial_book_model =
     BookletModel
@@ -86,6 +117,8 @@ initial_book_model =
         (Trophy Right (Location 200 100))
 
 
+{-| Initialize the trophy model
+-}
 initial_trophy_model : TrophyModel
 initial_trophy_model =
     TrophyModel
@@ -121,6 +154,8 @@ get_bookshelf_order bookshelf =
     List.map (\x -> x.index) bookshelf.books
 
 
+{-| Update the face of trophy when being clicked
+-}
 rotate_trophy : Trophy -> Trophy
 rotate_trophy old =
     let
@@ -141,6 +176,8 @@ rotate_trophy old =
     { old | face = newdir }
 
 
+{-| Update the bookshelf include the choice state, choices books and mainly the book order
+-}
 update_bookshelf : Int -> Bookshelf -> Bookshelf
 update_bookshelf num old =
     let
@@ -250,6 +287,8 @@ draw_trophy trophy =
         |> List.singleton
 
 
+{-| Draw the index of book
+-}
 draw_bookshelf_index : Bookshelf -> List (Svg Msg)
 draw_bookshelf_index bookshelf =
     List.map (draw_book_index bookshelf.changeIndex bookshelf.choiceState) bookshelf.books

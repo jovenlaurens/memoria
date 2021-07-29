@@ -1,9 +1,36 @@
-module Ppiano exposing (..)
+module Ppiano exposing
+    ( initial
+    , play_audio
+    , check_order
+    , bounce_key
+    , press_key
+    , draw_key_set
+    , PianoModel
+    )
+
+{-| This module is to accomplish the puzzle of playing piano
+
+
+# Functions
+
+@docs initial
+@docs play_audio
+@docs check_order
+@docs bounce_key
+@docs press_key
+@docs draw_key_set
+
+
+# Datatype
+
+@docs PianoModel
+
+-}
 
 import Button exposing (Button, test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
@@ -32,6 +59,15 @@ type alias PianoKey =
     }
 
 
+{-| All piano keys are contained in the entry called
+
+    pianoKeySet : List PianoKey
+
+    playedKey : List Int
+
+The played key entry contains all the index played and the current Music is to help make audio
+
+-}
 type alias PianoModel =
     { pianoKeySet : List PianoKey
     , playedKey : List Int
@@ -40,6 +76,8 @@ type alias PianoModel =
     }
 
 
+{-| Initialize the piano model in the piano puzzle
+-}
 initial : PianoModel
 initial =
     PianoModel
@@ -74,6 +112,8 @@ generate_key_set =
     List.map generate_key_set_help indexSet
 
 
+{-| To let the key become back after a period of time
+-}
 bounce_key : Float -> List PianoKey -> List PianoKey
 bounce_key time keySet =
     let
@@ -88,6 +128,8 @@ bounce_key time keySet =
     List.map (bounce_key_help time) keySet
 
 
+{-| Change the key state and start to timing
+-}
 press_key : Int -> Float -> List PianoKey -> List PianoKey
 press_key index time keySet =
     let
@@ -102,6 +144,8 @@ press_key index time keySet =
     List.map (press_key_help index) keySet
 
 
+{-| Play the sound for the piano
+-}
 play_audio : Int -> Html Msg
 play_audio index =
     audio
@@ -111,7 +155,8 @@ play_audio index =
         ]
         [ text "error" ]
 
-
+{-| Render the piano keys
+-}
 draw_key_set : PianoModel -> List (Svg Msg)
 draw_key_set piano =
     background piano ++ List.map draw_single_key_up piano.pianoKeySet
@@ -856,6 +901,8 @@ draw_single_key_down key =
         []
 
 
+{-| check whether the players press the correct order keys successfully
+-}
 check_order : List Int -> Bool
 check_order list =
     case list of

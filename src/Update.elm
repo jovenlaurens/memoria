@@ -108,7 +108,7 @@ update msg model =
             )
 
         OnClickItem index ->
-            
+
             ( pickup_picture index model
             , Cmd.none
             )
@@ -146,12 +146,12 @@ update msg model =
 test_bulb_win : Model -> Model
 test_bulb_win model =
     let
-        oldobjs = 
+        oldobjs =
             model.objects
 
-        ck = 
+        ck =
             model.checklist
-        fin obj = 
+        fin obj =
             ( case obj of
                     Bul a ->
                         if (a.state) then
@@ -161,14 +161,14 @@ test_bulb_win model =
                     _ ->
                             False
             )
-        sta = (List.map fin oldobjs ) 
+        sta = (List.map fin oldobjs )
             |> List.any (\x -> x == True)
     in
         if sta then
             {model | checklist = {ck | level1light = True} }
         else
             model
-        
+
 
 
 
@@ -247,7 +247,7 @@ test_keyboard_win list =
                     obj
     in
         List.map fin list
-    
+
 
 
 
@@ -475,7 +475,7 @@ renew_screen_info submsg old choices =
                     case ( a, b ) of
                         ( 0, 0 ) ->
                             8
-                        
+
                         ( 0, 1 ) ->
                             13
 
@@ -493,10 +493,10 @@ renew_screen_info submsg old choices =
 
                         ( 2, 0 ) ->
                             27
-                        
+
                         ( 2, 1 ) ->
                             31
-                    
+
                         ( 2, 2 ) ->
                             43
                         _ ->
@@ -580,10 +580,10 @@ bounce_key_help time object =
 test_table_win : Object -> Model -> Model
 test_table_win obj model =
     let
-        cklst = 
+        cklst =
             model.checklist
     in
-    
+
     case obj of
         Table a ->
             if List.all (\x -> x.state == Active) a.blockSet then
@@ -605,7 +605,7 @@ test_clock_win model =
         ( hour, min ) =
             get_time cloc
 
-        pic1 = 
+        pic1 =
             list_index_picture 1 model.pictures
         pic5 =
             list_index_picture 5 model.pictures
@@ -682,8 +682,8 @@ test_mirror_win model =
     else
         model
 
-test_doll_win : Model -> Model 
-test_doll_win model = 
+test_doll_win : Model -> Model
+test_doll_win model =
     let
         dol =
             list_index_object 13 model.objects
@@ -699,8 +699,8 @@ test_doll_win model =
         model
 
 
-test_pig_mash : Model -> Model 
-test_pig_mash model = 
+test_pig_mash : Model -> Model
+test_pig_mash model =
     let
         dol =
             list_index_object 13 model.objects
@@ -716,8 +716,8 @@ test_pig_mash model =
         model
 
 
-test_computer_unlock : Model -> Model 
-test_computer_unlock model = 
+test_computer_unlock : Model -> Model
+test_computer_unlock model =
     let
         com =
             list_index_object 4 model.objects
@@ -740,7 +740,7 @@ show_phone_question obj =
             Mirror {a | stage = (Pass, NotYet)}
         _ ->
             obj
-            
+
 
 
 
@@ -765,7 +765,7 @@ test_mirror_win_help object =
             False
 
 test_fragment_win : Model -> Model
-test_fragment_win model = 
+test_fragment_win model =
     let
         fin obj =
             case obj of
@@ -779,7 +779,7 @@ test_fragment_win model =
         |> test_fragment
 
 test_fragment : Model -> Model
-test_fragment model = 
+test_fragment model =
     let
         frag =
             list_index_object 8 model.objects
@@ -842,7 +842,7 @@ unchoose_index_picture index list =
             if id == pict.index then
                 {pict | state = Picked}
             else
-                pict     
+                pict
     in
         List.map (fin index) list
 
@@ -854,7 +854,7 @@ choose_index_picture index list =
             if id == pict.index then
                 {pict | state = UnderUse}
             else
-                pict     
+                pict
     in
         List.map (fin index) list
 
@@ -870,7 +870,7 @@ change_index_picture index udu list =
                 pict
     in
         List.map (fin index udu) list
-    
+
 
 
 
@@ -901,13 +901,13 @@ update_onclicktrigger model number =
     let
         cklst = model.checklist
     in
-    
+
     case model.cscreen.cscene of
         1 ->
             updateclock model number
 
         2 ->
-            { model | checklist = { cklst | level1liquid = True } 
+            { model | checklist = { cklst | level1liquid = True }
                     ,  pictures = show_index_picture 0 model.pictures
             }
 
@@ -931,7 +931,7 @@ update_onclicktrigger model number =
 
         9 ->
             update_fra model number
-        
+
         10 ->
             case number of
                 100 ->
@@ -942,15 +942,15 @@ update_onclicktrigger model number =
 
         11 ->
             { model | objects = try_to_update_trophy model.objects }
-        
+
         12 ->
             update_cab 12 number model
 
         13 ->
             try_to_update_computer 13 model number
 
-        14 -> 
-            update_doll model number 
+        14 ->
+            update_doll model number
 
         0 ->
             (case model.cscreen.clevel of
@@ -984,7 +984,7 @@ try_to_unlock_door model number =
                 model
         else
             model
-    
+
 
 
 
@@ -995,13 +995,13 @@ update_cab cs number model =
         fin cse num obj =
             case (cse, num, obj) of
                 ( 12, 1, Cabinet a ) ->
-                    Cabinet {a | lower = switch_cabState a.lower} 
+                    Cabinet {a | lower = switch_cabState a.lower}
                 _ ->
                     obj
         new_obj = List.map (fin cs number) model.objects
     in
         { model | objects = new_obj}
-        
+
 
 
 
@@ -1015,25 +1015,25 @@ update_cab_lock cs number udus model =
                 { model | checklist = {ck | level1lowercab = (not ck.level1lowercab)}}
             _ ->
                 model-}
-            
+
 --need add
-    
- 
-
-
-        
-        
 
 
 
 
 
-    
+
+
+
+
+
+
+
 
 
 
 update_doll : Model -> Int -> Model
-update_doll model number = 
+update_doll model number =
     let
         oldudus = model.underUse
         oldpict = model.pictures
@@ -1221,7 +1221,7 @@ update_lighton number model =
         0 ->
            lighton_mirror model
 
-        1 -> 
+        1 ->
             lighton_doll model
 
         _ ->
@@ -1238,7 +1238,7 @@ lighton_mirror model =
                 _ ->
                     mirror
     in
-    { model | objects = List.map toggle model.objects }  
+    { model | objects = List.map toggle model.objects }
 
 
 --need
@@ -1307,12 +1307,12 @@ try_to_unlock_picture model number =
                 0 ->
                     if model.underUse == 0 then --碎片的0
                         {
-                            model | pictures = consume_picture model.pictures 0 
+                            model | pictures = consume_picture model.pictures 0
                                 , underUse = 99
                         }
                     else if model.underUse == 1 then --碎片的1
                         {
-                            model | pictures = consume_picture model.pictures 1 
+                            model | pictures = consume_picture model.pictures 1
                                   , underUse = 99
                         }
                     else
@@ -1331,7 +1331,7 @@ try_to_unlock_picture model number =
                 3 ->
                     if model.underUse == 8 then --碎片的8
                         {
-                            model | pictures = consume_picture model.pictures 8 
+                            model | pictures = consume_picture model.pictures 8
                                 , underUse = 99
                         }
 
@@ -1428,7 +1428,7 @@ update_light_mirror index object =
             Mirror ({ a | mirrorSet = newMirrorSet, lightSet = newLightSet }
                         |> refresh_keyboard index
                     )
-                        
+
 
         _ ->
             object

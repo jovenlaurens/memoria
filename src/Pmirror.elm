@@ -1,4 +1,33 @@
-module Pmirror exposing (..)
+module Pmirror exposing
+    ( initialMirror
+    , test_keyboard_win_inside
+    , refresh_keyboard
+    , render_mirror
+    , draw_light
+    , draw_mirror
+    , LightState(..)
+    , MirrorModel
+    )
+
+{-| This module is to accomplish the puzzle of mirror game
+
+
+# Functions
+
+@docs initialMirror
+@docs test_keyboard_win_inside
+@docs refresh_keyboard
+@docs render_mirror
+@docs draw_light
+@docs draw_mirror
+
+
+# Datatype
+
+@docs LightState
+@docs MirrorModel
+
+-}
 
 import Debug exposing (toString)
 import Geometry exposing (..)
@@ -10,13 +39,20 @@ import Svg.Events
 import List exposing (foldr)
 
 
+{-| The type of whether the light from the mirror hit the target correctly
+-}
+type LightState
+    = Light_2_on
+    | Light_2_off
+    | Otherobject
 
-type LightState 
-        = Light_2_on
-        | Light_2_off
-        | Otherobject
 
-
+{-| Contain the fields to play the mirror model :
+lightSet : List
+Line contain all the light line.
+answer : Int
+Is the answer for the the question who is my favourite character.
+-}
 type alias MirrorModel =
     { lightstate : LightState
     , frame : List Location
@@ -34,6 +70,8 @@ type alias Ipad =
     }
 
 
+{-| This function is to initial the MirrorModel
+-}
 initialMirror : MirrorModel
 initialMirror =
     MirrorModel
@@ -46,7 +84,7 @@ initialMirror =
         ]
         (NotYet, NotYet)
         (Ipad (List.repeat 26 0) (List.range 4 29) -1)
-        
+
 
 
 generate_one_frame : ( Float, Float ) -> Location
@@ -112,6 +150,8 @@ correct_answer_3 = [ 0, 0, 1, 1, 1, 1, 0, 0, 1, 0
                    ]
 
 
+{-| Test whether the player input the right answer of favourite character
+-}
 test_keyboard_win_inside : MirrorModel -> MirrorModel
 test_keyboard_win_inside old =
     if List.any (\x -> x ==  old.ipad.keyboard)  [correct_answer_1, correct_answer_2, correct_answer_3] then
@@ -121,6 +161,8 @@ test_keyboard_win_inside old =
 --need bug
 
 
+{-| Refresh the "keyboard" when players input wrong answer
+-}
 refresh_keyboard : Int -> MirrorModel -> MirrorModel
 refresh_keyboard index old =
     if index <= 3 then
@@ -135,7 +177,7 @@ refresh_keyboard index old =
         
             newKeyb = List.map2 (fin index) old.ipad.keyIndex old.ipad.keyboard
             opad = old.ipad
-        in 
+        in
             { old | ipad ={ opad | keyboard = newKeyb} }
 
 
@@ -156,6 +198,8 @@ toFloatPoint ( x, y ) =
     ( Basics.toFloat x, Basics.toFloat y )
 
 
+{-| Render who is favourite game in mirror puzzle game
+-}
 render_mirror : MirrorModel -> List (Svg Msg)
 render_mirror a =
     let
@@ -168,8 +212,8 @@ render_mirror a =
 
     in
        draw_mirror_back a.lightstate
-    ++ draw_frame a.frame 
-    ++ draw_mirror a.mirrorSet 
+    ++ draw_frame a.frame
+    ++ draw_mirror a.mirrorSet
     ++ draw_light a.lightSet
     ++ draw_question a.stage a.ipad.answer
     ++ key
@@ -186,7 +230,7 @@ draw_light_and_mirror a =
 
 
 draw_mirror_back : LightState ->  List (Svg Msg)
-draw_mirror_back lght = 
+draw_mirror_back lght =
             [ Svg.image
                 [ SvgAttr.x "0"
                 , SvgAttr.y "0"
@@ -204,7 +248,7 @@ draw_mirror_back lght =
                             , SvgAttr.xlinkHref "assets/level2/mirrorliang.png"
                             ]
                             []
-                    
+
                 else
                     Svg.rect
                         []
@@ -213,7 +257,7 @@ draw_mirror_back lght =
             )
             ]
 
-                
+
 
 draw_test_info : List Int -> List (Svg Msg)
 draw_test_info mirr =
@@ -286,8 +330,8 @@ draw_one_keyboard x y sta id =
         []
 
 
-
-
+{-| Draw light of the mirror game
+-}
 draw_light : List Line -> List (Svg msg)
 draw_light lightSet =
     let
@@ -351,6 +395,8 @@ draw_single_mirror mirror =
         []
 
 
+{-| Draw mirror in the mirror puzzle game
+-}
 draw_mirror : List Mirror -> List (Svg Msg)
 draw_mirror mirrorSet =
     List.map draw_single_mirror mirrorSet
