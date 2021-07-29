@@ -1,5 +1,14 @@
 module View exposing (..)
 
+{-| This module is the main view module
+
+
+# Functions
+
+@docs view
+
+-}
+
 import Button exposing (Button, black_white_but, test_button, trans_button_sq)
 import Debug exposing (toString)
 import Document exposing (Document, render_document_detail, render_newspaper_index)
@@ -15,36 +24,30 @@ import Memory exposing (MeState(..), Memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
-import Pbulb exposing (render_bulb)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
+import Pbulb exposing (Bulb, render_bulb)
+import Pcabinet exposing (render_cabinet)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
 import Pcomputer exposing (draw_computer)
-import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
-import Pmirror exposing (draw_frame, draw_light, draw_mirror)
-import Ppiano exposing (PianoModel, draw_key_set, play_audio)
-import Ppower exposing (drawpowersupply)
-import Pstair exposing (render_stair_level)
-import Ptable exposing (draw_block, drawpath, render_table_button)
-import Pfragment exposing (..)
-import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
 import Pdolls exposing (drawdoll_ui)
+import Pfragment exposing (..)
+import Picture exposing (Picture, ShowState(..), list_index_picture, render_frame, render_inventory, render_picture_button)
+import Pmirror exposing (LightState(..), draw_frame, draw_light, draw_mirror, render_mirror)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio, render_piano_button)
+import Ppower exposing (drawpowersupply)
+import Pstair exposing (render_stair_level, stair_button_level_1l)
+import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Pcabinet exposing (render_cabinet)
-import Pmirror exposing (render_mirror, LightState(..))
-import Picture exposing (render_inventory)
-import Pbulb exposing (Bulb)
-import Button exposing (black_white_but)
-import Ptable exposing (draw_coffee_back)
-import Picture exposing (render_frame)
-import Pstair exposing (stair_button_level_1l)
-import Ppiano exposing (render_piano_button)
 
 
 style =
     Html.Attributes.style
 
 
+{-| The view function for main
+-}
 view : Model -> Html Msg
 view model =
     let
@@ -67,14 +70,14 @@ view model =
 
         gcontent =
             get_Gcontent model.gradient
-        (bkgdColor,opa) =
-                                                   --need
-                                                   if gcontent == OnlyWord  then
-                                                       ("#ffffff",1)
 
-                                                   else
-                                                       ("#000000",model.opac)
+        ( bkgdColor, opa ) =
+            --need
+            if gcontent == OnlyWord then
+                ( "#ffffff", 1 )
 
+            else
+                ( "#000000", model.opac )
     in
     div
         [ style "width" "100%"
@@ -83,6 +86,7 @@ view model =
         , style "left" "0"
         , style "top" "0"
         , style "background-color" "#000000"
+
         --, style ""
         ]
         [ div
@@ -128,16 +132,15 @@ view model =
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                                 ++ render_picture model.pictures model.cscreen.cscene
                         )
-                    
                     ]
                         ++ render_ui_button 0
 
                 1 ->
-                    [ (menu_back 1 1)
-                    , (menu_back 1 2)
-                    , (menu_back 1 3)
+                    [ menu_back 1 1
+                    , menu_back 1 2
+                    , menu_back 1 3
                     ]
-                    ++ render_ui_button 1
+                        ++ render_ui_button 1
 
                 2 ->
                     [ render_wall_1
@@ -221,12 +224,11 @@ view model =
 
 {-| render everything
 -}
-render_documents :  List Document -> Int -> List (Html Msg)
+render_documents : List Document -> Int -> List (Html Msg)
 render_documents docus cs =
     case cs of
         2 ->
             [ render_newspaper_index 0 docus ]
-
 
         _ ->
             []
@@ -234,7 +236,6 @@ render_documents docus cs =
 
 
 --need how to simplify
-
 
 
 render_wall_1 : Html Msg
@@ -274,7 +275,8 @@ render_level : Model -> List (Html Msg)
 render_level model =
     [ render_object model
     ]
-     ++ render_button_level model.cscreen.clevel model
+        ++ render_button_level model.cscreen.clevel model
+
 
 get_trophy : List Object -> Bool
 get_trophy lst =
@@ -289,6 +291,7 @@ get_trophy lst =
                     False
     in
     List.any get_trophy_face lst
+
 
 render_button_level : Int -> Model -> List (Html Msg)
 render_button_level level model =
@@ -306,11 +309,12 @@ render_button_level level model =
                 render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button
 
         1 ->
-                ( if model.checklist.level1door == True then 
-                    render_stair_level level
-                  else
-                    render_locked_door
-                )
+            (if model.checklist.level1door == True then
+                render_stair_level level
+
+             else
+                render_locked_door
+            )
                 ++ [ trans_button_sq stair_button_level_1l
                    , drawclockbutton
                    , render_table_button
@@ -325,7 +329,8 @@ render_button_level level model =
 
 render_locked_door : List (Html Msg)
 render_locked_door =
-    [trans_button_sq (Button 52 45.51 8 39.1 "" (OnClickTriggers 0) "block")]
+    [ trans_button_sq (Button 52 45.51 8 39.1 "" (OnClickTriggers 0) "block") ]
+
 
 render_mirror_button : List (Html Msg)
 render_mirror_button =
@@ -349,79 +354,90 @@ render_button_inside cs objs =
 render_object : Model -> Svg Msg
 render_object model =
     let
-        cs = model.cscreen.cscene
-        cle = model.cscreen.clevel
-        fur = case model.cscreen.clevel of
+        cs =
+            model.cscreen.cscene
+
+        cle =
+            model.cscreen.clevel
+
+        fur =
+            case model.cscreen.clevel of
                 0 ->
                     level_0_furniture
+
                 1 ->
                     level_1_furniture model.checklist.level1light
+
                 2 ->
-                    (render_level_2 model)
+                    render_level_2 model
+
                 _ ->
                     []
-        door = if model.checklist.level1door == True && cle == 1 && cs == 0 then
-                    [
-                        Svg.image
-                            [ SvgAttr.x "0"
-                            , SvgAttr.y "0"
-                            , SvgAttr.width "100%"
-                            , SvgAttr.height "100%"
-                            , SvgAttr.xlinkHref "assets/level1/opendoor.png"
-                            ]
-                            []
-                    ]
-                else
-                    []
 
+        door =
+            if model.checklist.level1door == True && cle == 1 && cs == 0 then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/opendoor.png"
+                    ]
+                    []
+                ]
+
+            else
+                []
     in
-    
     Svg.svg
         [ SvgAttr.width "100%"
         , SvgAttr.height "100%"
         , SvgAttr.viewBox "0 0 1600 900"
         ]
         ((if model.cscreen.cscene == 0 then
-                fur ++ door ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
+            fur ++ door ++ List.foldr (render_object_inside model.checklist cs cle) [] model.objects
 
           else
-            
-                render_object_only model cs model.objects
+            render_object_only model cs model.objects
                 ++ render_object_only_html cs model.objects
          )
             ++ render_inventory model.pictures
         )
 
+
 render_level_2 : Model -> List (Svg Msg)
-render_level_2 model = 
-    [ Svg.image 
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level2/level2.png"
-            ]
-            []
-    ,Svg.image
-            [ SvgAttr.x "70%"
-            , SvgAttr.y "60%"
-            , SvgAttr.width "2%"
-            , SvgAttr.xlinkHref "assets/level2/doll.png"
-            ]
-            []
-    ] ++ (render_window model)
+render_level_2 model =
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref "assets/level2/level2.png"
+        ]
+        []
+    , Svg.image
+        [ SvgAttr.x "70%"
+        , SvgAttr.y "60%"
+        , SvgAttr.width "2%"
+        , SvgAttr.xlinkHref "assets/level2/doll.png"
+        ]
+        []
+    ]
+        ++ render_window model
 
 
 render_level_0 : Model -> List (Svg Msg)
 render_level_0 model =
-    [ Svg.image 
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
+        ]
+        []
+    ]
+
 
 render_window : Model -> List (Svg Msg)
 render_window model =
@@ -433,93 +449,99 @@ render_window model =
 
                 _ ->
                     Otherobject
-        statelist = List.map toggle model.objects
 
-        state =findlightstate statelist
+        statelist =
+            List.map toggle model.objects
+
+        state =
+            findlightstate statelist
     in
-        case state of
-            Light_2_off ->
-                render_window_off
+    case state of
+        Light_2_off ->
+            render_window_off
 
-            Light_2_on ->
-                render_window_on
+        Light_2_on ->
+            render_window_on
 
-            _->
-                []
+        _ ->
+            []
 
-findlightstate : List(LightState) -> LightState
-findlightstate list = 
-        case list of
-            x :: xs ->
-                 if (x == Light_2_on || x == Light_2_off) then
-                        x
-                 else
-                    findlightstate xs
-            
-            x ->
-                Otherobject
-            
 
+findlightstate : List LightState -> LightState
+findlightstate list =
+    case list of
+        x :: xs ->
+            if x == Light_2_on || x == Light_2_off then
+                x
+
+            else
+                findlightstate xs
+
+        x ->
+            Otherobject
 
 
 render_window_off : List (Svg Msg)
-render_window_off = 
-    [ Svg.image 
-            [ SvgAttr.x "30"
-            , SvgAttr.y "400"
-            , SvgAttr.width "40%"
-            , SvgAttr.height "30%"
-            , SvgAttr.xlinkHref "assets/level2/window_off.png"
-            , Svg.Events.onClick(Lighton 0)
-            ]
-            []
+render_window_off =
+    [ Svg.image
+        [ SvgAttr.x "30"
+        , SvgAttr.y "400"
+        , SvgAttr.width "40%"
+        , SvgAttr.height "30%"
+        , SvgAttr.xlinkHref "assets/level2/window_off.png"
+        , Svg.Events.onClick (Lighton 0)
+        ]
+        []
     ]
+
 
 render_window_on : List (Svg Msg)
-render_window_on = 
-    [ Svg.image 
-            [ SvgAttr.x "30"
-            , SvgAttr.y "400"
-            , SvgAttr.width "40%"
-            , SvgAttr.height "30%"
-            , SvgAttr.xlinkHref "assets/level2/window_on.png"
-            ]
-            []
+render_window_on =
+    [ Svg.image
+        [ SvgAttr.x "30"
+        , SvgAttr.y "400"
+        , SvgAttr.width "40%"
+        , SvgAttr.height "30%"
+        , SvgAttr.xlinkHref "assets/level2/window_on.png"
+        ]
+        []
     ]
 
 
-{-render_test_information : Model -> List (Svg Msg)
-render_test_information model =
-    let
-        under =
-            if model.underUse == 99 then
-                "Blank"
 
-            else
-                "Have"
+{- render_test_information : Model -> List (Svg Msg)
+   render_test_information model =
+       let
+           under =
+               if model.underUse == 99 then
+                   "Blank"
 
-        show3 =
-            toString model.cscreen.cscene
+               else
+                   "Have"
 
-        fram =
-            list_index_memory 0 model.memory
+           show3 =
+               toString model.cscreen.cscene
 
-        show2 =
-            toString model.checklist.level1light
+           fram =
+               list_index_memory 0 model.memory
+
+           show2 =
+               toString model.checklist.level1light
 
 
-    in
-    [ Svg.text_
-        [ SvgAttr.x "100"
-        , SvgAttr.y "200"
-        ]
-        [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 )
-        ]
-    ]
+       in
+       [ Svg.text_
+           [ SvgAttr.x "100"
+           , SvgAttr.y "200"
+           ]
+           [ Svg.text (under ++ " " ++ show2 ++ " " ++ show3 )
+           ]
+       ]
 -}
 
+
 render_picture : List Picture -> Int -> List (Html Msg)
-render_picture list cs=
+render_picture list cs =
     let
         render_pict_inside pict =
             if pict.state == Show && cs == pict.place then
@@ -537,9 +559,8 @@ render_picture_index : Int -> Html Msg
 render_picture_index index =
     case index of
         0 ->
-
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "54%"
                 , style "left" "32%"
                 , style "width" "16%"
@@ -550,7 +571,7 @@ render_picture_index index =
 
         1 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "50%"
                 , style "left" "60%"
                 , style "width" "20%"
@@ -558,9 +579,10 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
-        2 -> 
+
+        2 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "28%"
                 , style "left" "33%"
                 , style "width" "2%"
@@ -582,7 +604,7 @@ render_picture_index index =
 
         6 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "0%"
                 , style "left" "0%"
                 , style "width" "100%"
@@ -593,7 +615,7 @@ render_picture_index index =
 
         7 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "25%"
                 , style "left" "59%"
                 , style "width" "6%"
@@ -604,7 +626,7 @@ render_picture_index index =
 
         8 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "5%"
                 , style "left" "30%"
                 , style "width" "40%"
@@ -612,9 +634,10 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
+
         10 ->
             Html.img
-                [ src ("assets/picts/"++(toString index)++".png")
+                [ src ("assets/picts/" ++ toString index ++ ".png")
                 , style "top" "0%"
                 , style "left" "0%"
                 , style "width" "100%"
@@ -627,12 +650,6 @@ render_picture_index index =
             Debug.todo ""
 
 
-
-
-
-
-
-
 {-| 把
 -}
 render_object_inside : CheckList -> Int -> Int -> Object -> List (Svg Msg) -> List (Svg Msg)
@@ -640,12 +657,12 @@ render_object_inside cklst scne cle obj old =
     let
         new =
             case obj of
-                {-Clock a ->
-                    [ drawclock scne
-                    , drawhourhand scne a
-                    , drawminutehand scne a
-                    ]
-            -}
+                {- Clock a ->
+                   [ drawclock scne
+                   , drawhourhand scne a
+                   , drawminutehand scne a
+                   ]
+                -}
                 Frame a ->
                     if cle == 1 then
                         [ render_picture_button ]
@@ -670,23 +687,22 @@ render_object_inside cklst scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
-                
+
                 Cabinet a ->
                     render_cabinet scne cle a
 
                 Bul a ->
-                     if cle == 1 then
+                    if cle == 1 then
                         render_bulb 0 a
 
-                     else
+                    else
                         []
-                    
+
                 Doll a ->
                     drawdoll_ui 0 a cle
 
                 _ ->
                     []
-
     in
     old ++ new
 
@@ -697,7 +713,8 @@ render_object_only model cs objects =
         tar =
             list_index_object (cs - 1) objects
 
-        cklst = model.checklist
+        cklst =
+            model.checklist
     in
     case tar of
         Mirror a ->
@@ -710,7 +727,6 @@ render_object_only model cs objects =
             ]
 
         Table a ->
-            
             draw_block cklst.level1light cklst.level1coffee cklst.level1liquid a.blockSet
 
         Frame a ->
@@ -728,13 +744,13 @@ render_object_only model cs objects =
 
         Bul a ->
             render_bulb 8 a
-        
+
         Fra a ->
             render_fra 9 a model.cscreen.clevel
 
         Cabinet a ->
             render_cabinet model.cscreen.cscene model.cscreen.clevel a
-        
+
         Trophy a ->
             draw_trophy a.trophy
 
@@ -754,7 +770,7 @@ render_object_only_html cs objs =
     case tar of
         Bul a ->
             render_bulb 8 a ++ [ text "sdfgh" ]
-            
+
         Piano a ->
             [ div
                 [ Html.Attributes.style "width" "100%"
@@ -889,17 +905,18 @@ render_ui_button cstate =
         _ ->
             []
 
+
 menu_back : Float -> Int -> Html Msg
 menu_back opa ind =
     Html.img
-                [ src ("assets/intro/"++(toString ind)++".png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                , style "opacity" (toString opa)
-                ]
-                []
+        [ src ("assets/intro/" ++ toString ind ++ ".png")
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        , style "opacity" (toString opa)
+        ]
+        []
 
 
 play_piano_audio : Int -> List Object -> List (Html Msg)
@@ -919,8 +936,3 @@ play_piano_audio currentScene objectSet =
                 div [] []
     in
     List.map (play_piano_audio_help currentScene) objectSet
-
-
-
-        
-        
