@@ -1,11 +1,14 @@
-module Model exposing (..)
+module Model exposing (CheckList, ChooseList, Model, initial, initial_target, list_index_object)
+
+{-| This module is for all the function and the view of the document part
+-}
 
 import Document exposing (Document, initial_docu)
 import Draggable
 import Gradient exposing (ColorState(..), GradientState(..), Screen)
 import Intro exposing (IntroPage, initial_intro)
 import Memory exposing (Memory, initial_memory)
-import Object exposing (..)
+import Object exposing (Object, default_object, initial_objects)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 

@@ -1,4 +1,15 @@
-module Pbookshelf_trophy exposing (..)
+module Pbookshelf_trophy exposing
+    ( render_trophy_button
+    , initial_book_model
+    , initial_trophy_model
+    , rotate_trophy
+    , draw_trophy
+    , draw_bookshelf_index
+    , update_bookshelf
+    , Direction(..)
+    , BookletModel
+    , TrophyModel, draw_bookshelf_or_trophy, get_bookshelf_order
+    )
 
 {-| This module is to accomplish the puzzle of bookshelf game
 
@@ -6,7 +17,6 @@ module Pbookshelf_trophy exposing (..)
 # Functions
 
 @docs render_trophy_button
-@docs render_bookshelf_button
 @docs initial_book_model
 @docs initial_trophy_model
 @docs rotate_trophy

@@ -1,4 +1,7 @@
-module Ppower exposing (..)
+module Ppower exposing (PowerModel, PowerState(..), drawpowersupply, initPowerModel, updatetrigger)
+
+{-| This module is for all the function and the view of the document part
+-}
 
 import Browser
 import Debug exposing (toString)
@@ -6,11 +9,11 @@ import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
 import Html.Events exposing (onClick)
 import Messages exposing (GraMsg(..), Msg(..))
+import Pcomputer exposing (drawchargedcomputer)
 import String exposing (fromInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (x)
 import Svg.Events
-import Pcomputer exposing (drawchargedcomputer)
 
 
 type PowerState
@@ -115,25 +118,26 @@ drawpowersupply_6 model =
 
 drawpowersupply_6_back : List (Svg Msg)
 drawpowersupply_6_back =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/power/back.png"
-            ]
-            []]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/power/back.png"
+        ]
+        []
+    ]
 
 
 drawpowersupply_6_cover_locked : List (Svg Msg)
 drawpowersupply_6_cover_locked =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/power/close.png"
-            ]
-            []
-    ,Svg.circle
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/power/close.png"
+        ]
+        []
+    , Svg.circle
         [ SvgAttr.cx "805"
         , SvgAttr.cy "424"
         , SvgAttr.r "20"
@@ -143,159 +147,162 @@ drawpowersupply_6_cover_locked =
         []
     ]
 
+
 drawpowersupply_6_cover_unlock : List (Svg Msg)
 drawpowersupply_6_cover_unlock =
-    [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/power/open.png"
-            ]
-            []]
-
-    
-    {- [ Svg.rect
-        [ SvgAttr.x "500"
-        , SvgAttr.y "100"
-        , SvgAttr.width "400"
-        , SvgAttr.height "500"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "4"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "490"
-        , SvgAttr.y "200"
-        , SvgAttr.width "20"
-        , SvgAttr.height "50"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "490"
-        , SvgAttr.y "400"
-        , SvgAttr.width "20"
-        , SvgAttr.height "50"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "680,250 650,380 680,380 650,460 730,350 680,350 730,250 "
-        , SvgAttr.fill "yellow"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "2"
-        ]
-        []
-    , Svg.circle
-        [ SvgAttr.cx "850"
-        , SvgAttr.cy "350"
-        , SvgAttr.r "20"
-        , SvgAttr.fill "white"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "2"
-        , Svg.Events.onClick (OnClickTriggers 0)
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "848"
-        , SvgAttr.y "335"
-        , SvgAttr.width "4"
-        , SvgAttr.height "30"
-        , SvgAttr.fill "black"
-        , Svg.Events.onClick (OnClickTriggers 0)
-        ]
-        []
-    ] -}
-
-
-{- drawpowersupply_6_inner : PowerState -> List (Svg Msg)
-drawpowersupply_6_inner state =
-    [ Svg.rect
-        [ SvgAttr.x "700"
-        , SvgAttr.y "100"
-        , SvgAttr.width "400"
-        , SvgAttr.height "500"
-        , SvgAttr.fill "silver"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "4"
-        ]
-        []
-    , Svg.polygon
-        [ SvgAttr.points "700,100 500,200 500,700 700,600"
-        , SvgAttr.fill "silver"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "4"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "690"
-        , SvgAttr.y "200"
-        , SvgAttr.width "20"
-        , SvgAttr.height "50"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "690"
-        , SvgAttr.y "400"
-        , SvgAttr.width "20"
-        , SvgAttr.height "50"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "800"
-        , SvgAttr.y "200"
-        , SvgAttr.width "200"
-        , SvgAttr.height "300"
-        , SvgAttr.fill "orange"
-        , SvgAttr.stroke "black"
-        , SvgAttr.strokeWidth "2"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "800"
-        , SvgAttr.y "200"
-        , SvgAttr.width "200"
-        , SvgAttr.height "30"
-        , SvgAttr.fill "brown"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "800"
-        , SvgAttr.y "470"
-        , SvgAttr.width "200"
-        , SvgAttr.height "30"
-        , SvgAttr.fill "brown"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "845"
-        , SvgAttr.y "230"
-        , SvgAttr.width "10"
-        , SvgAttr.height "180"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "890"
-        , SvgAttr.y "230"
-        , SvgAttr.width "20"
-        , SvgAttr.height "180"
-        , SvgAttr.fill "black"
-        ]
-        []
-    , Svg.rect
-        [ SvgAttr.x "945"
-        , SvgAttr.y "230"
-        , SvgAttr.width "10"
-        , SvgAttr.height "180"
-        , SvgAttr.fill "black"
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/power/open.png"
         ]
         []
     ]
-        ++ drawswitch state -}
+
+
+
+{- [ Svg.rect
+       [ SvgAttr.x "500"
+       , SvgAttr.y "100"
+       , SvgAttr.width "400"
+       , SvgAttr.height "500"
+       , SvgAttr.fill "white"
+       , SvgAttr.stroke "black"
+       , SvgAttr.strokeWidth "4"
+       ]
+       []
+   , Svg.rect
+       [ SvgAttr.x "490"
+       , SvgAttr.y "200"
+       , SvgAttr.width "20"
+       , SvgAttr.height "50"
+       , SvgAttr.fill "black"
+       ]
+       []
+   , Svg.rect
+       [ SvgAttr.x "490"
+       , SvgAttr.y "400"
+       , SvgAttr.width "20"
+       , SvgAttr.height "50"
+       , SvgAttr.fill "black"
+       ]
+       []
+   , Svg.polygon
+       [ SvgAttr.points "680,250 650,380 680,380 650,460 730,350 680,350 730,250 "
+       , SvgAttr.fill "yellow"
+       , SvgAttr.stroke "black"
+       , SvgAttr.strokeWidth "2"
+       ]
+       []
+   , Svg.circle
+       [ SvgAttr.cx "850"
+       , SvgAttr.cy "350"
+       , SvgAttr.r "20"
+       , SvgAttr.fill "white"
+       , SvgAttr.stroke "black"
+       , SvgAttr.strokeWidth "2"
+       , Svg.Events.onClick (OnClickTriggers 0)
+       ]
+       []
+   , Svg.rect
+       [ SvgAttr.x "848"
+       , SvgAttr.y "335"
+       , SvgAttr.width "4"
+       , SvgAttr.height "30"
+       , SvgAttr.fill "black"
+       , Svg.Events.onClick (OnClickTriggers 0)
+       ]
+       []
+   ]
+-}
+{- drawpowersupply_6_inner : PowerState -> List (Svg Msg)
+   drawpowersupply_6_inner state =
+       [ Svg.rect
+           [ SvgAttr.x "700"
+           , SvgAttr.y "100"
+           , SvgAttr.width "400"
+           , SvgAttr.height "500"
+           , SvgAttr.fill "silver"
+           , SvgAttr.stroke "black"
+           , SvgAttr.strokeWidth "4"
+           ]
+           []
+       , Svg.polygon
+           [ SvgAttr.points "700,100 500,200 500,700 700,600"
+           , SvgAttr.fill "silver"
+           , SvgAttr.stroke "black"
+           , SvgAttr.strokeWidth "4"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "690"
+           , SvgAttr.y "200"
+           , SvgAttr.width "20"
+           , SvgAttr.height "50"
+           , SvgAttr.fill "black"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "690"
+           , SvgAttr.y "400"
+           , SvgAttr.width "20"
+           , SvgAttr.height "50"
+           , SvgAttr.fill "black"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "800"
+           , SvgAttr.y "200"
+           , SvgAttr.width "200"
+           , SvgAttr.height "300"
+           , SvgAttr.fill "orange"
+           , SvgAttr.stroke "black"
+           , SvgAttr.strokeWidth "2"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "800"
+           , SvgAttr.y "200"
+           , SvgAttr.width "200"
+           , SvgAttr.height "30"
+           , SvgAttr.fill "brown"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "800"
+           , SvgAttr.y "470"
+           , SvgAttr.width "200"
+           , SvgAttr.height "30"
+           , SvgAttr.fill "brown"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "845"
+           , SvgAttr.y "230"
+           , SvgAttr.width "10"
+           , SvgAttr.height "180"
+           , SvgAttr.fill "black"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "890"
+           , SvgAttr.y "230"
+           , SvgAttr.width "20"
+           , SvgAttr.height "180"
+           , SvgAttr.fill "black"
+           ]
+           []
+       , Svg.rect
+           [ SvgAttr.x "945"
+           , SvgAttr.y "230"
+           , SvgAttr.width "10"
+           , SvgAttr.height "180"
+           , SvgAttr.fill "black"
+           ]
+           []
+       ]
+           ++ drawswitch state
+-}
 
 
 drawswitch : PowerState -> List (Svg Msg)
@@ -329,6 +336,3 @@ drawswitch state =
                 ]
                 []
             ]
-
-
-

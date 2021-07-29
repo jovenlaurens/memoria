@@ -1,4 +1,7 @@
-module Object exposing (..)
+module Object exposing (ClockModel, Object(..), default_object, get_computer_state, get_doll_number, get_fragment_state, get_pig_state, get_time, initial_objects, test_table)
+
+{-| This module is for all the function and the view of the document part
+-}
 
 import Geometry exposing (Location)
 import Memory exposing (Memory)
