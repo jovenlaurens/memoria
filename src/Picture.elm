@@ -26,6 +26,8 @@ import Svg.Attributes as SvgAttr
 import Svg.Events
 
 
+{-| Pic model
+-}
 type alias Picture =
     { state : ShowState
     , index : Int
@@ -34,6 +36,8 @@ type alias Picture =
     }
 
 
+{-| show state
+-}
 type ShowState
     = NotShow
     | Show
@@ -42,6 +46,8 @@ type ShowState
     | Consumed
 
 
+{-| Show picture by index
+-}
 show_index_picture : Int -> List Picture -> List Picture
 show_index_picture index list =
     let
@@ -66,6 +72,8 @@ show_index_picture index list =
 -}
 
 
+{-| render\_inventory
+-}
 render_inventory : List Picture -> List (Svg Msg)
 render_inventory picts =
     List.map render_inventory_inside picts
@@ -145,6 +153,8 @@ render_inventory_button pict =
         []
 
 
+{-| get the first pictures
+-}
 list_index_picture : Int -> List Picture -> Picture
 list_index_picture index list =
     List.drop index list
@@ -152,6 +162,8 @@ list_index_picture index list =
         |> Maybe.withDefault default_picture
 
 
+{-| init pic
+-}
 initial_pictures : List Picture
 initial_pictures =
     [ Picture NotShow 0 300 2 --碎片0 for memory 1
@@ -180,6 +192,8 @@ default_picture =
     Picture NotShow 0 0 0
 
 
+{-| render button for pic
+-}
 render_picture_button : Svg Msg
 render_picture_button =
     Svg.rect
@@ -250,6 +264,8 @@ render_picts pict =
             []
 
 
+{-| render frame
+-}
 render_frame : List Picture -> List (Svg Msg)
 render_frame list =
     let
@@ -259,7 +275,7 @@ render_frame list =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/frames.png"
+                , SvgAttr.xlinkHref "assets/level1/frames.jpg"
                 ]
                 []
             , Svg.image
@@ -286,6 +302,8 @@ render_frame list =
     bk ++ frames ++ but ++ pictures
 
 
+{-| render complete pictures
+-}
 read_complete_ones : List Picture -> List (Svg Msg)
 read_complete_ones list =
     let

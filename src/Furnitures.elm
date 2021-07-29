@@ -23,56 +23,61 @@ import Svg.Attributes as SvgAttr
 level_1_furniture : Bool -> List (Svg Msg)
 level_1_furniture sta =
     if sta then
-        [
-            Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/level1.png"
-                ]
-                []
-            , Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/tablelightsmall.png"
-                ]
-                []
-        ]
-    else
-        [Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/level1.png"
-                ]
-                []
-        ]
-        {-, Svg.image
+        [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/memory_menu.png"
+            , SvgAttr.xlinkHref "assets/level1/level1.jpg"
             ]
-            []-} --ui dont need now
+            []
+        , Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level1/tablelightsmall.png"
+            ]
+            []
+        ]
 
-    {-drawWindow
-        ++ drawTable
-        ++ drawFloor
-        ++ drawLeftChair
-        ++ drawRightChair
-        ++ drawLamps
-        ++ drawCeiling
-        ++ drawStair
-        ++ drawDoor
-        ++ drawSofa
-        ++ drawLamp
-        ++ drawDrawer
-        ++ drawPhotos-}
+    else
+        [ Svg.image
+            [ SvgAttr.x "0"
+            , SvgAttr.y "0"
+            , SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            , SvgAttr.xlinkHref "assets/level1/level1.jpg"
+            ]
+            []
+        ]
+
+
+
+{- , Svg.image
+   [ SvgAttr.x "0"
+   , SvgAttr.y "0"
+   , SvgAttr.width "100%"
+   , SvgAttr.height "100%"
+   , SvgAttr.xlinkHref "assets/memory_menu.png"
+   ]
+   []
+-}
+--ui dont need now
+{- drawWindow
+   ++ drawTable
+   ++ drawFloor
+   ++ drawLeftChair
+   ++ drawRightChair
+   ++ drawLamps
+   ++ drawCeiling
+   ++ drawStair
+   ++ drawDoor
+   ++ drawSofa
+   ++ drawLamp
+   ++ drawDrawer
+   ++ drawPhotos
+-}
 
 
 drawTable : List (Svg msg)

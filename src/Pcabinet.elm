@@ -125,7 +125,7 @@ render_cabinet cs cle cab =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level1/drawerclose.png"
+                        , SvgAttr.xlinkHref "assets/level1/drawerclose.jpg"
                         ]
                         []
 

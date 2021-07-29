@@ -47,6 +47,8 @@ type Msg
     | Plus Int
 
 
+{-| grag message
+-}
 type GraMsg
     = EnterState --from cover to intro, from intro to the game (state++ until 0, cover 100, intro 101)
     | ChangeScene Int --ChangeScene a : a is the direction of the scene change;
@@ -70,11 +72,15 @@ type GraMsg
 --Intro
 
 
+{-| Define the state of game
+-}
 type PassState
     = Pass
     | NotYet
 
 
+{-| Generate svg text
+-}
 svg_text_2 : Float -> Float -> Float -> Float -> String -> Svg Msg
 svg_text_2 x_ y_ wid hei content =
     Svg.text_

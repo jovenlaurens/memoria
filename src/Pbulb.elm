@@ -96,6 +96,8 @@ update_bulb_inside number model =
     { model | bulb = newbulb }
 
 
+{-| Check the bulb game result
+-}
 checkoutwin : BulbModel -> BulbModel
 checkoutwin model =
     let
@@ -237,7 +239,7 @@ drawbulb_image =
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
         , SvgAttr.height "100%"
-        , SvgAttr.xlinkHref "assets/level1/bulbs.png"
+        , SvgAttr.xlinkHref "assets/level1/bulbs.jpg"
         ]
         []
     ]

@@ -111,6 +111,8 @@ poscompare fra =
     136 - List.sum fra
 
 
+{-| get pos
+-}
 getemptypos : List Fragment -> Int
 getemptypos fra =
     poscompare (getposlist fra)
@@ -237,7 +239,7 @@ drawpictureframe =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/fragment/h_back.png"
+        , SvgAttr.xlinkHref "assets/level0/fragment/h_back.jpg"
         ]
         []
     ]

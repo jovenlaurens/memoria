@@ -27,6 +27,8 @@ import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
 
 
+{-| Main model
+-}
 type alias Model =
     { cscreen : Screen
     , tscreen : Screen
@@ -48,6 +50,8 @@ type alias Model =
     }
 
 
+{-| Init Model
+-}
 initial : Model
 initial =
     Model
@@ -70,6 +74,8 @@ initial =
         initial_chooselist
 
 
+{-| choose list
+-}
 type alias ChooseList =
     { m0c0 : Int
     , m1c1 : Int
@@ -93,11 +99,15 @@ initial_screen =
 --need temporary change
 
 
+{-| Init target screen
+-}
 initial_target : Screen
 initial_target =
     Screen 98 1 0 -1 -1 -1
 
 
+{-| CheckList
+-}
 type alias CheckList =
     { level1light : Bool
     , level1coffee : Bool
@@ -110,6 +120,8 @@ type alias CheckList =
     }
 
 
+{-| initial\_checklist
+-}
 initial_checklist : CheckList
 initial_checklist =
     CheckList False False False False False False False False
@@ -119,6 +131,8 @@ initial_checklist =
 --临时改
 
 
+{-| Object list with index
+-}
 list_index_object : Int -> List Object -> Object
 list_index_object index list =
     if index > List.length list then

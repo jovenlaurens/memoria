@@ -42,6 +42,8 @@ type alias DollModel =
     }
 
 
+{-| PigState
+-}
 type Pigstate
     = Whole
     | Broken

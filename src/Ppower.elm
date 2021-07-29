@@ -37,6 +37,8 @@ type PowerState
     | High
 
 
+{-| power model
+-}
 type alias PowerModel =
     { key : Int -- 1 refers to have a key in the package
     , state : PowerState
@@ -44,11 +46,15 @@ type alias PowerModel =
     }
 
 
+{-| initialize the power model
+-}
 initPowerModel : PowerModel
 initPowerModel =
     PowerModel 1 Low 1
 
 
+{-| update power
+-}
 updatetrigger : Int -> PowerModel -> PowerModel
 updatetrigger index model =
     case index of
@@ -88,6 +94,8 @@ updatekey model =
 -}
 
 
+{-| draw power supply
+-}
 drawpowersupply : PowerModel -> Int -> Int -> List (Svg Msg)
 drawpowersupply model cs cle =
     case cs of
@@ -138,7 +146,7 @@ drawpowersupply_6_back =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/power/back.png"
+        , SvgAttr.xlinkHref "assets/level0/power/back.jpg"
         ]
         []
     ]

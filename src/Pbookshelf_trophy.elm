@@ -161,6 +161,8 @@ initial_bookshelf =
         (Trophy Right (Location 200 100))
 
 
+{-| Get the order of bookshelf
+-}
 get_bookshelf_order : Bookshelf -> List Int
 get_bookshelf_order bookshelf =
     List.map (\x -> x.index) bookshelf.books
@@ -270,6 +272,8 @@ foldl_help ( b1, b2 ) shelfItem newlst =
         { b2 | index = b1.index } :: newlst
 
 
+{-| Render the trophy
+-}
 draw_trophy : Trophy -> List (Svg Msg)
 draw_trophy trophy =
     let
@@ -380,6 +384,8 @@ draw_book ( x, y ) choice book =
         []
 
 
+{-| draw bookshelf or trophy
+-}
 draw_bookshelf_or_trophy : BookletModel -> List (Svg Msg)
 draw_bookshelf_or_trophy bookshelf =
     let
@@ -389,7 +395,7 @@ draw_bookshelf_or_trophy bookshelf =
                     "assets/book/book_back.png"
 
                 _ ->
-                    "assets/trophy/trophy_bg.png"
+                    "assets/trophy/trophy_bg.jpg"
 
         mainTarget =
             case bookshelf.trophy.face of

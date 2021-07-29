@@ -531,6 +531,8 @@ draw_mirror mirrorSet =
     List.map draw_single_mirror mirrorSet
 
 
+{-| draw frame
+-}
 draw_frame : List Location -> List (Svg Msg)
 draw_frame locationList =
     let

@@ -33,11 +33,15 @@ main =
         }
 
 
+{-| main init function
+-}
 init : () -> ( Model, Cmd Msg )
 init a =
     ( initial, Cmd.batch [ Task.perform GetViewport getViewport, Preload.preload () ] )
 
 
+{-| main subscriptions function
+-}
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
