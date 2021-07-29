@@ -1,21 +1,21 @@
-module Geometry exposing (..)
+module Geometry exposing (refresh_lightSet,rotate_mirror,Mirror,Line,Location)
 
 {-| This module is for all the function and the view of the document part
 
 
 # Functions
 
-@docs initial_docu
-@docs render_document_detail
-@docs render_newspaper_index
+@docs refresh_lightSet,rotate_mirror
 
 #Datatypes
 
-@docs Document
+@docs Location,Mirror,Line
 
 -}
 
 
+{-| The location is the location of an element in the cartesian coordinate system
+-}
 type alias Location =
     { x : Float
     , y : Float
@@ -23,15 +23,16 @@ type alias Location =
 
 
 
-{- co stand for coefficient -}
 
-
+{-| Mirror is composed of a line and int for its index
+-}
 type alias Mirror =
     { body : Line
     , index : Int
     }
 
-
+{-| Line is made up of two point in the cartesian coordinate system
+-}
 type alias Line =
     { firstPoint : Location
     , secondPoint : Location
@@ -62,7 +63,7 @@ get_new_light_help lightSet mirrorSet =
         new_light |> List.singleton |> List.append new_lightset_before_append
 
 
-{-| top hierarchy.
+{-| Whenever a mirror is rotate, the function can refresh the light set
 -}
 refresh_lightSet : List Line -> List Mirror -> List Line
 refresh_lightSet lightSet mirrorSet =
@@ -127,7 +128,8 @@ reflect_light mirror light =
     else
         light
 
-
+{-| Rotate the mirror
+-}
 rotate_mirror : List Mirror -> Int -> List Mirror
 rotate_mirror mirrorSet index =
     List.map (rotate_single_mirror index) mirrorSet

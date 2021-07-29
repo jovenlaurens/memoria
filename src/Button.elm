@@ -1,4 +1,11 @@
 module Button exposing (..)
+{-| This module is the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
+# Functions
+@docs test_button
+@docs trans_button_sq
+#Datatypes
+@docs Button
+-}
 
 import Debug exposing (toString)
 import Html exposing (..)
@@ -9,9 +16,8 @@ import Svg.Attributes exposing (display)
 import Html.Attributes exposing (class)
 
 
-
---in a word, it's the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
-
+{-| The button type needs argument of button its left top width height content effect(mostly Msg) and display to generate the Html button
+-}
 
 type alias Button =
     { lef : Float
@@ -24,7 +30,7 @@ type alias Button =
     }
 
 
-{-| The style of transparent button
+{-| The style of transparent button according text on it
 -}
 test_button : Button -> Html Msg
 test_button but =
@@ -74,7 +80,8 @@ stylesheet =
             box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
         }""" ]
 
-
+{-| The style of transparent button
+-}
 trans_button_sq : Button -> Html Msg
 trans_button_sq but =
     button

@@ -1,14 +1,13 @@
 module Ptable exposing
     ( initial_table
     , render_table_button
+    , draw_coffee_back
     , change_block_state
     , distance
     , draw_block
     , BlockState(..)
     , TableModel
-    , blockLength
-    ,drawpath
-    ,draw_coffee_back
+    , blockLength, drawpath
     )
 
 {-| This module is to accomplish the puzzle of one touch game
@@ -41,7 +40,6 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events exposing (onClick)
-import Button exposing (trans_button_sq)
 
 
 {-| The block will be active if it is pressed in a legal way
@@ -212,99 +210,95 @@ draw_single_block block =
                 ]
                 []
 
-    
-
 
 draw_block : Bool -> Bool -> Bool -> List Block -> List (Svg Msg)
 draw_block state sta1 sta2 blockSet =
-    (draw_back state)
-  ++ draw_coffee_back sta1 sta2
-  ++ List.map draw_single_block blockSet
+    draw_back state
+        ++ draw_coffee_back sta1 sta2
+        ++ List.map draw_single_block blockSet
 
 
 draw_back : Bool -> List (Svg Msg)
 draw_back sta =
     let
-        light = if sta then
-                    [ Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level1/tablelight.png"
-                        ]
-                        []
-                    , Svg.image
-                        [ SvgAttr.x "0"
-                        , SvgAttr.y "0"
-                        , SvgAttr.width "100%"
-                        , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level1/lightword.png"
-                        ]
-                        []
+        light =
+            if sta then
+                [ Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/tablelight.png"
                     ]
-                else
                     []
-
-    in
-
-            ( Svg.image
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width "100%"
-                , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+                , Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/lightword.png"
+                    ]
+                    []
                 ]
+
+            else
                 []
-            )
-            ::light
+    in
+    Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref "assets/level1/tablebig.png"
+        ]
+        []
+        :: light
 
 
 {-| Render the background for the puzzle game
 -}
 draw_coffee_back : Bool -> Bool -> List (Svg Msg)
 draw_coffee_back a b =
-    case (a, b) of
-        (_ , True) ->
+    case ( a, b ) of
+        ( _, True ) ->
             []
-        (True, False) ->
-            [
-                Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
-                    ]
-                    []
+
+        ( True, False ) ->
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                ]
+                []
             , Svg.circle
-                    [ SvgAttr.cx "575"
-                    , SvgAttr.cy "560"
-                    , SvgAttr.r "120"
-                    , SvgAttr.fillOpacity "0.0"
-                    , Svg.Events.onClick (OnClickTriggers 0)
-                    ]
-                    []
+                [ SvgAttr.cx "575"
+                , SvgAttr.cy "560"
+                , SvgAttr.r "120"
+                , SvgAttr.fillOpacity "0.0"
+                , Svg.Events.onClick (OnClickTriggers 0)
+                ]
+                []
             ]
-        (False, _) ->
-            [
-                Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffee.png"
-                    ]
-                    []
+
+        ( False, _ ) ->
+            [ Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffee.png"
+                ]
+                []
             , Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level1/coffeebubble.png"
-                    ]
-                    []
-            
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level1/coffeebubble.png"
+                ]
+                []
             ]
 
 

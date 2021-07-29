@@ -9,6 +9,7 @@ module Furnitures exposing
 # Functions
 
 @docs level_1_furniture
+@docs drawFloor
 
 -}
 
