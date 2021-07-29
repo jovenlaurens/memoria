@@ -1,15 +1,32 @@
-module Scene exposing (..)
+module Scene exposing
+    ( initial_scene, defaultScene
+    , Scene
+    )
 
-import List exposing (indexedMap)
+{-| This module can generate scenes
 
 
+# Functions
+
+@docs initial_scene, defaultScene
+
+#Datatypes
+
+@docs Scene
+
+-}
+
+
+{-| The objectOrder is a list for all the index of the object in this scene, and the pictureSrc is to locates its location in Program structure files
+-}
 type alias Scene =
-    --哈哈好像这个玩意并没有派上用场，那就重新做一点东西进去
     { objectOrder : List Int --这一层所有object的编号的列表，render的时候按照这个render
     , pictureSrc : String
     }
 
 
+{-| Initialize the scene with its background picture and object
+-}
 initial_scene : List Scene
 initial_scene =
     let
@@ -25,5 +42,7 @@ initial_scene =
     [ scene0, scene1, scene2 ]
 
 
+{-| Default Scene
+-}
 defaultScene =
     Scene [] ""

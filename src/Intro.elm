@@ -1,15 +1,30 @@
-module Intro exposing (..)
+module Intro exposing
+    ( initial_intro, render_intro, get_new_intro, update_intropage
+    , FinishSit(..), IntroPage
+    )
+
+{-| This module contains all the element of the introduction part
+
+
+# Functions
+
+@docs initial_intro, render_intro, update_intropate, get_new_intro, update_intropage
+
+#Datatypes
+
+@docs FinishSit, IntroPage
+
+-}
 
 import Button exposing (trans_button_sq)
 import Debug exposing (toString)
-import Html exposing (Html, a, br, button, div, text)
+import Html exposing (Html, br, button, div, text)
 import Html.Attributes as HtmlAttr exposing (style)
-import Html.Events exposing (onClick)
 import Messages exposing (GraMsg(..), Msg(..))
-import Svg
-import Svg.Attributes as SvgAttr
 
 
+{-| These union type defines different type of the changing state of intro part
+-}
 type FinishSit
     = Finished
     | Normal
@@ -17,7 +32,8 @@ type FinishSit
     | AllAppear
 
 
-
+{-| IntroPage
+-}
 type alias IntroPage =
     { cp : Int
     , state : FinishSit
@@ -26,52 +42,75 @@ type alias IntroPage =
     }
 
 
+{-| Initialize the intro page
+-}
 initial_intro : IntroPage
 initial_intro =
     IntroPage 1 AllAppear 0.0 0.0
 
-disppearSpeed = 0.05
 
-appearSpeed = 0.05
+disppearSpeed =
+    0.05
 
+
+appearSpeed =
+    0.05
+
+
+{-| Refresh intro page
+-}
 get_new_intro : IntroPage -> Int -> IntroPage
 get_new_intro intro cstate =
     if cstate == 99 then
         let
-            ( oldIm, oldWord ) = (intro.imageOpa, intro.wordOpa)
+            ( oldIm, oldWord ) =
+                ( intro.imageOpa, intro.wordOpa )
+
             ( newIm, newWord ) =
-                case (intro.cp, intro.state) of
-                    (_, AllAppear) ->
+                case ( intro.cp, intro.state ) of
+                    ( _, AllAppear ) ->
                         ( oldIm + appearSpeed, oldWord + appearSpeed )
-                    (_, Normal) ->
+
+                    ( _, Normal ) ->
                         ( oldIm, oldWord )
-                    (_, TypeDisppear) ->
+
+                    ( _, TypeDisppear ) ->
                         ( oldIm, oldWord - disppearSpeed )
-                    (_) ->
+
+                    _ ->
                         ( oldIm, oldWord )
-            (newpage, newState, new2Im ) =
-                if newIm > 1.08 && newWord > 1.08 then --need
+
+            ( newpage, newState, new2Im ) =
+                if newIm > 1.08 && newWord > 1.08 then
+                    --need
                     ( intro.cp, Normal, newIm )
+
                 else if newWord <= 0 && newIm >= 1 && intro.cp <= 2 then
                     ( intro.cp + 1, AllAppear, 0 )
+
                 else if newWord <= -0.5 then
                     ( intro.cp, AllAppear, 0 )
+
                 else
                     ( intro.cp, intro.state, newIm )
-
         in
-            { intro | cp = newpage
-                    , state = newState
-                    , imageOpa = new2Im
-                    , wordOpa = newWord
-            }
+        { intro
+            | cp = newpage
+            , state = newState
+            , imageOpa = new2Im
+            , wordOpa = newWord
+        }
+
     else
         intro
 
+
+{-| Eliminate current page and lead to the following one.
+-}
 update_intropage : IntroPage -> IntroPage
 update_intropage intro =
-    {
-        intro | state = TypeDisppear
+    { intro
+        | state = TypeDisppear
     }
 
 
@@ -93,6 +132,8 @@ list_index_intro list index =
                 "abab"
 
 
+{-| Render the intro part
+-}
 render_intro : IntroPage -> List (Html Msg)
 render_intro intro =
     case intro.cp of
@@ -101,12 +142,14 @@ render_intro intro =
             , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 1
             ]
+
         2 ->
             [ back 1 1
             , back intro.imageOpa intro.cp
             , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 2
             ]
+
         3 ->
             [ back 1 1
             , back 1 2
@@ -114,23 +157,22 @@ render_intro intro =
             , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 0
             ]
+
         _ ->
             []
-
-
 
 
 back : Float -> Int -> Html Msg
 back opa ind =
     Html.img
-                [ HtmlAttr.src ("assets/intro/"++(toString ind)++".png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                , style "opacity" (toString opa)
-                ]
-                []
+        [ HtmlAttr.src ("assets/intro/" ++ toString ind ++ ".png")
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        , style "opacity" (toString opa)
+        ]
+        []
 
 
 button : Int -> Html Msg
@@ -140,12 +182,11 @@ button id =
             case id of
                 0 ->
                     StartChange EnterState
+
                 _ ->
                     Plus id
     in
-    trans_button_sq ( Button.Button 0 0 100 100 "" eff "block" )
-
-
+    trans_button_sq (Button.Button 0 0 100 100 "" eff "block")
 
 
 intro_base : String -> Int -> List (Html msg)
@@ -153,40 +194,45 @@ intro_base sta ind =
     case ind of
         1 ->
             [ text "My life stopped," --0 0 20
-            , br [][]
-            , br [][]
+            , br [] []
+            , br [] []
             , text "One year ago." --0 1 20
-            , br [][]
-            , br [][]
+            , br [] []
+            , br [] []
             , text "I lost my memory." --0 2 20
             ]
 
         2 ->
             [ text "Now I have remembered lots of things," --1 3 40
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "Except Maria, my past lover." --1 4 30
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "I have heard about her from others many times," --1 5 50
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "But still can't remember her." --1 6 30
             ]
+
         3 ->
             [ text "How is she?" --2 7 15
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "Why we broke out?" --2 8 20
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "Why she died?" --2 9 15
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "This house, where we lived together, may give some help." --2 10 60
-            , br [][], br [][]
+            , br [] []
+            , br [] []
             , text "So, I come here, to find the lost memory for Maria." --2 11 55
             ]
+
         _ ->
             []
-
-
-
-
 
 
 text_attr : Float -> List (Html.Attribute msg)

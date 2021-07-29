@@ -1,18 +1,20 @@
-module Object exposing (..)
+module Object exposing (ClockModel, Object(..), default_object, get_computer_state, get_doll_number, get_fragment_state, get_pig_state, get_time, initial_objects, test_table)
+
+{-| This module is for all the function and the view of the document part
+-}
 
 import Geometry exposing (Location)
 import Memory exposing (Memory)
+import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
 import Pbulb exposing (BulbModel, initial_bulb)
-import Pcomputer exposing (ComputerModel, initial_computer,State(..),initial_safebox)
+import Pcabinet exposing (CabinetModel, initial_cab)
+import Pcomputer exposing (ComputerModel, State(..), initial_computer, initial_safebox)
+import Pdolls exposing (DollModel, Pigstate(..), initDollModel)
+import Pfragment exposing (FragmentModel, FragmentState, initfraModel)
 import Pmirror exposing (MirrorModel, initialMirror)
 import Ppiano exposing (PianoModel)
 import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
-import Pfragment exposing (FragmentModel, initfraModel)
-import Pbookshelf_trophy exposing (BookletModel, TrophyModel)
-import Pdolls exposing (DollModel, initDollModel, Pigstate(..))
-import Pcabinet exposing (CabinetModel, initial_cab)
-import Pfragment exposing (FragmentState)
 
 
 type Object
@@ -30,7 +32,6 @@ type Object
     | Doll DollModel
     | Cabinet CabinetModel
     | Scr Int
-
 
 
 type alias ScreenModel =
@@ -63,7 +64,7 @@ get_time obj =
 
 
 get_doll_number : Object -> Int
-get_doll_number obj = 
+get_doll_number obj =
     let
         num =
             case obj of
@@ -73,10 +74,11 @@ get_doll_number obj =
                 _ ->
                     Debug.todo "abab"
     in
-        num
+    num
+
 
 get_pig_state : Object -> Pigstate
-get_pig_state obj = 
+get_pig_state obj =
     let
         state =
             case obj of
@@ -86,11 +88,11 @@ get_pig_state obj =
                 _ ->
                     Debug.todo "abab"
     in
-        state
+    state
 
 
 get_computer_state : Object -> State
-get_computer_state obj = 
+get_computer_state obj =
     let
         state =
             case obj of
@@ -100,10 +102,11 @@ get_computer_state obj =
                 _ ->
                     Debug.todo "abab"
     in
-        state
+    state
+
 
 get_fragment_state : Object -> FragmentState
-get_fragment_state obj = 
+get_fragment_state obj =
     let
         state =
             case obj of
@@ -113,7 +116,8 @@ get_fragment_state obj =
                 _ ->
                     Debug.todo "abab"
     in
-        state
+    state
+
 
 test_table : Location -> Object -> Object
 test_table loca pre =
@@ -123,12 +127,10 @@ test_table loca pre =
                 Table initial_table
 
             else
-                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca } 
-                    
+                Table { tm | blockSet = List.map (change_block_state loca) tm.blockSet, lastLocation = loca }
 
         _ ->
             pre
-
 
 
 initial_objects : List Object
@@ -142,7 +144,7 @@ initial_objects =
     , Power initPowerModel --5    6        0
     , Piano Ppiano.initial --6    7        0
     , Bul initial_bulb --7    8        1
-    , Fra initfraModel -- 8   9  0  
+    , Fra initfraModel -- 8   9  0
     , Book Pbookshelf_trophy.initial_book_model -- 9  10 0
     , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
     , Cabinet initial_cab -- 11 12 1

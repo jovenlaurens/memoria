@@ -1,17 +1,23 @@
-module Level0 exposing (..)
+module Level0 exposing (level_0_furniture)
 
-import Furnitures exposing (drawFloor)
-import Html.Events exposing (onClick)
+{-| This module contains the main picture of the level0 furniture in svg style
+
+
+# Function
+
+@docs level_0_furniture
+
+-}
+
 import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Svg.Events
 
 
 {-| level 0 furniture
 -}
 level_0_furniture : Int -> Bool -> List (Svg Msg)
-level_0_furniture end li=
+level_0_furniture end li =
     let
         back =
             [ Svg.image
@@ -21,7 +27,9 @@ level_0_furniture end li=
                 , SvgAttr.height "100%"
                 , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
                 ]
-                []]
+                []
+            ]
+
         screen =
             [ Svg.image
                 [ SvgAttr.x "0"
@@ -32,26 +40,31 @@ level_0_furniture end li=
                 ]
                 []
             , Svg.image
-                    [ SvgAttr.x "0"
-                    , SvgAttr.y "0"
-                    , SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref ("assets/level0/cs0/lightr.png")
-                    ]
-                    []
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level0/cs0/lightr.png"
+                ]
+                []
             ]
 
         show =
             case end of
                 0 ->
                     "s1"
+
                 1 ->
                     "s2"
+
                 2 ->
                     "s3"
+
                 _ ->
                     ""
-        s = if end /= 0 then
+
+        s =
+            if end /= 0 then
                 [ Svg.image
                     [ SvgAttr.x "0"
                     , SvgAttr.y "0"
@@ -59,9 +72,12 @@ level_0_furniture end li=
                     , SvgAttr.height "100%"
                     , SvgAttr.xlinkHref ("assets/level0/cs0/" ++ show ++ ".png")
                     ]
-                    []]
+                    []
+                ]
+
             else
                 []
+
         lightr =
             if li == True then
                 [ Svg.image
@@ -69,14 +85,15 @@ level_0_furniture end li=
                     , SvgAttr.y "0"
                     , SvgAttr.width "100%"
                     , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref ("assets/level0/cs0/l.png")
+                    , SvgAttr.xlinkHref "assets/level0/cs0/l.png"
                     ]
                     []
                 ]
+
             else
                 []
     in
-        back ++ s ++ screen ++ lightr
+    back ++ s ++ screen ++ lightr
 
 
 drawFloor : List (Svg msg)

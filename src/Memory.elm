@@ -1,4 +1,20 @@
-module Memory exposing (..)
+module Memory exposing
+    ( MeState(..), State(..), Memory
+    , initial_memory, render_memory
+    )
+
+{-| This module is for all the function and the view of the document part
+
+
+# Functions
+
+@docs MeState, State, Memory
+
+#Datatypes
+
+@docs MeState, State, Memory
+
+-}
 
 import Button exposing (Button, trans_button_sq)
 import Debug exposing (toString)
@@ -13,11 +29,15 @@ import Svg.Attributes as SvgAttr
 import Svg.Events
 
 
+{-| lock and unlock
+-}
 type MeState
     = Locked
     | Unlocked
 
 
+{-| The State contains dialogue, choose and end
+-}
 type State
     = Dialogue
     | Thought
@@ -25,6 +45,8 @@ type State
     | End
 
 
+{-| Memory
+-}
 type alias Memory =
     { index : Int --对应frame的index
     , state : MeState
@@ -51,6 +73,8 @@ type alias ChoiceBase =
     }
 
 
+{-| initialize the memory
+-}
 initial_memory : List Memory
 initial_memory =
     [ Memory 0 Locked [ Locked, Locked ] [ 0, 1 ]
@@ -80,10 +104,9 @@ list_index_memory index list =
                 default_memory
 
 
-
-
-
-render_memory : Int -> Int -> Gcontent  -> Float -> List (Html Msg)
+{-| Render the memory
+-}
+render_memory : Int -> Int -> Gcontent -> Float -> List (Html Msg)
 render_memory cm cp cg opa =
     let
         needText =
@@ -97,8 +120,8 @@ render_memory cm cp cg opa =
                 2 ->
                     textBase_2
 
-                3->
-                    textBase_3     
+                3 ->
+                    textBase_3
 
                 _ ->
                     []
@@ -109,6 +132,7 @@ render_memory cm cp cg opa =
         needOpa =
             if cg == OnlyWord then
                 opa
+
             else
                 1
     in
@@ -233,7 +257,7 @@ svg_tran_button x_ y_ wid hei eff =
         []
 
 
-svg_text : Float -> Float -> Float -> Float -> String -> Float-> Svg Msg
+svg_text : Float -> Float -> Float -> Float -> String -> Float -> Svg Msg
 svg_text x_ y_ wid hei content opa =
     Svg.text_
         [ SvgAttr.x (toString x_)
@@ -248,10 +272,8 @@ svg_text x_ y_ wid hei content opa =
         ]
 
 
-
-
 render_choice : Int -> Page -> Float -> List (Html Msg)
-render_choice index page opa=
+render_choice index page opa =
     let
         ( ca, cb, cc ) =
             case index of
@@ -265,11 +287,11 @@ render_choice index page opa=
                     ( "Anna Karenina", "Scarlett O 'Hara", "Not very clear." )
 
                 3 ->
-                    ( "Related to an important person.", "These numbers are interesting!", "No meaning.")
+                    ( "Related to an important person.", "These numbers are interesting!", "No meaning." )
 
                 4 ->
-                    ( "Someone you are missing?", "You are unwilling to stay here", "You just struggle with something")
-                
+                    ( "Someone you are missing?", "You are unwilling to stay here", "You just struggle with something" )
+
                 _ ->
                     ( "", "", "" )
     in
@@ -312,25 +334,28 @@ textBase_0 : List Page
 
 
 textBase_0 =
-    [ Page "So, I’m in a crowded cafe." "I" "assets/intro.png" "assets/blank.png" Dialogue 0--0
-    , Page "Maria is there!" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 1--1
+    [ Page "So, I’m in a crowded cafe." "I" "assets/intro.png" "assets/blank.png" Dialogue 0 --0
+    , Page "Maria is there!" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 1 --1
     , Page "She is immersed in something." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 2
     , Page "Oh, she told that she is a freelancer. " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 3
     , Page "What is she is working on? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 4
     , Page "(Attention: Your memory is made by yourself)" "" "assets/intro.png" "assets/blank.png" Dialogue 5
-    , Page "(different choice will lead to a different Maria.)" "" "assets/intro.png" "assets/blank.png" Dialogue 6--6
-    , Page "" "" "assets/intro.png" "" (Choose 0) 7--7
+    , Page "(different choice will lead to a different Maria.)" "" "assets/intro.png" "assets/blank.png" Dialogue 6 --6
+    , Page "" "" "assets/intro.png" "" (Choose 0) 7 --7
+
     --1A:
-    , Page "I don't have to tell you exactly what happened," "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 8--8
-    , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 9--9
-    , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 10--10
-    , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11--11
+    , Page "I don't have to tell you exactly what happened," "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 8 --8
+    , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 9 --9
+    , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 10 --10
+    , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11 --11
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End 12 --12
+
     --1B
     , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 13 --13
     , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14 --14
     , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15 --15
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End 16 --16
+
     --1C
     , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 17 --17
     , Page "In this record, I want to figure out what I really am." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 18 --18
@@ -338,7 +363,7 @@ textBase_0 =
     , Page "How can I talk to myself and figure out what happened?" "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 20
     , Page "My daily life, my preference, and something like this." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 21
     , Page "Sorry if my mind surprised you." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 22
-    , Page "End" "" "assets/intro.png" "" End  23
+    , Page "End" "" "assets/intro.png" "" End 23
     ]
 
 
@@ -350,6 +375,7 @@ textBase_1 =
     , Page "What’s the actual shape of a hanabi? Is it like a sphere, or a disc? " "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue 3
     , Page "Maria replied" "" "assets/intro.png" "assets/girl/3.png" Dialogue 4
     , Page "" "" "assets/intro.png" "" (Choose 1) 5
+
     -- 2A: I don't know
     , Page "I don’t know." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 6
     , Page "It’s so beautiful yet so sad." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 7
@@ -358,18 +384,21 @@ textBase_1 =
     , Page "We don't appreciate beauty until we lose it. " "Jerome" "assets/intro.png" "assets/girl/9.png" Dialogue 10
     , Page "Exactly." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11
     , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 12
+
     -- 2B: Why not check for ourselves?
     , Page "Let's find out!" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 13
     , Page "Just take a Montgolfier and fly through the sky, when the fireworks begin." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14
     , Page "It must be amazing!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15
     , Page "Sounds cool!" "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 16
     , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 17
+
     -- 2C: Interesting question.
     , Page "It’s an interesting question." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
     , Page "However, instead of watching it from outside, what if we stood inside the hanabi?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 19
     , Page "How can it turn from a small black ball into a brilliant scene?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 20
     , Page "Maria thinks about things from a peculiar perspective." "I" "assets/intro.png" "assets/girl/9.png" Dialogue 21
     , Page "Seems that she is always investigating inner parts of one thing." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 22
+
     --Question3
     , Page "Now it’s my turn to give you a question!" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 23
     , Page "For what?" "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue 24
@@ -410,6 +439,8 @@ textBase_1 =
     , Page "But I love her." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 53
     , Page "End" "" "assets/intro.png" "assets/girl1.png" End 54
     ]
+
+
 textBase_2 : List Page
 textBase_2 =
     [ Page "We’ve just moved into a new house, two floors, with an additional basement." "" "assets/intro.png" "assets/blank.png" Dialogue 0
@@ -447,7 +478,6 @@ textBase_2 =
     ]
 
 
-
 textBase_3 : List Page
 textBase_3 =
     [ Page "We have been lived together for one year," "" "assets/intro.png" "assets/blank.png" Dialogue 0
@@ -465,7 +495,7 @@ textBase_3 =
     , Page "I guess you are missing someone you can’t contact?" "I" "assets/intro.png" "assets/blank.png" Dialogue 10
     , Page "Partially, actually, I’m still confused." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 11
     , Page "About what? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 12
-    , Page "The ideal love…… " "Maria" "assets/intro.png"  "assets/girl/3.png" Dialogue 13
+    , Page "The ideal love…… " "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 13
     , Page "But you have been with me for a whole year! " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 14
     , Page "What do you mean?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 15
     , Page "I know, I know……" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 16
@@ -501,14 +531,12 @@ textBase_3 =
     , Page "Can you understand this kind of feeling?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 42
     , Page "Something is just gnawing my heart, weighing down my spirit." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 43
     , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 44
-
-
     , Page "..." "" "assets/intro.png" "" Dialogue 45
     , Page "......" "" "assets/intro.png" "" Dialogue 46
     , Page "........." "I" "assets/intro.png" "" Dialogue 47
     , Page "Something appears in the basement. Now, go for it." "I" "assets/intro.png" "" End 48
-
     ]
+
 
 sub_0_2 : List Page
 sub_0_2 =

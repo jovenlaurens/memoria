@@ -1,13 +1,24 @@
-module Messages exposing (..)
+module Messages exposing (GraMsg(..), Msg(..), PassState(..), svg_text_2)
+
+{-| The main message module
+
+
+# Datatypes Msg
+
+@docs update
+
+-}
 
 import Browser.Dom exposing (Viewport)
+import Debug exposing (toString)
 import Draggable
 import Geometry exposing (Location)
-import Svg.Attributes
 import Svg exposing (Svg)
-import Debug exposing (toString)
+import Svg.Attributes
 
 
+{-| Main message
+-}
 type Msg
     = OnClickTriggers Int --OnClickTriggers a :  a is the list number of the buttons on the object (regulations in details should be included in the design of obejcts)
     | OnClickItem Int --OnClickItem,第一个int是index,进inventory,可能会取消第二个参数)
@@ -24,7 +35,7 @@ type Msg
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg ())
     | Charge Int
-    | Lighton Int  -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
+    | Lighton Int -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
     | Plus Int
 
 
@@ -37,7 +48,7 @@ type GraMsg
     | Pause --from game to menu, state = 1
     | RecallMemory --state = 2
     | MovePage Int -- 0 for prev, 1 for next
-    | Back --back one stage 
+    | Back --back one stage
     | Achievement
     | BackfromAch
       --Memory part are below
@@ -45,13 +56,16 @@ type GraMsg
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory
-     --Intro
 
+
+
+--Intro
 
 
 type PassState
     = Pass
     | NotYet
+
 
 svg_text_2 : Float -> Float -> Float -> Float -> String -> Svg Msg
 svg_text_2 x_ y_ wid hei content =

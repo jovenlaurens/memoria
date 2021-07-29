@@ -1,4 +1,16 @@
-module Main exposing (..)
+module Main exposing
+    ( main
+    , init, subscriptions
+    )
+
+{-| This Main of the project
+
+
+# Function
+
+@docs main
+
+-}
 
 import Browser
 import Browser.Dom exposing (getViewport)
@@ -12,6 +24,8 @@ import Update exposing (..)
 import View exposing (view)
 
 
+{-| The main function
+-}
 main : Program () Model Msg
 main =
     Browser.element
@@ -24,7 +38,7 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init a =
-    ( initial, Cmd.batch [Task.perform GetViewport getViewport, Preload.preload ()] )
+    ( initial, Cmd.batch [ Task.perform GetViewport getViewport, Preload.preload () ] )
 
 
 subscriptions : Model -> Sub Msg

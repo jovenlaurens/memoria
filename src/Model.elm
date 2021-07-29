@@ -1,14 +1,16 @@
-module Model exposing (..)
+module Model exposing (CheckList, ChooseList, Model, initial, initial_target, list_index_object)
+
+{-| This module is for all the function and the view of the document part
+-}
 
 import Document exposing (Document, initial_docu)
 import Draggable
 import Gradient exposing (ColorState(..), GradientState(..), Screen)
 import Intro exposing (IntroPage, initial_intro)
 import Memory exposing (Memory, initial_memory)
-import Object exposing (..)
+import Object exposing (Object, default_object, initial_objects)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
-import Svg.Attributes exposing (x)
 
 
 type alias Model =
@@ -26,7 +28,7 @@ type alias Model =
     , docu : List Document
     , move_timer : Float
     , opac : Float
-    , intro : IntroPage-- 可以做掉
+    , intro : IntroPage -- 可以做掉
     , checklist : CheckList
     , choice : ChooseList
     }
@@ -53,6 +55,7 @@ initial =
         initial_checklist
         initial_chooselist
 
+
 type alias ChooseList =
     { m0c0 : Int
     , m1c1 : Int
@@ -61,6 +64,7 @@ type alias ChooseList =
     , m3c4 : Int
     , end : Int
     }
+
 
 initial_chooselist =
     ChooseList -1 1 1 1 1 -1
@@ -91,8 +95,14 @@ type alias CheckList =
     , level0light : Bool
     }
 
+
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False False False False False) --临时改
+initial_checklist =
+    CheckList False False False False False False False False
+
+
+
+--临时改
 
 
 list_index_object : Int -> List Object -> Object
