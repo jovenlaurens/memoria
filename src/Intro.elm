@@ -197,7 +197,7 @@ text_attr opa =
     , style "height" "40%"
     , style "text-align" "center"
     , style "position" "absolute"
-    , style "font-size" "30"
+    , style "font-size" "40"
     , style "font-family" "Times New Roman"
     , style "opacity" (toString opa)
     ]

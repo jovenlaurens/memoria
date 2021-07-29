@@ -142,7 +142,7 @@ initial_pictures =
     , Picture NotShow 6 990 13 --镰刀 for 1楼 可能就没用了
     , Picture NotShow 7 1105 14 --钥匙1 for 电箱
     , Picture NotShow 8 1220 5 --碎片5 for memory 4
-    , Picture NotShow 9 1335 15 --钥匙2 for 1楼 柜子
+    , Picture Show 9 1335 15 --钥匙2 for 1楼 柜子
     , Picture NotShow 10 1450 13 --锤子 for 2楼 小猪罐子
     ]
 --attention: 6和10换了一下
@@ -210,7 +210,9 @@ show_on_wall index =
                 ]
                 []
         _ ->
-            Debug.todo ""
+            Svg.rect
+                []
+                []
     
 
 

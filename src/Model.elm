@@ -28,7 +28,7 @@ type alias Model =
     , opac : Float
     , intro : IntroPage-- 可以做掉
     , checklist : CheckList
-    , choice : List Int
+    , choice : ChooseList
     }
 
 
@@ -51,9 +51,19 @@ initial =
         1
         initial_intro
         initial_checklist
-        (List.repeat 5 -1)
+        initial_chooselist
         
+type alias ChooseList =
+    { m0c0 : Int
+    , m1c1 : Int
+    , m1c2 : Int
+    , m2c3 : Int
+    , m3c4 : Int
+    , end : Int
+    }
 
+initial_chooselist =
+    ChooseList -1 1 1 1 1 -1
 
 
 initial_screen : Screen
@@ -78,10 +88,11 @@ type alias CheckList =
     , level1door : Bool
     , level0safebox : Bool
     , level0piano : Bool
+    , level0light : Bool
     }
 
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False False False False) --临时改
+initial_checklist = (CheckList False False False False True False False False) --临时改
 
 
 list_index_object : Int -> List Object -> Object

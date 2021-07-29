@@ -29,6 +29,7 @@ type Object
     | Trophy TrophyModel
     | Doll DollModel
     | Cabinet CabinetModel
+    | Scr Int
 
 
 
@@ -146,7 +147,8 @@ initial_objects =
     , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
     , Cabinet initial_cab -- 11 12 1
     , Computer initial_safebox -- 12 13 0
-    , Doll initDollModel -- 13  14  2 
+    , Doll initDollModel -- 13  14  2
+    , Scr -1 --14 15 0
     ]
 
 
