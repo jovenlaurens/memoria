@@ -9,6 +9,8 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 
 
+{-| Render the button to switch the scene from main to the trophy puzzle game scene
+-}
 render_trophy_button : Html Msg
 render_trophy_button =
     let

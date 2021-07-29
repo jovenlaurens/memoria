@@ -1,5 +1,20 @@
 module Geometry exposing (..)
 
+{-| This module is for all the function and the view of the document part
+
+
+# Functions
+
+@docs initial_docu
+@docs render_document_detail
+@docs render_newspaper_index
+
+#Datatypes
+
+@docs Document
+
+-}
+
 
 type alias Location =
     { x : Float

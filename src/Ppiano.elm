@@ -1,4 +1,6 @@
 module Ppiano exposing (..)
+
+import Button exposing (Button, test_button)
 import Geometry exposing (Location)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
@@ -7,16 +9,14 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
 import Svg.Events
-import Button
-import Button exposing (test_button)
 
 
 keyLength =
-    30.0
+    111
 
 
 keyWidth =
-    200.0
+    70
 
 
 type KeyState
@@ -45,7 +45,7 @@ initial =
     PianoModel
         generate_key_set
         []
-        0        
+        0
         False
 
 
@@ -59,7 +59,7 @@ generate_key_set_help number =
             fl * keyLength
     in
     PianoKey
-        (Location (x + 400) 500.0)
+        (Location (x - 190) 570)
         number
         Up
         0
@@ -69,7 +69,7 @@ generate_key_set : List PianoKey
 generate_key_set =
     let
         indexSet =
-            List.range 1 12
+            List.range 1 19
     in
     List.map generate_key_set_help indexSet
 
@@ -79,7 +79,7 @@ bounce_key time keySet =
     let
         bounce_key_help : Float -> PianoKey -> PianoKey
         bounce_key_help currentTime key =
-            if currentTime - key.press_time > 500 && key.keyState == Down then
+            if currentTime - key.press_time > 300 && key.keyState == Down then
                 { key | keyState = Up, press_time = 0 }
 
             else
@@ -114,7 +114,7 @@ play_audio index =
 
 draw_key_set : PianoModel -> List (Svg Msg)
 draw_key_set piano =
-    background piano ++ List.map draw_single_key piano.pianoKeySet
+    background piano ++ List.map draw_single_key_up piano.pianoKeySet
 
 
 background : PianoModel -> List (Svg Msg)
@@ -139,8 +139,701 @@ background piano =
         |> List.singleton
 
 
-draw_single_key : PianoKey -> Svg Msg
-draw_single_key key =
+draw_key_without_sound : List (Svg Msg)
+draw_key_without_sound =
+    let
+        x =
+            31
+
+        y =
+            570
+    in
+    [ Svg.polygon
+        [ SvgAttr.points (String.fromFloat (x - 3 * keyLength) ++ "," ++ String.fromFloat y ++ " " ++ String.fromFloat (x - 2 * keyLength) ++ "," ++ String.fromFloat y ++ " " ++ String.fromFloat (x - 2 * keyLength + 2.2 * keyLength) ++ "," ++ String.fromFloat (y - 320) ++ " " ++ String.fromFloat (x - 3 * keyLength + 2.4 * keyLength) ++ "," ++ String.fromFloat (y - 320) ++ " ")
+        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.stroke "white"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points
+            (String.fromFloat (x - 2 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x - 1 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x - 1 * keyLength + 1 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x - 1 * keyLength + 0.7 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x - 1 * keyLength + 1.9 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x - 2 * keyLength + 2.2 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+            )
+        , SvgAttr.fillOpacity "0.3"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points
+            (String.fromFloat (x + 13 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 0.75 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 1 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 1.75 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 13 * keyLength - 1.15 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 13 * keyLength - 0.4 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 13 * keyLength - 0.65 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+            )
+        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.stroke "white"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points
+            (String.fromFloat (x + 14 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 0.85 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 1.2 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 2.05 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 1.3 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 0.5 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 14 * keyLength - 0.75 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+            )
+        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.stroke "white"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    , Svg.polygon
+        [ SvgAttr.points
+            (String.fromFloat (x + 15 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 16 * keyLength)
+                ++ ","
+                ++ String.fromFloat y
+                ++ " "
+                ++ String.fromFloat (x + 16 * keyLength - 1.9 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 1.6 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 320)
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 0.6 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+                ++ " "
+                ++ String.fromFloat (x + 15 * keyLength - 0.85 * keyLength)
+                ++ ","
+                ++ String.fromFloat (y - 160)
+            )
+        , SvgAttr.fillOpacity "0"
+        , SvgAttr.stroke "white"
+        , SvgAttr.strokeWidth "1"
+        ]
+        []
+    ]
+
+
+draw_single_key_up : PianoKey -> Svg Msg
+draw_single_key_up key =
+    let
+        x =
+            31
+
+        y =
+            570
+
+        state =
+            key.keyState
+
+        num =
+            key.index
+
+        opac =
+            case state of
+                Up ->
+                    "0.0"
+
+                Down ->
+                    "0.4"
+    in
+    case num of
+        1 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x - keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 0 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 0 * keyLength + 0.9 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 0 * keyLength + 0.6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 0 * keyLength + 1.7 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x - keyLength + 2.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x - keyLength + 1.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x - keyLength + 1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        2 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat x
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 0.8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 0.5 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 1.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 2.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 1.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 0.9 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        3 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 2 * keyLength + 1.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 1.8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + keyLength + 0.8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        4 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 0.55 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 0.9 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 2 * keyLength + 1.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        5 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 0.45 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 0.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 0.7 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 1.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 0.8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 3 * keyLength + 0.55 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        6 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 5 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 5 * keyLength + 0.6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 1.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 0.7 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 4 * keyLength + 0.45 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        7 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 5 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength + 0.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength - 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength + 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 5 * keyLength + 0.6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        8 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength + 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength - 0.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength - 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength + 0.5 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength + 0.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 6 * keyLength + 0.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        9 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 7 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength - 0.05 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength - 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength - 0.35 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength + 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength + 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 7 * keyLength + 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        10 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 9 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 9 * keyLength - 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength + 0.05 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength + 0.2 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 8 * keyLength - 0.05 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        11 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 9 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength - 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength - 0.5 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength - 0.8 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 9 * keyLength - 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        12 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 10 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 0.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 0.6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength - 0.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength + 0 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 10 * keyLength - 0.3 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        13 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 11 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 12 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 12 * keyLength - 1.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 0.6 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 0.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 11 * keyLength - 0.4 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        14 ->
+            Svg.polygon
+                [ SvgAttr.points
+                    (String.fromFloat (x + 12 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 13 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat y
+                        ++ " "
+                        ++ String.fromFloat (x + 13 * keyLength - 0.65 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 13 * keyLength - 1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 160)
+                        ++ " "
+                        ++ String.fromFloat (x + 13 * keyLength - 1.65 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                        ++ String.fromFloat (x + 12 * keyLength - 1.1 * keyLength)
+                        ++ ","
+                        ++ String.fromFloat (y - 320)
+                        ++ " "
+                    )
+                , SvgAttr.fillOpacity opac
+                , Svg.Events.onClick (OnClickTriggers key.index)
+                ]
+                []
+
+        _ ->
+            Svg.rect [] []
+
+
+draw_single_key_down : PianoKey -> Svg Msg
+draw_single_key_down key =
     let
         deltay =
             case key.keyState of
@@ -150,12 +843,14 @@ draw_single_key key =
                 Down ->
                     100
     in
-    Svg.image
-        [ SvgAttr.width "2%"
-        , SvgAttr.height "6%"
+    Svg.rect
+        [ SvgAttr.width (String.fromFloat keyLength ++ "px")
+        , SvgAttr.height (String.fromFloat keyWidth ++ "px")
         , SvgAttr.x (String.fromFloat key.anchor.x)
         , SvgAttr.y (String.fromFloat (key.anchor.y + deltay))
-        , SvgAttr.xlinkHref "assets/h1.jpg"
+        , SvgAttr.fillOpacity "0.3"
+        , SvgAttr.stroke "white"
+        , SvgAttr.strokeWidth "1"
         , Svg.Events.onClick (OnClickTriggers key.index)
         ]
         []

@@ -52,7 +52,7 @@ initial =
         initial_intro
         initial_checklist
         initial_chooselist
-        
+
 type alias ChooseList =
     { m0c0 : Int
     , m1c1 : Int

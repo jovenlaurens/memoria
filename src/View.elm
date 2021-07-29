@@ -1,5 +1,14 @@
 module View exposing (..)
 
+{-| This module is the main view module
+
+
+# Functions
+
+@docs view
+
+-}
+
 import Button exposing (Button, black_white_but, test_button, trans_button_sq)
 import Debug exposing (toString)
 import Document exposing (Document, render_document_detail, render_newspaper_index)
@@ -45,6 +54,8 @@ style =
     Html.Attributes.style
 
 
+{-| The view function for main
+-}
 view : Model -> Html Msg
 view model =
     let
@@ -297,7 +308,7 @@ render_button_level level model =
                 render_stair_level level ++ render_piano_button ++ List.singleton render_trophy_button ++ screen
 
         1 ->
-                ( if model.checklist.level1door == True then 
+                ( if model.checklist.level1door == True then
                     render_stair_level level
                   else
                     render_locked_door
@@ -366,7 +377,7 @@ render_object model =
                     []
 
     in
-    
+
     Svg.svg
         [ SvgAttr.width "100%"
         , SvgAttr.height "100%"
@@ -384,8 +395,8 @@ render_object model =
         )
 
 render_level_2 : Model -> List (Svg Msg)
-render_level_2 model = 
-    [ Svg.image 
+render_level_2 model =
+    [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
@@ -405,7 +416,7 @@ render_level_2 model =
 
 render_level_0 : Model -> List (Svg Msg)
 render_level_0 model =
-    [ Svg.image 
+    [ Svg.image
             [ SvgAttr.x "0"
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
@@ -439,23 +450,23 @@ render_window model =
                 []
 
 findlightstate : List(LightState) -> LightState
-findlightstate list = 
+findlightstate list =
         case list of
             x :: xs ->
                  if (x == Light_2_on || x == Light_2_off) then
                         x
                  else
                     findlightstate xs
-            
+
             x ->
                 Otherobject
-            
+
 
 
 
 render_window_off : List (Svg Msg)
-render_window_off = 
-    [ Svg.image 
+render_window_off =
+    [ Svg.image
             [ SvgAttr.x "30"
             , SvgAttr.y "400"
             , SvgAttr.width "40%"
@@ -467,8 +478,8 @@ render_window_off =
     ]
 
 render_window_on : List (Svg Msg)
-render_window_on = 
-    [ Svg.image 
+render_window_on =
+    [ Svg.image
             [ SvgAttr.x "30"
             , SvgAttr.y "400"
             , SvgAttr.width "40%"
@@ -549,7 +560,7 @@ render_picture_index index =
                 , onClick (OnClickItem index)
                 ]
                 []
-        2 -> 
+        2 ->
             Html.img
                 [ src ("assets/picts/"++(toString index)++".png")
                 , style "top" "28%"
@@ -692,7 +703,7 @@ render_object_inside cklst scne cle obj old =
 
                 Fra a ->
                     render_fra 0 a cle
-                
+
                 Cabinet a ->
                     render_cabinet scne cle a
 
@@ -702,7 +713,7 @@ render_object_inside cklst scne cle obj old =
 
                      else
                         []
-                    
+
                 Doll a ->
                     drawdoll_ui 0 a cle
 
@@ -732,7 +743,7 @@ render_object_only model cs objects =
             ]
 
         Table a ->
-            
+
             draw_block cklst.level1light cklst.level1coffee cklst.level1liquid a.blockSet
 
         Frame a ->
@@ -750,13 +761,13 @@ render_object_only model cs objects =
 
         Bul a ->
             render_bulb 8 a
-        
+
         Fra a ->
             render_fra 9 a model.cscreen.clevel
 
         Cabinet a ->
             render_cabinet model.cscreen.cscene model.cscreen.clevel a
-        
+
         Trophy a ->
             draw_trophy a.trophy
 
@@ -819,7 +830,7 @@ render_object_only_html cs objs =
     case tar of
         Bul a ->
             render_bulb 8 a ++ [ text "sdfgh" ]
-            
+
         Piano a ->
             [ div
                 [ Html.Attributes.style "width" "100%"
@@ -990,5 +1001,4 @@ play_piano_audio currentScene objectSet =
 
 
 
-        
-        
+
