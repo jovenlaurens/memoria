@@ -4,6 +4,8 @@ module Pcomputer exposing
     , draw_computer
     , ComputerModel
     , State(..)
+    ,drawchargedcomputer
+    ,initial_safebox
     )
 
 {-| This module is to accomplish the puzzle of computer

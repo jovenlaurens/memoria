@@ -7,6 +7,7 @@ module Pmirror exposing
     , draw_mirror
     , LightState(..)
     , MirrorModel
+    ,draw_frame
     )
 
 {-| This module is to accomplish the puzzle of mirror game

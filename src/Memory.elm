@@ -39,7 +39,6 @@ type alias Page =
     , backPict : String
     , figure : String
     , act : State
-    , index : Int
     }
 
 
@@ -93,6 +92,12 @@ render_memory cm cp cg opa =
 
                 1 ->
                     textBase_1
+
+                2 ->
+                    textBase_2
+
+                3->
+                    textBase_3
 
                 _ ->
                     []
@@ -188,7 +193,6 @@ render_page page opa =
                     [ svg_rect 0 70 1000 300
                     , svg_rect 50 40 150 60
                     , svg_text 50 160 500 300 page.content opa
-                    , svg_text 50 200 500 300 (toString page.index) opa
                     , svg_text 70 80 150 60 page.speaker opa
                     ]
                 , trans_button_sq (Button 0 0 100 100 "" eff "block")
@@ -258,6 +262,12 @@ render_choice index page opa=
                 2 ->
                     ( "Anna Karenina", "Scarlett O 'Hara", "Not very clear." )
 
+                3 ->
+                    ( "Related to an important person.", "These numbers are interesting!", "No meaning.")
+
+                4 ->
+                    ( "Someone you are missing?", "You are unwilling to stay here", "You just struggle with something")
+
                 _ ->
                     ( "", "", "" )
     in
@@ -300,104 +310,223 @@ textBase_0 : List Page
 
 
 textBase_0 =
-    [ Page "So, I’m in a crowded cafe." "I" "assets/intro.png" "assets/blank.png" Dialogue 0--0
-    , Page "Maria is there!" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 1--1
-    , Page "She is immersed in something." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 2
-    , Page "Oh, she told that she is a freelancer. " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 3
-    , Page "What is she is working on? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 4
-    , Page "(Attention: Your memory is made by yourself)" "" "assets/intro.png" "assets/blank.png" Dialogue 5
-    , Page "(different choice will lead to a different Maria.)" "" "assets/intro.png" "assets/blank.png" Dialogue 6--6
-    , Page "" "" "assets/intro.png" "" (Choose 0) 7--7
-    --1A:
-    , Page "I don't have to tell you exactly what happened," "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 8--8
-    , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 9--9
-    , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 10--10
-    , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11--11
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 12 --12
-    --1B
-    , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 13 --13
-    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14 --14
-    , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15 --15
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 16 --16
-    --1C
-    , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 17 --17
-    , Page "In this record, I want to figure out what I really am." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 18 --18
-    , Page "What I look like." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 19 --19
-    , Page "How can I talk to myself and figure out what happened?" "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 20
-    , Page "My daily life, my preference, and something like this." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 21
-    , Page "Sorry if my mind surprised you." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 22
-    , Page "End" "" "assets/intro.png" "" End  23
+    [ Page "So, I’m in a crowded cafe." "I" "assets/intro.png" "assets/blank.png" Dialogue --0
+    , Page "Maria is there!" "I" "assets/intro.png" "assets/girl/3.png" Dialogue --1
+    , Page "She is immersed in something." "I" "assets/intro.png" "assets/girl/3.png" Dialogue --2
+    , Page "Oh, she told that she is a freelancer. " "I" "assets/intro.png" "assets/girl/3.png" Dialogue --3
+    , Page "What is she is working on? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue --4
+    , Page "(Attention: Your memory is made by yourself)" "" "assets/intro.png" "assets/blank.png" Dialogue --5
+    , Page "(different choice will lead to a different Maria.)" "" "assets/intro.png" "assets/blank.png" Dialogue --6
+    , Page "" "" "assets/intro.png" "" (Choose 0) --7
+
+    {- ]
+       sub_0_0 : List Page
+       sub_0_0 =
+           [
+    -}
+    , Page "I don't have to tell you exactly what happened," "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --8
+    , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --9
+    , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --10
+    , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --11
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --12
+
+    {- ]
+       sub_0_1 : List Page
+       sub_0_1 =
+           [
+    -}
+    , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --13
+    , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14
+    , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --15
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --16
+    , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --17
+    , Page "In this record, I want to figure out what I really am." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --18
+    , Page "What I look like." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --19
+    , Page "How can I talk to myself and figure out what happened?" "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --20
+    , Page "My daily life, my preference, and something like this." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --21
+    , Page "Sorry if my mind surprised you." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --22
+    , Page "End" "" "assets/intro.png" "" End -- 23
     ]
+
+
+
+--可以这样，List String （对话文字） List String （人物） List String（背景路径） Listing String (人物图像路径) （类型（实际上thought没有用到））
+--然后map
 
 
 textBase_1 : List Page
 textBase_1 =
-    [ Page "It’s a brilliant summer night." "I" "assets/intro.png" "assets/blank.png" Dialogue 0
-    , Page "Our first date, under the hanabi." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 1
-    , Page "Suddenly, a weird thought comes to my mind," "I" "assets/intro.png" "assets/girl/3.png" Dialogue 2
-    , Page "What’s the actual shape of a hanabi? Is it like a sphere, or a disc? " "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue 3
-    , Page "Maria replied" "" "assets/intro.png" "assets/girl/3.png" Dialogue 4
-    , Page "" "" "assets/intro.png" "" (Choose 1) 5
+    [ Page "It’s a brilliant summer night." "I" "assets/intro.png" "assets/blank.png" Dialogue --0
+    , Page "Our first date, under the hanabi." "I" "assets/intro.png" "assets/girl/3.png" Dialogue --1
+    , Page "Suddenly, a weird thought comes to my mind," "I" "assets/intro.png" "assets/girl/3.png" Dialogue --2
+    , Page "What’s the actual shape of a hanabi? Is it like a sphere, or a disc? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue --3
+    , Page "Maria replied" "" "assets/intro.png" "assets/girl/3.png" Dialogue --4
+    , Page "" "" "assets/intro.png" "" (Choose 1) --5
+
     -- 2A: I don't know
-    , Page "I don’t know." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 6
-    , Page "It’s so beautiful yet so sad." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 7
-    , Page "Just like real life, huh?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 8
-    , Page "I know what you mean." "Jerome" "assets/intro.png" "assets/girl/9.png" Dialogue 9
-    , Page "We don't appreciate beauty until we lose it. " "Jerome" "assets/intro.png" "assets/girl/9.png" Dialogue 10
-    , Page "Exactly." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 12
+    , Page "I don’t know." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --6
+    , Page "It’s so beautiful yet so sad." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --7
+    , Page "Just like real life, huh?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --8
+    , Page "I know what you mean." "I" "assets/intro.png" "assets/girl/9.png" Dialogue --9
+    , Page "We don't appreciate beauty until we lose it. " "I" "assets/intro.png" "assets/girl/9.png" Dialogue --10
+    , Page "Exactly." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue --11
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue --12
+
     -- 2B: Why not check for ourselves?
-    , Page "Let's find out!" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 13
-    , Page "Just take a Montgolfier and fly through the sky, when the fireworks begin." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14
-    , Page "It must be amazing!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15
-    , Page "Sounds cool!" "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 16
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 17
+    , Page "Let's find out!" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --13
+    , Page "Just take a Montgolfier and fly through the sky, when the fireworks begin." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --14
+    , Page "It must be amazing!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --15
+    , Page "Sounds cool!" "I" "assets/intro.png" "assets/girl/1.png" Dialogue --16
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue --17
+
     -- 2C: Interesting question.
-    , Page "It’s an interesting question." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
-    , Page "However, instead of watching it from outside, what if we stood inside the hanabi?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 19
-    , Page "How can it turn from a small black ball into a brilliant scene?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 20
-    , Page "Maria thinks about things from a peculiar perspective." "I" "assets/intro.png" "assets/girl/9.png" Dialogue 21
-    , Page "Seems that she is always investigating inner parts of one thing." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 22
+    , Page "It’s an interesting question." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --18
+    , Page "However, instead of watching it from outside, what if we stood inside the hanabi?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --19
+    , Page "How can it turn from a small black ball into a brilliant scene?" "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue --20
+    , Page "Maria thinks about things from a peculiar perspective." "I" "assets/intro.png" "assets/girl/9.png" Dialogue --21
+    , Page "Seems that she is always investigating inner parts of one thing." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --22
+
     --Question3
-    , Page "Now it’s my turn to give you a question!" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 23
-    , Page "For what?" "Jerome" "assets/intro.png" "assets/girl/3.png" Dialogue 24
-    , Page "Just guess: who is my favorite female character?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 25
-    , Page "" "" "assets/intro.png" "" (Choose 2) 26
+    , Page "Now it’s my turn to give you a question!" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --23
+    , Page "For what?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue --24
+    , Page "Just guess: who is my favorite female character?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue --25
+    , Page "" "" "assets/intro.png" "" (Choose 2) --26
 
     --3A: Anna Karenina
-    , Page "Anna Karenina? " "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue 27
-    , Page "The first time I read this book, I was impressed by her courage to love, even though the ending isn't satisfactory." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 28
-    , Page "She never met the right one." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 29
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 30
+    , Page "Anna Karenina? " "I" "assets/intro.png" "assets/girl/6.png" Dialogue --27
+    , Page "The first time I read this book, I was impressed by her courage to love, even though the ending isn't satisfactory." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --28
+    , Page "She never met the right one." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --29
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --30
 
     --3B: Scarlett O 'Hara
-    , Page "Scarlett? You know her." "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue 31
-    , Page "Exactly! How can you read my mind? Her brave, aggressive heart is so appealing to me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 32
-    , Page "But, you two are not the same." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 33
-    , Page "Maybe a little." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 34
-    , Page "Like how?" "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue 35
-    , Page "Too many things in her world: Man, money and her land." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 36
-    , Page "I’m different from her!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 37
-    , Page "That means you don’t like money?" "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 38
-    , Page "I like it!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 39
-    , Page "But my love is bigger than money." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 40
-    , Page "Wish I could understand." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 41
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 42
+    , Page "Scarlett? You know her." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --31
+    , Page "Exactly! How can you read my mind? Her brave, aggressive heart is so appealing to me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --32
+    , Page "But, you two are not the same." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --33
+    , Page "Maybe a little." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --34
+    , Page "Like how?" "I" "assets/intro.png" "assets/girl/6.png" Dialogue --35
+    , Page "Too many things in her world: Man, money and her land." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --36
+    , Page "I’m different from her!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --37
+    , Page "That means you don’t like money?" "I" "assets/intro.png" "assets/girl/1.png" Dialogue --38
+    , Page "I like it!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --39
+    , Page "But my love is bigger than money." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --40
+    , Page "Wish I could understand." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --41
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --42
 
     -- 3c: Not very clear
-    , Page "I can’t pick one." "Jerome" "assets/intro.png" "assets/girl/6.png" Dialogue 43
-    , Page "You are too complex for me to know." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 44
-    , Page "It happens." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 45
-    , Page "It’s of course a trouble for me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 46
-    , Page "Who can figure out their own personality?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 47
-    , Page "You are always the unique one." "Jerome" "assets/intro.png" "assets/girl/1.png" Dialogue 48
-    , Page "That may become a problem, a serious problem, one day……" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 49
-    , Page "Maria’s voice is covered by the fireworks, gradually. " "I" "assets/intro.png" "assets/girl/1.png" Dialogue 50
-    , Page "Through these months, I can ensure that she is undoubtedly an unusual woman." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 51
-    , Page "and from her eyes, I can feel a sense of glamour, secret but dangerous." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 52
-    , Page "But I love her." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 53
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 54
+    , Page "I can’t pick one." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --43
+    , Page "You are too complex for me to know." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --44
+    , Page "It happens." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --45
+    , Page "It’s of course a trouble for me." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --46
+    , Page "Who can figure out their own personality?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue --47
+    , Page "You are always the unique one." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --48
+    , Page "That may become a problem, a serious problem, one day……" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue --49
+    , Page "Maria’s voice is covered by the fireworks, gradually. " "I" "assets/intro.png" "assets/girl/1.png" Dialogue --50
+    , Page "Through these months, I can ensure that she is undoubtedly an unusual woman." "I" "assets/intro.png" "assets/girl/6.png" Dialogue --51
+    , Page "and from her eyes, I can feel a sense of glamour, secret but dangerous." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --52
+    , Page "But I love her." "I" "assets/intro.png" "assets/girl/1.png" Dialogue --53
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End --54
     ]
+
+textBase_2 : List Page
+textBase_2 =
+    [ Page "We’ve just moved into a new house, two floors, with an additional basement." "" "assets/intro.png" "assets/blank.png" Dialogue 0
+    , Page "There are so many things need to arrange, so tired." "" "assets/intro.png" "assets/girl/3.png" Dialogue 1
+    , Page "Maria is unlocking her safe box in the basement, " "" "assets/intro.png" "assets/girl/3.png" Dialogue 2
+    , Page "and she seems to trust me quite much. " "" "assets/intro.png" "assets/girl/3.png" Dialogue 3
+    , Page "1,9,8,6……" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 4
+    , Page "Does this password mean anything else?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 5
+    , Page "" "" "assets/intro.png" "" (Choose 3) 6
+
+    -- 4A: Related to an important person.
+    , Page "Yeah, it’s someone’s year of birth." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 7
+    , Page "I have been using it as my password for a long time." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 8
+    , Page "A person more important than me??" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 9
+    , Page "Perhaps." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 10
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 11
+
+    -- 4B: These numbers are interesting!
+    , Page "Can you find something interesting?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 12
+    , Page "If we rotate them, we will get four new numbers!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 13
+    , Page "And that’s just my computer password." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14
+    , Page "What a coincidence!" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15
+    , Page "Your ideas are lovely." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 16
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 17
+
+    -- 4C: No meaning.
+    , Page "Nothing interesting, actually." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
+    , Page "If you want, I can also tell you my computer password, just transpose it." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 19
+    , Page "These things are not important at all." "Maria" "assets/intro.png" "assets/girl/7.png" Dialogue 20
+    , Page "So, what do you think is important in our life?" "I" "assets/intro.png" "assets/girl/9.png" Dialogue 21
+    , Page "I haven’t found it yet." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 22
+    , Page "Maybe we can work it out together, for our future." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 23
+    , Page "I will try my best." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 24
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 25
+    ]
+
+
+
+textBase_3 : List Page
+textBase_3 =
+    [ Page "We have been lived together for one year," "" "assets/intro.png" "assets/blank.png" Dialogue 0
+    , Page "but it seems that Maria changed a lot." "" "assets/intro.png" "assets/girl/3.png" Dialogue 1
+    , Page "She always locked herself in the basement, working on something." "" "assets/intro.png" "assets/girl/3.png" Dialogue 2
+    , Page "She also likes sitting by my piano, and practicing it." "" "assets/intro.png" "assets/girl/3.png" Dialogue 3
+    , Page "Maria, can we talk?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 4
+    , Page "About what?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 5
+    , Page "Why do you always hide in the basement?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 6
+    , Page "I'm worried about you." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 7
+    , Page "You don't have any idea?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 8
+    , Page "" "" "assets/intro.png" "" (Choose 4) 9
+
+    -- 5A: Someone you are missing?
+    , Page "I guess you are missing someone you can’t contact?" "I" "assets/intro.png" "assets/blank.png" Dialogue 10
+    , Page "Partially, actually, I’m still confused." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 11
+    , Page "About what? " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 12
+    , Page "The ideal love…… " "Maria" "assets/intro.png"  "assets/girl/3.png" Dialogue 13
+    , Page "But you have been with me for a whole year! " "I" "assets/intro.png" "assets/girl/3.png" Dialogue 14
+    , Page "What do you mean?" "I" "assets/intro.png" "assets/girl/3.png" Dialogue 15
+    , Page "I know, I know……" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 16
+    , Page "(Maria is in pain. I can see tears start to fall.)" "" "assets/intro.png" "assets/girl/3.png" Dialogue 17
+    , Page "Jerome, my dear." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 18
+    , Page "I’m here." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 19
+    , Page "Never leave me, you promise?" "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 20
+    , Page "I promise." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 21
+    , Page "Today’s Maria is different, but I just felt relieved after she asked for me to stay." "" "assets/intro.png" "assets/girl/9.png" Dialogue 22
+    , Page "Everything will be good." "" "assets/intro.png" "assets/girl/9.png" Dialogue 23
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 24
+
+    -- 5B: You are unwilling to stay here
+    , Page "So, Maria, staying in the basement is not your intention, isn’t it?" "I" "assets/intro.png" "assets/girl/6.png" Dialogue 25
+    , Page "Somehow like this, I can feel my sadness when I work in the basement." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 26
+    , Page "But did you work at home by yourself before?" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 27
+    , Page "I tried, but failed." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 28
+    , Page "Give me some time to relax, please……" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 29
+    , Page "Oh, my dear, I can give you plenty of time." "I" "assets/intro.png" "assets/girl/6.png" Dialogue 30
+    , Page "Will you give me space in your heart?" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 31
+    , Page "(I was so tired. It seems that Maria and I are people from two worlds." "I" "assets/intro.png" "assets/girl/1.png" Dialogue 32
+    , Page "It’s hard for me to give her everything she wants.)" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 33
+    , Page "Give me some time to relax, please……" "I" "assets/intro.png" "assets/girl/1.png" Dialogue 34
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 35
+
+    -- 5C: You just struggle with something
+    , Page "If you need help, Maria, just call me." "I" "assets/intro.png" "assets/girl/3.png" Dialogue 36
+    , Page "I will stay with you." "I" "assets/intro.png" "assets/girl/7.png" Dialogue 37
+    , Page "I can’t leave you to bear everything alone." "I" "assets/intro.png" "assets/girl/7.png" Dialogue 38
+    , Page "It’s my fortune to meet with you, Jerome," "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 39
+    , Page "but, leave me alone for a while, please." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 40
+    , Page "Maria, don’t treat yourself like this, I beg you……" "I" "assets/intro.png" "assets/girl/6.png" Dialogue 41
+    , Page "Can you understand this kind of feeling?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 42
+    , Page "Something is just gnawing my heart, weighing down my spirit." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 43
+    , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 44
+
+
+    , Page "..." "" "assets/intro.png" "" Dialogue 45
+    , Page "......" "" "assets/intro.png" "" Dialogue 46
+    , Page "........." "I" "assets/intro.png" "" Dialogue 47
+    , Page "Something appears in the basement. Now, go for it." "I" "assets/intro.png" "" End 48
+
+    ]
+
 
 
 sub_0_2 : List Page
@@ -407,4 +536,4 @@ sub_0_2 =
 
 default_page : Page
 default_page =
-    Page "test" "Maria" "none" "none" Dialogue -1
+    Page "test" "Maria" "none" "none" Dialogue

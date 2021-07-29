@@ -255,7 +255,7 @@ update_gra_part : Model -> GraMsg -> Model
 update_gra_part model submsg =
     let
         targetScreen =
-            renew_screen_info submsg model.cscreen model.choice
+            renew_screen_info submsg model.cscreen
 
         graState =
             get_gra_state submsg
@@ -271,107 +271,13 @@ update_gra_part model submsg =
     }
 
 
-get_new_choice : GraMsg -> ChooseList -> ChooseList
+get_new_choice : GraMsg -> List Int -> List Int
 get_new_choice submsg list =
-    let
-        stage1 =
-            case submsg of
-                Choice 0 b ->
-                    { list | m0c0 = b}
-
-                Choice 1 b ->
-                    { list | m1c1 = b}
-                Choice 2 b ->
-                    { list | m1c2 = b}
-                Choice 3 b ->
-                    { list | m2c3 = b}
-                Choice 4 b ->
-                    { list | m3c4 = b}
-
-                _ ->
-                    list
-    in
-        get_end stage1
-
-
-get_end : ChooseList -> ChooseList
-get_end old =
-    if old.m3c4 /= -1 then
-        let
-            g1 = case old.m0c0 of
-                    0 ->
-                        10
-                    1 ->
-                        20
-                    _ ->
-                        30
-            g2 = case old.m1c1 of
-                    0 ->
-                        10
-                    1 ->
-                        20
-                    _ ->
-                        30
-            g3 = case old.m1c2 of
-                    0 ->
-                        10
-                    1 ->
-                        20
-                    _ ->
-                        30
-            g4 = case old.m2c3 of
-                    0 ->
-                        10
-                    1 ->
-                        20
-                    _ ->
-                        30
-            g5 = case old.m3c4 of
-                    0 ->
-                        10
-                    1 ->
-                        20
-                    _ ->
-                        30
-            all = g1 + g2 + g3 + g4 + g5
-
-            end =
-                if all <= 70 then
-                    0
-                else if all > 70 && all <= 110 then
-                    1
-                else
-                    2
-                    --可以improve一些
-        in
-            { old | end = end }
-    else
-        old
-
-
-
-
-
-
-
-
-get_cur_choice : ChooseList -> Int -> Int
-get_cur_choice list index =
-    case index of
-        0 ->
-            list.m0c0
-        1 ->
-            list.m1c1
-        2 ->
-            list.m1c2
-        3 ->
-            list.m2c3
-        4 ->
-            list.m3c4
+    case submsg of
+        Choice a b ->
+            replace a b list
         _ ->
-            -1
-
-
+            list
 
 --need
 
@@ -399,8 +305,8 @@ get_gra_state submsg =
 
 
 
-renew_screen_info : GraMsg -> Screen -> ChooseList  -> Screen
-renew_screen_info submsg old choices =
+renew_screen_info : GraMsg -> Screen -> Screen
+renew_screen_info submsg old =
     case submsg of
         Pause ->
             { old | cstate = 1 }
@@ -466,7 +372,7 @@ renew_screen_info submsg old choices =
             }
 
         Forward ->
-            { old | cpage = change_page old choices
+            { old | cpage = change_page old.cpage
             }
 
         Choice a b ->
@@ -499,6 +405,25 @@ renew_screen_info submsg old choices =
 
                         ( 2, 2 ) ->
                             43
+
+                        ( 3, 0 ) ->
+                            7
+
+                        ( 3, 1 ) ->
+                            12
+
+                        ( 3, 2 ) ->
+                            18
+
+                        ( 4, 0 ) ->
+                            10
+
+                        ( 4, 1 ) ->
+                            25
+
+                        ( 4, 2 ) ->
+                            36
+
                         _ ->
                             22
             in
@@ -510,55 +435,15 @@ renew_screen_info submsg old choices =
                 , cstate = 11
             }
 
-change_page : Screen ->  ChooseList -> Int
-change_page old choices =
-    let
-        choice_order = ( if old.cmemory > 1 || old.cpage >= 25 then
-                            old.cmemory + 1
-                         else
-                            old.cmemory
-                        )
-
-        current_choice =
-            get_cur_choice choices choice_order
-
-        cur_pair =
-            ( old.cmemory, old.cpage, current_choice )
-
-        tar =
-            (List.filter (\x -> Tuple.first x == cur_pair) answer_pair)
-                |> List.head
-                |> Maybe.withDefault ( ( 0,0,0 ), -1 )
-                |> Tuple.second
-    in
-        if tar == -1 then
-            old.cpage + 1
-        else
-            tar
-
-
-
-
-
-answer_pair : List ( (Int, Int, Int), Int )
-answer_pair =
-    [ (( 0, 4, -1 ), 5)
-    , (( 0, 4, 0 ), 8)
-    , (( 0, 4, 1 ), 13)
-    , (( 0, 4, 2 ), 17)
-    , (( 1, 4, -1 ), 5)
-    , (( 1, 4, 0 ), 6)
-    , (( 1, 4, 1 ), 13)
-    , (( 1, 4, 2 ), 18)
-    , (( 1, 11, 0), 23)
-    , (( 1, 11, -1), 23)
-    , (( 1, 16, 1), 23)
-    , (( 1, 16, -1), 23)
-    , (( 1, 25, -1 ), 26)
-    , (( 1, 25, 0 ), 27)
-    , (( 1, 25, 1 ), 31)
-    , (( 1, 25, 2 ), 43)
-    ]
+change_page : Int -> Int
+change_page old =
+    case old of
+        11 ->
+            23
+        16 ->
+            23
+        _ ->
+            old + 1
 
 
 
@@ -1026,8 +911,16 @@ update_cab_lock cs number udus model =
 
 
 
-
-
+clear_index_picture : Int -> List Picture -> List Picture
+clear_index_picture index list =
+    let
+        fin id pict =
+            if id == pict.index && pict.state == UnderUse then
+                { pict | state = Consumed }
+            else
+                pict
+    in
+        List.map (fin index) list
 
 
 
@@ -1210,8 +1103,6 @@ try_to_update_computer cs model number =
             )
     else
         model
-
-
 
 
 

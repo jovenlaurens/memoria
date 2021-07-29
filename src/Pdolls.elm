@@ -4,6 +4,7 @@ module Pdolls exposing
     , drawdoll_ui
     , DollModel
     , Dollstate(..)
+    ,Pigstate(..)
     )
 
 {-| This module is to accomplish the puzzle of doll

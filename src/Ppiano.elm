@@ -6,6 +6,7 @@ module Ppiano exposing
     , press_key
     , draw_key_set
     , PianoModel
+    ,render_piano_button
     )
 
 {-| This module is to accomplish the puzzle of playing piano

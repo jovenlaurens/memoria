@@ -7,6 +7,8 @@ module Ptable exposing
     , BlockState(..)
     , TableModel
     , blockLength
+    ,drawpath
+    ,draw_coffee_back
     )
 
 {-| This module is to accomplish the puzzle of one touch game
