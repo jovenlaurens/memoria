@@ -96,6 +96,8 @@ update_bulb_inside number model =
     { model | bulb = newbulb }
 
 
+{-| Check the bulb game result
+-}
 checkoutwin : BulbModel -> BulbModel
 checkoutwin model =
     let

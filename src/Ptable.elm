@@ -54,6 +54,8 @@ type BlockState
     | NonActive
 
 
+{-| the length of block
+-}
 blockLength : Float
 blockLength =
     30.0
@@ -134,6 +136,8 @@ render_table_button =
     trans_button_sq enter
 
 
+{-| draw path
+-}
 drawpath : List (Svg Msg)
 drawpath =
     Svg.path
@@ -216,6 +220,8 @@ draw_single_block block =
                 []
 
 
+{-| draw block
+-}
 draw_block : Bool -> Bool -> Bool -> List Block -> List (Svg Msg)
 draw_block state sta1 sta2 blockSet =
     draw_back state

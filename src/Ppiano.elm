@@ -927,6 +927,8 @@ check_order list =
             False
 
 
+{-| Render button for piano
+-}
 render_piano_button : List (Html Msg)
 render_piano_button =
     let

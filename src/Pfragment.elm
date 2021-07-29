@@ -111,6 +111,8 @@ poscompare fra =
     136 - List.sum fra
 
 
+{-| get pos
+-}
 getemptypos : List Fragment -> Int
 getemptypos fra =
     poscompare (getposlist fra)

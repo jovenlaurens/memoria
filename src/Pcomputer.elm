@@ -102,6 +102,8 @@ updatetrigger a model =
                 model
 
 
+{-| check whether the safe trigger the computer
+-}
 updatesafetrigger : Int -> ComputerModel -> ComputerModel
 updatesafetrigger a model =
     case a of
@@ -219,6 +221,8 @@ draw_computer commodel l0s cs cle =
             Debug.todo "branch '_' not implemented"
 
 
+{-| drawchargedcomputer
+-}
 drawchargedcomputer : Int -> ComputerModel -> List (Svg Msg)
 drawchargedcomputer number commodel =
     case number of
@@ -522,6 +526,8 @@ drawword word =
             []
 
 
+{-| initial\_safebox
+-}
 initial_safebox : ComputerModel
 initial_safebox =
     ComputerModel Lowpower (Charged 0) 0 [] []

@@ -31,6 +31,8 @@ import Ppower exposing (PowerModel, initPowerModel)
 import Ptable exposing (TableModel, blockLength, change_block_state, distance, initial_table)
 
 
+{-| puzzle object
+-}
 type Object
     = Clock ClockModel
     | Table TableModel
@@ -48,21 +50,29 @@ type Object
     | Scr Int
 
 
+{-| screen rate
+-}
 type alias ScreenModel =
     Float
 
 
+{-| Clock Model
+-}
 type alias ClockModel =
     { hour : Int
     , minute : Int
     }
 
 
+{-| Frame Model
+-}
 type alias FrameModel =
     { index : List Int
     }
 
 
+{-| Get clock time
+-}
 get_time : Object -> ( Int, Int )
 get_time obj =
     let
@@ -77,6 +87,8 @@ get_time obj =
     ( modBy 12 orihour, modBy 60 oriminute )
 
 
+{-| Get doll number
+-}
 get_doll_number : Object -> Int
 get_doll_number obj =
     let
@@ -91,6 +103,8 @@ get_doll_number obj =
     num
 
 
+{-| get\_pig\_state
+-}
 get_pig_state : Object -> Pigstate
 get_pig_state obj =
     let
@@ -105,6 +119,8 @@ get_pig_state obj =
     state
 
 
+{-| get\_computer\_state
+-}
 get_computer_state : Object -> State
 get_computer_state obj =
     let
@@ -119,6 +135,8 @@ get_computer_state obj =
     state
 
 
+{-| get\_fragment\_state
+-}
 get_fragment_state : Object -> FragmentState
 get_fragment_state obj =
     let
@@ -133,6 +151,8 @@ get_fragment_state obj =
     state
 
 
+{-| Test the table touch
+-}
 test_table : Location -> Object -> Object
 test_table loca pre =
     case pre of
@@ -147,6 +167,8 @@ test_table loca pre =
             pre
 
 
+{-| Init objects
+-}
 initial_objects : List Object
 initial_objects =
     --cscene = 0,            -|obj |cscene|所在楼层|描述
@@ -168,7 +190,7 @@ initial_objects =
     ]
 
 
-{-| 钟
+{-| default object
 -}
 default_object : Object
 default_object =

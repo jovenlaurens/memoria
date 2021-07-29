@@ -111,6 +111,8 @@ trans_button_sq but =
         []
 
 
+{-| black white button
+-}
 black_white_but : Button -> Html Msg
 black_white_but but =
     button

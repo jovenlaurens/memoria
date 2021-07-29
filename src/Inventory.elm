@@ -17,6 +17,8 @@ import Svg.Attributes as SvgAttr
 import Svg.Events
 
 
+{-| The model of inventory
+-}
 type alias Inventory =
     { own : List Grid
     , locaLeft : List Int
