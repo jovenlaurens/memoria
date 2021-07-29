@@ -1,8 +1,6 @@
 module Button exposing
-    ( test_button
-    , trans_button_sq
+    ( test_button, trans_button_sq, black_white_but
     , Button
-    , black_white_but
     )
 
 {-| This module is the repo of different kinds of buttons: transparent, UI, or any other button styles which will appear more than once
@@ -10,9 +8,11 @@ module Button exposing
 
 # Functions
 
-@docs test_button
-@docs trans_button_sq
-@docs #Datatypes
+@docs test_button, trans_button_sq, black_white_but
+
+
+# Datatypes
+
 @docs Button
 
 -}

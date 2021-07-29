@@ -1,11 +1,19 @@
-module Messages exposing (GraMsg(..), Msg(..), PassState(..), svg_text_2)
+module Messages exposing
+    ( GraMsg(..), Msg(..), PassState(..)
+    , svg_text_2
+    )
 
 {-| The main message module
 
 
-# Datatypes Msg
+# Datatypes
 
-@docs update
+@docs GraMsg, Msg, PassState
+
+
+# Functions
+
+@docs svg_text_2
 
 -}
 

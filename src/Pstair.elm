@@ -1,11 +1,21 @@
-module Pstair exposing (..)
+module Pstair exposing (render_stair_level, stair_button_level_1l)
+
+{-| This module is for the stair event and rendering
+
+
+# Functions
+
+@docs render_stair_level, stair_button_level_1l
+
+-}
 
 import Button exposing (..)
-import Debug exposing (toString)
-import Html exposing (Html, button)
+import Html exposing (Html)
 import Messages exposing (GraMsg(..), Msg(..))
 
 
+{-| Render the stair button for specific level
+-}
 render_stair_level : Int -> List (Html Msg)
 render_stair_level cl =
     case cl of
@@ -15,8 +25,10 @@ render_stair_level cl =
         1 ->
             [ trans_button_sq stair_button_level_1r
             ]
-        2->
-            [trans_button_sq stair_button_level_2]
+
+        2 ->
+            [ trans_button_sq stair_button_level_2 ]
+
         _ ->
             [ test_button stair_button_level_2 ]
 
@@ -26,6 +38,8 @@ stair_button_level_0 =
     Button 42 45.51 8 39.1 "" (StartChange (ChangeLevel 1)) "block"
 
 
+{-| Render level 1 stair
+-}
 stair_button_level_1l : Button
 stair_button_level_1l =
     Button 42 45.51 8 39.1 "" (StartChange (ChangeLevel 2)) "block"

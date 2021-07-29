@@ -1,7 +1,6 @@
 module Pcabinet exposing
-    ( render_cabinet, switch_cabState, svg_rect_button
+    ( render_cabinet, switch_cabState, svg_rect_button, initial_cab
     , CabState(..), CabinetModel
-    , initial_cab
     )
 
 {-| This module is to accomplish the function of cabinet
@@ -9,7 +8,7 @@ module Pcabinet exposing
 
 # Functions
 
-@docs render_cabinet, switch_cabState, svg_rect_button
+@docs render_cabinet, switch_cabState, svg_rect_button, initial_cab
 
 
 # Datatype

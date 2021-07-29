@@ -1,46 +1,55 @@
-module Pfragment exposing (..)
+module Pfragment exposing
+    ( checkoutwin, getemptypos, initfraModel, render_fra, updatefra
+    , Fragment, FragmentModel, FragmentState(..)
+    )
 
 {-| This module is to accomplish the puzzle of fragment
 
 
 # Functions
 
-@docs initial_computer
-@docs updatetrigger
-@docs draw_computer
+@docs checkoutwin, getemptypos, initfraModel, render_fra, updatefra
 
 
 # Datatype
 
-@docs ComputerModel
-@docs State
+@docs Fragment, FragmentModel, FragmentState
 
 -}
+
 import Debug exposing (toString)
 import Messages exposing (GraMsg(..), Msg(..))
-import String exposing (toInt)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Messages exposing (GraMsg(..), Msg(..))
 
+
+{-| position define its location it the sudoku
+number define its index
+-}
 type alias Fragment =
     { position : ( Int, Int )
     , number : Int
     }
 
 
+{-| The state of fragment
+-}
 type FragmentState
     = Seperated
     | Done
 
 
+{-| The model for fragment puzzle
+-}
 type alias FragmentModel =
     { fragment : List Fragment
     , state : FragmentState
     }
 
 
+{-| Initialize the fragment model
+-}
 initfraModel : FragmentModel
 initfraModel =
     FragmentModel
@@ -63,6 +72,8 @@ initfraModel =
         Seperated
 
 
+{-| Check the result of fragment puzzle
+-}
 checkoutwin : FragmentModel -> FragmentModel
 checkoutwin model =
     let
@@ -105,15 +116,18 @@ getemptypos fra =
     poscompare (getposlist fra)
 
 
+{-| Main update function for fragment puzzle
+-}
 updatefra : Int -> Int -> FragmentModel -> FragmentModel
-updatefra  clknumber index fra =
-        if clknumber == 99 then
-            {fra | state = Done}
-        else if (modBy 4 index) == 0 then
-            fra
-                |> checkoutclick clknumber (index - 1) index
-                |> checkoutclick clknumber (index - 4) index
-                |> checkoutclick clknumber (index + 4) index
+updatefra clknumber index fra =
+    if clknumber == 99 then
+        { fra | state = Done }
+
+    else if modBy 4 index == 0 then
+        fra
+            |> checkoutclick clknumber (index - 1) index
+            |> checkoutclick clknumber (index - 4) index
+            |> checkoutclick clknumber (index + 4) index
 
     else if modBy 4 index == 1 then
         fra
@@ -152,22 +166,24 @@ checkoutclick clknumber index oindex fra =
         fra
 
 
-findpos : Int -> ( Int , Int )
-findpos index = 
-    case (modBy 4 index) of
+findpos : Int -> ( Int, Int )
+findpos index =
+    case modBy 4 index of
         0 ->
-            ((ceiling (toFloat index / 4)), 4)
+            ( ceiling (toFloat index / 4), 4 )
+
         _ ->
-            ((ceiling (toFloat index / 4)), (modBy 4 index))
+            ( ceiling (toFloat index / 4), modBy 4 index )
 
 
-
+{-| Render the fragments
+-}
 render_fra : Int -> FragmentModel -> Int -> List (Svg Msg)
-render_fra cs model cle=
+render_fra cs model cle =
     case cs of
         0 ->
             if cle == 0 then
-                [Svg.rect
+                [ Svg.rect
                     [ SvgAttr.x "62.5"
                     , SvgAttr.y "445"
                     , SvgAttr.width "135"
@@ -180,56 +196,69 @@ render_fra cs model cle=
 
             else
                 []
-        
+
         9 ->
             drawhrd model
 
         _ ->
             []
 
+
 drawhrd : FragmentModel -> List (Svg Msg)
-drawhrd model = 
+drawhrd model =
     case model.state of
         Seperated ->
-                  drawpictureframe ++ drawFragment model.fragment ++ drawframe ++ drawButton model.fragment
-                  ++ drawcheatingbutton
+            drawpictureframe
+                ++ drawFragment model.fragment
+                ++ drawframe
+                ++ drawButton model.fragment
+                ++ drawcheatingbutton
 
-        Done -> 
+        Done ->
             drawpictureframe
 
+
 drawpassview : List (Svg Msg)
-drawpassview = 
-        [Svg.image 
-            [ SvgAttr.x "550"
-            , SvgAttr.y "20"
-            , SvgAttr.width "400"
-            , SvgAttr.height "700"
-            , SvgAttr.xlinkHref "assets/f1.jpg"
-            ][]]
+drawpassview =
+    [ Svg.image
+        [ SvgAttr.x "550"
+        , SvgAttr.y "20"
+        , SvgAttr.width "400"
+        , SvgAttr.height "700"
+        , SvgAttr.xlinkHref "assets/f1.jpg"
+        ]
+        []
+    ]
 
 
 drawpictureframe : List (Svg Msg)
-drawpictureframe = 
-        [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/fragment/h_back.png"
-            ][]
+drawpictureframe =
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/fragment/h_back.png"
+        ]
+        []
+    ]
 
-            ]
+
 drawframe : List (Svg Msg)
 drawframe =
-        [Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.xlinkHref "assets/level0/fragment/h_up.png"
-            ][]
-            ]
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.xlinkHref "assets/level0/fragment/h_up.png"
+        ]
+        []
+    ]
+
+
 drawFragment : List Fragment -> List (Svg Msg)
-drawFragment fra = 
+drawFragment fra =
     List.map drawoneFragment fra
+
 
 drawButton : List Fragment -> List (Svg Msg)
 drawButton fra =
@@ -239,51 +268,57 @@ drawButton fra =
 drawoneFragment : Fragment -> Svg Msg
 drawoneFragment fra =
     let
-        cx = String.fromInt (415 + 150 * (Tuple.second fra.position))
+        cx =
+            String.fromInt (415 + 150 * Tuple.second fra.position)
 
-        cy = String.fromInt (5 + 150 * (Tuple.first fra.position))
+        cy =
+            String.fromInt (5 + 150 * Tuple.first fra.position)
 
         ulr =
-            "assets/level0/fragment/m2_" ++ toString(fra.number)++ ".jpg"
-
+            "assets/level0/fragment/m2_" ++ toString fra.number ++ ".jpg"
     in
-        Svg.image 
-            [ SvgAttr.x cx
-            , SvgAttr.y cy
-            , SvgAttr.width "140"
-            , SvgAttr.xlinkHref ulr
-            ][]
+    Svg.image
+        [ SvgAttr.x cx
+        , SvgAttr.y cy
+        , SvgAttr.width "140"
+        , SvgAttr.xlinkHref ulr
+        ]
+        []
 
 
 drawoneFragment_button : Fragment -> Svg Msg
 drawoneFragment_button fra =
     let
-        cx = String.fromInt (415 + 148 * (Tuple.second fra.position))
+        cx =
+            String.fromInt (415 + 148 * Tuple.second fra.position)
 
-        cy = String.fromInt (5 + 148 * (Tuple.first fra.position))
+        cy =
+            String.fromInt (5 + 148 * Tuple.first fra.position)
 
-        num = (4 * (Tuple.first fra.position - 1) + (Tuple.second fra.position))
-
-
+        num =
+            4 * (Tuple.first fra.position - 1) + Tuple.second fra.position
     in
-        Svg.rect
-            [ SvgAttr.x cx
-            , SvgAttr.y cy
-            , SvgAttr.width "145"
-            , SvgAttr.height "145"
-            , SvgAttr.fillOpacity "0.0"
-            , Svg.Events.onClick (OnClickTriggers num)
-            ][]
+    Svg.rect
+        [ SvgAttr.x cx
+        , SvgAttr.y cy
+        , SvgAttr.width "145"
+        , SvgAttr.height "145"
+        , SvgAttr.fillOpacity "0.0"
+        , Svg.Events.onClick (OnClickTriggers num)
+        ]
+        []
 
 
 drawcheatingbutton : List (Svg Msg)
 drawcheatingbutton =
-        [Svg.rect
-            [ SvgAttr.x "90%"
-            , SvgAttr.y "60%"
-            , SvgAttr.width "5%"
-            , SvgAttr.height "5%"
-            , SvgAttr.opacity "0.0"
-            , SvgAttr.fill "silver"
-            , Svg.Events.onClick (OnClickTriggers 99)
-            ][]]
+    [ Svg.rect
+        [ SvgAttr.x "90%"
+        , SvgAttr.y "60%"
+        , SvgAttr.width "5%"
+        , SvgAttr.height "5%"
+        , SvgAttr.opacity "0.0"
+        , SvgAttr.fill "silver"
+        , Svg.Events.onClick (OnClickTriggers 99)
+        ]
+        []
+    ]
