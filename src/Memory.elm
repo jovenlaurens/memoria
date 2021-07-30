@@ -347,13 +347,13 @@ textBase_0 =
     , Page "but if you're really interested..." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 9 --9
     , Page "I met my true love. " "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 10 --10
     , Page "I've always wondered what would have happened if I had held on to him." "Maria" "assets/intro.png" "assets/girl/9.png" Dialogue 11 --11
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 12 --12
+    , Page "End" "" "assets/intro.png" "assets/girl/1.png" End 12 --12
 
     --1B
     , Page "Have you ever been inspired by perfection?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 13 --13
     , Page "My imagination went wild and I couldn't stop my pen from telling this story." "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 14 --14
     , Page "What are the limits of perfection?" "Maria" "assets/intro.png" "assets/girl/1.png" Dialogue 15 --15
-    , Page "End" "" "assets/intro.png" "assets/girl1.png" End 16 --16
+    , Page "End" "" "assets/intro.png" "assets/girl/1.png" End 16 --16
 
     --1C
     , Page "I'm working on my autobiography." "Maria" "assets/intro.png" "assets/girl/3.png" Dialogue 17 --17
@@ -530,8 +530,6 @@ textBase_3 =
     , Page "Can you understand this kind of feeling?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 42
     , Page "Something is just gnawing my heart, weighing down my spirit." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 43
     , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 44
-
-
     , Page "..." "" "assets/intro.png" "assets/blank.png" Dialogue 45
     , Page "......" "" "assets/intro.png" "assets/blank.png" Dialogue 46
     , Page "........." "I" "assets/intro.png" "assets/blank.png" Dialogue 47

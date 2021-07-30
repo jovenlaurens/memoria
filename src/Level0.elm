@@ -1,6 +1,5 @@
 module Level0 exposing (level_0_furniture)
 
-
 {-| This module contains the main picture of the level0 furniture in svg style
 
 
@@ -10,15 +9,16 @@ module Level0 exposing (level_0_furniture)
 
 -}
 
-
 import Furnitures exposing (drawFloor)
 import Html.Events exposing (onClick)
+import Messages exposing (Msg(..))
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Messages exposing (Msg(..))    
 
 
+{-| level 0 furniture
+-}
 level_0_furniture : Int -> Bool -> List (Svg Msg)
 level_0_furniture end li =
     let
@@ -59,10 +59,12 @@ level_0_furniture end li =
 
                 1 ->
                     "s2"
+
                 _ ->
                     "s3"
 
-        s = if end /= -1 then
+        s =
+            if end /= -1 then
                 [ Svg.image
                     [ SvgAttr.x "0"
                     , SvgAttr.y "0"
@@ -70,7 +72,8 @@ level_0_furniture end li =
                     , SvgAttr.height "100%"
                     , SvgAttr.xlinkHref ("assets/level0/cs0/" ++ show ++ ".png")
                     ]
-                    []]
+                    []
+                ]
 
             else
                 []
