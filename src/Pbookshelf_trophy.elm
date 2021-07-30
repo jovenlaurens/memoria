@@ -42,6 +42,8 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
+import Button exposing (trans_button_sq)
+
 
 
 {-| Render the button to switch the scene from main to the trophy puzzle game scene
@@ -52,7 +54,7 @@ render_trophy_button =
         enter =
             Button.Button 66 41 21 9 "" (StartChange (ChangeScene 10)) ""
     in
-    test_button enter
+    trans_button_sq enter
 
 
 

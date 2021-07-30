@@ -19,7 +19,6 @@ module Messages exposing
 
 import Browser.Dom exposing (Viewport)
 import Debug exposing (toString)
-import Draggable
 import Geometry exposing (Location)
 import Svg exposing (Svg)
 import Svg.Attributes
@@ -40,8 +39,6 @@ type Msg
     | GetViewport Viewport
     | Resize Int Int
     | Tick Float --need
-    | OnDragBy Draggable.Delta
-    | DragMsg (Draggable.Msg ())
     | Charge Int
     | Lighton Int -- fror two click in level2 cscene = 0( 0 -> window 1 -> light)
     | Plus Int
@@ -66,7 +63,7 @@ type GraMsg
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer
     | EndMemory
-
+    | EndGame   
 
 
 --Intro

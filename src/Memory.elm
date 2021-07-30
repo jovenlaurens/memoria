@@ -218,7 +218,6 @@ render_page page opa =
                     [ svg_rect 0 70 1000 300
                     , svg_rect 50 40 150 60
                     , svg_text 50 160 500 300 page.content opa
-                    , svg_text 50 200 500 300 (toString page.index) opa
                     , svg_text 70 80 150 60 page.speaker opa
                     ]
                 , trans_button_sq (Button 0 0 100 100 "" eff "block")
@@ -315,9 +314,9 @@ render_choice index page opa =
             , SvgAttr.height "100%"
             , SvgAttr.viewBox "0 0 1600 900"
             ]
-            [ svg_tran_button 600 300 400 60 (StartChange (Choice index 0))
-            , svg_tran_button 600 400 400 60 (StartChange (Choice index 1))
-            , svg_tran_button 600 500 400 60 (StartChange (Choice index 2))
+            [ svg_tran_button 500 300 600 60 (StartChange (Choice index 0))
+            , svg_tran_button 500 400 600 60 (StartChange (Choice index 1))
+            , svg_tran_button 500 500 600 60 (StartChange (Choice index 2))
             , svg_text 700 340 200 60 ca opa
             , svg_text 700 440 200 60 cb opa
             , svg_text 700 540 200 60 cc opa
@@ -531,10 +530,12 @@ textBase_3 =
     , Page "Can you understand this kind of feeling?" "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 42
     , Page "Something is just gnawing my heart, weighing down my spirit." "Maria" "assets/intro.png" "assets/girl/6.png" Dialogue 43
     , Page "End" "" "assets/intro.png" "assets/girl1.png" Dialogue 44
-    , Page "..." "" "assets/intro.png" "" Dialogue 45
-    , Page "......" "" "assets/intro.png" "" Dialogue 46
-    , Page "........." "I" "assets/intro.png" "" Dialogue 47
-    , Page "Something appears in the basement. Now, go for it." "I" "assets/intro.png" "" End 48
+
+
+    , Page "..." "" "assets/intro.png" "assets/blank.png" Dialogue 45
+    , Page "......" "" "assets/intro.png" "assets/blank.png" Dialogue 46
+    , Page "........." "I" "assets/intro.png" "assets/blank.png" Dialogue 47
+    , Page "Something appears in the basement. Now, go for it." "I" "assets/intro.png" "assets/blank.png" End 48
     ]
 
 

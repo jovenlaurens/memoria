@@ -19,10 +19,9 @@ module Button exposing
 
 import Debug exposing (toString)
 import Html exposing (..)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Messages exposing (Msg)
-import Svg.Attributes exposing (display)
 
 
 {-| The button type needs argument of button its left top width height content effect(mostly Msg) and display to generate the Html button

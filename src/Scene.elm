@@ -20,7 +20,7 @@ module Scene exposing
 {-| The objectOrder is a list for all the index of the object in this scene, and the pictureSrc is to locates its location in Program structure files
 -}
 type alias Scene =
-    { objectOrder : List Int --这一层所有object的编号的列表，render的时候按照这个render
+    { objectOrder : List Int 
     , pictureSrc : String
     }
 

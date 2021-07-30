@@ -12,7 +12,6 @@ module Main exposing (main, init, subscriptions)
 import Browser
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta, onResize)
-import Draggable
 import Messages exposing (..)
 import Model exposing (..)
 import Preload
@@ -47,5 +46,4 @@ subscriptions model =
     Sub.batch
         [ onAnimationFrameDelta Tick
         , onResize Resize
-        , Draggable.subscriptions DragMsg model.drag
         ]

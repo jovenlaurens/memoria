@@ -140,7 +140,7 @@ updatecorrectpw : ComputerModel -> ComputerModel
 updatecorrectpw model =
     -- here is the standard password input,
     -- the order of the password is reversed
-    if model.word == [ 1, 2, 3, 4 ] then
+    if model.word == [ 6, 8, 9, 1 ] || model.word == [ 1, 9, 8, 6 ] || model.word == [ 9, 8, 6, 1 ]   then
         { model | state = Charged 1 }
 
     else
@@ -151,7 +151,7 @@ updatecorrectsfpw : ComputerModel -> ComputerModel
 updatecorrectsfpw model =
     -- here is the standard password input,
     -- the order of the password is reversed
-    if model.sfword == [ 1, 2, 3, 4 ] then
+    if model.sfword == [ 6, 8, 9, 1 ] then
         { model | safestate = Charged 1 }
 
     else
@@ -542,7 +542,7 @@ render_safebox l0s commodel =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
+                , SvgAttr.xlinkHref "assets/level0/safebox/blank.jpg"
                 ]
                 []
             , Svg.image
@@ -562,7 +562,7 @@ render_safebox l0s commodel =
                     , SvgAttr.y "0"
                     , SvgAttr.width "100%"
                     , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
+                    , SvgAttr.xlinkHref "assets/level0/safebox/face.jpg"
                     ]
                     []
                 , Svg.image

@@ -19,6 +19,8 @@ module Pfragment exposing
 
 import Debug exposing (toString)
 import Messages exposing (GraMsg(..), Msg(..))
+import String exposing (toInt)
+
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events

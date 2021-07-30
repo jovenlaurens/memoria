@@ -12,7 +12,6 @@ module View exposing (view)
 import Button exposing (Button, black_white_but, test_button, trans_button_sq)
 import Debug exposing (toString)
 import Document exposing (Document, render_document_detail, render_newspaper_index)
-import Draggable
 import Furnitures exposing (..)
 import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
 import Html exposing (Html, button, div, text)
@@ -24,23 +23,31 @@ import Memory exposing (MeState(..), Memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
-import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
-import Pbulb exposing (Bulb, render_bulb)
-import Pcabinet exposing (render_cabinet)
+import Pbulb exposing (render_bulb)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
 import Pcomputer exposing (draw_computer)
-import Pdolls exposing (drawdoll_ui)
-import Pfragment exposing (..)
-import Picture exposing (Picture, ShowState(..), list_index_picture, render_frame, render_inventory, render_picture_button)
-import Pmirror exposing (LightState(..), draw_frame, draw_light, draw_mirror, render_mirror)
-import Ppiano exposing (PianoModel, draw_key_set, play_audio, render_piano_button)
+import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
+import Pmirror exposing (draw_frame, draw_light, draw_mirror)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio)
 import Ppower exposing (drawpowersupply)
-import Pstair exposing (render_stair_level, stair_button_level_1l)
-import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_button)
+import Pstair exposing (render_stair_level)
+import Ptable exposing (draw_block, drawpath, render_table_button)
+import Pfragment exposing (..)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
+import Pdolls exposing (drawdoll_ui)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-
+import Pcabinet exposing (render_cabinet)
+import Pmirror exposing (render_mirror, LightState(..))
+import Picture exposing (render_inventory)
+import Pbulb exposing (Bulb)
+import Button exposing (black_white_but)
+import Ptable exposing (draw_coffee_back)
+import Picture exposing (render_frame)
+import Pstair exposing (stair_button_level_1l)
+import Ppiano exposing (render_piano_button)
+import Intro exposing (render_end)
 
 style =
     Html.Attributes.style
@@ -86,7 +93,7 @@ view model =
         , style "left" "0"
         , style "top" "0"
         , style "background-color" "#000000"
-
+        , style "overflow" "hidden"
         --, style ""
         ]
         [ div
@@ -123,104 +130,58 @@ view model =
                         , style "position" "absolute"
                         ]
                         (if model.cscreen.cscene == 0 then
-                            render_level model
+                            render_object model
+    
+                        :: render_button_level model.cscreen.clevel model
 
                          else
-                            render_object model
-                                :: render_button_inside model.cscreen.cscene model.objects
+                            [render_object model, drawbackbutton]
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                                 ++ render_picture model.pictures model.cscreen.cscene
                         )
-                    ]
-                        ++ [ text (toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2)
-                           ]
-                        --test
+
+                    
+                           ] --test
                         ++ render_ui_button 0
 
                 1 ->
-                    [ menu_back 1 1
-                    , menu_back 1 2
-                    , menu_back 1 3
+                    [ (menu_back 1 1)
+                    , (menu_back 1 2)
+                    , (menu_back 1 3)
                     ]
-                        ++ render_ui_button 1
+                    ++ render_ui_button 1
 
                 2 ->
-                    [ render_wall_1
-                    , Html.embed
-                        [ Html.Attributes.type_ "image/png"
-                        , src "assets/memory_menu1.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "15%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-                    ]
+                    render_hint
+                    
                         ++ render_ui_button 2
 
-                3 ->
-                    --第二页memory
-                    [ render_wall_1
-                    , Html.embed
-                        [ Html.Attributes.type_ "image/png"
-                        , src "assets/memory_menu2.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "15%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-                    ]
-                        ++ render_ui_button 3
-
-                4 ->
-                    --第三页memory
-                    [ render_wall_1
-                    , Html.embed
-                        [ Html.Attributes.type_ "image/png"
-                        , src "assets/memory_menu3.png"
-                        , style "top" "0%"
-                        , style "left" "0%"
-                        , style "width" "15%"
-                        , style "height" "100%"
-                        , style "position" "absolute"
-                        ]
-                        []
-                    , div
-                        [ style "top" "87%"
-                        , style "left" "8%"
-                        , style "height" "10%"
-                        , style "width" "6%"
-                        , style "background-color" "white"
-                        , style "position" "absolute"
-                        ]
-                        []
-                    ]
-                        ++ render_ui_button 4
-
                 10 ->
-                    render_ui_button 10
-                        ++ [ text "this is Achievement page" ]
+                    render_achieve
+
+                    ++ render_ui_button 10
+
 
                 11 ->
-                    --游戏中的document 详细界面
                     render_ui_button 11
                         ++ render_document_detail model.cscreen.cdocu
 
                 12 ->
-                    --menu中的document 详细界面
                     render_ui_button 12
                         ++ render_document_detail model.cscreen.cdocu
 
                 20 ->
                     render_ui_button 20
                         ++ render_memory model.cscreen.cmemory model.cscreen.cpage gcontent model.opac
-                        ++ [ text (toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2)
-                           ]
+                        ++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
+                           ] --test
 
+                30 ->
+                    render_end model.choice.end model.end
+                        ++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
+                    , text (toString model.choice.end)
+                    ]
                 --test
                 _ ->
                     [ text (toString model.cscreen.cstate) ]
@@ -258,11 +219,7 @@ render_wall_1 =
         []
 
 
-render_level : Model -> List (Html Msg)
-render_level model =
-    [ render_object model
-    ]
-        ++ render_button_level model.cscreen.clevel model
+
 
 
 get_trophy : List Object -> Bool
@@ -279,7 +236,6 @@ get_trophy lst =
     in
     List.any get_trophy_face lst
 
-
 render_button_level : Int -> Model -> List (Html Msg)
 render_button_level level model =
     --放到button里
@@ -291,7 +247,7 @@ render_button_level level model =
 
                 screen =
                     if model.choice.end /= -1 then
-                        [ test_button (Button 10 5 40 40 "" (StartChange (ChangeScene 15)) "block") ]
+                        [ trans_button_sq (Button 6 12 30 32 "" (StartChange (ChangeScene 15)) "block") ]
 
                     else
                         []
@@ -335,10 +291,6 @@ render_mirror_button =
     trans_button_sq but
         |> List.singleton
 
-
-render_button_inside : Int -> List Object -> List (Html Msg)
-render_button_inside cs objs =
-    [ drawbackbutton ]
 
 
 
@@ -420,17 +372,7 @@ render_level_2 model =
         ++ render_window model
 
 
-render_level_0 : Model -> List (Svg Msg)
-render_level_0 model =
-    [ Svg.image
-        [ SvgAttr.x "0"
-        , SvgAttr.y "0"
-        , SvgAttr.width "100%"
-        , SvgAttr.height "100%"
-        , SvgAttr.xlinkHref "assets/level0/cs0/level0.png"
-        ]
-        []
-    ]
+
 
 
 render_window : Model -> List (Svg Msg)
@@ -599,9 +541,9 @@ render_picture_index index =
         4 ->
             Html.img
                 [ src ("assets/picts/" ++ toString index ++ ".png")
-                , style "top" "50%"
-                , style "left" "35%"
-                , style "width" "36%"
+                , style "top" "65%"
+                , style "left" "55%"
+                , style "width" "17%"
                 , style "position" "absolute"
                 , onClick (OnClickItem index)
                 ]
@@ -704,7 +646,6 @@ render_object_inside cklst scne cle obj old =
                     else
                         []
 
-                --三层楼都需要，所以不加level判定
                 Power a ->
                     if cle == 0 then
                         drawpowersupply a 0 cle
@@ -745,7 +686,7 @@ render_object_only model cs objects =
     in
     case tar of
         Mirror a ->
-            render_mirror a
+            render_mirror model.checklist.level2light a
 
         Clock a ->
             [ drawclock cs
@@ -802,7 +743,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc1.png"
+                        , SvgAttr.xlinkHref "assets/level0/sc1.jpg"
                         ]
                         []
 
@@ -812,7 +753,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc2.png"
+                        , SvgAttr.xlinkHref "assets/level0/sc2.jpg"
                         ]
                         []
 
@@ -822,7 +763,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc3.png"
+                        , SvgAttr.xlinkHref "assets/level0/sc3.jpg"
                         ]
                         []
 
@@ -905,25 +846,14 @@ render_ui_button cstate =
             Button 8 4.5 3.66 6.5 "Re" Reset "block"
 
         enterMemory =
-            Button 40 20 20 10 "Memory" (StartChange RecallMemory) "block"
+            Button 40 20 20 10 "Hints" (StartChange RecallMemory) "block"
 
-        next =
-            Button 8.5 87.5 5 8 "→" (StartChange (MovePage 1)) "block"
-
-        prev =
-            Button 2.8 87.5 4.2 8 "←" (StartChange (MovePage -1)) "block"
 
         achieve =
-            Button 40 50 20 10 "Achievement" (StartChange Achievement) "block"
+            Button 40 50 20 10 "Thanks" (StartChange Achievement) "block"
 
         backAchi =
             Button 2 2 4 4 "Back" (StartChange Pause) "block"
-
-        testMemory1 =
-            Button 14 2 4 4 "test" (StartChange (BeginMemory 0)) "block"
-
-        testMemory2 =
-            Button 14 8 4 4 "test" (StartChange (BeginMemory 1)) "block"
 
         testBack =
             Button 14 2 4 4 "main" (StartChange EndMemory) "block"
@@ -931,8 +861,6 @@ render_ui_button cstate =
     case cstate of
         0 ->
             [ test_button pause
-            , test_button testMemory1
-            , test_button testMemory2
             ]
 
         1 ->
@@ -943,19 +871,7 @@ render_ui_button cstate =
             ]
 
         2 ->
-            [ trans_button_sq back
-            , trans_button_sq next
-            ]
-
-        3 ->
-            [ trans_button_sq next
-            , trans_button_sq prev
-            , trans_button_sq back
-            ]
-
-        4 ->
-            [ trans_button_sq prev
-            , trans_button_sq back
+            [ test_button back
             ]
 
         10 ->
@@ -979,7 +895,7 @@ render_ui_button cstate =
             ]
 
         _ ->
-            []
+            [trans_button_sq back]
 
 
 menu_back : Float -> Int -> Html Msg
@@ -1012,3 +928,68 @@ play_piano_audio currentScene objectSet =
                 div [] []
     in
     List.map (play_piano_audio_help currentScene) objectSet
+
+render_hint : List ( Html msg)
+render_hint =
+    [ Html.img
+                [ src ("assets/intro/1.png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                ]
+                []
+    , Html.img
+                [ src ("assets/intro/2.png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                ]
+                []
+    , div
+            [ style "top" "20%"
+            , style "left" "20%"
+            , style "width" "60%"
+            , style "height" "60%"
+            , style "text-align" "left"
+            , style "position" "absolute"
+            , style "font-size" "40"
+            , style "font-family" "Times New Roman"
+            ]
+            [ text "test for hints"
+            ]
+    ]
+
+render_achieve : List ( Html msg)
+render_achieve =
+    [ Html.img
+                [ src ("assets/intro/1.png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                ]
+                []
+    , Html.img
+                [ src ("assets/intro/2.png")
+                , style "top" "0%"
+                , style "left" "0%"
+                , style "width" "100%"
+                , style "position" "absolute"
+                ]
+                []
+    , div
+            [ style "top" "20%"
+            , style "left" "20%"
+            , style "width" "60%"
+            , style "height" "60%"
+            , style "text-align" "left"
+            , style "position" "absolute"
+            , style "font-size" "40"
+            , style "font-family" "Times New Roman"
+            ]
+            [ text "testfor thanks"
+            ]
+    ]
+

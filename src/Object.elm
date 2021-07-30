@@ -171,7 +171,7 @@ test_table loca pre =
 -}
 initial_objects : List Object
 initial_objects =
-    --cscene = 0,            -|obj |cscene|所在楼层|描述
+
     [ Clock (ClockModel 7 30) --0    1        1
     , Table initial_table --1    2        1
     , Frame (FrameModel [ 0 ]) --2    3        1

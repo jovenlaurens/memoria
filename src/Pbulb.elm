@@ -186,7 +186,6 @@ render_bulb cs model =
         8 ->
             drawbulb_image
                 ++ List.map drawlight model.bulb
-                ++ render_test model
 
         _ ->
             []
