@@ -286,22 +286,28 @@ toFloatPoint ( x, y ) =
 
 {-| Render who is favourite game in mirror puzzle game
 -}
-render_mirror : MirrorModel -> List (Svg Msg)
-render_mirror a =
+render_mirror : Bool -> MirrorModel -> List (Svg Msg)
+render_mirror lion a =
     let
-        key =
-            if (a.stage |> Tuple.first) == Pass then
-                draw_keyboard a.ipad.keyboard a.ipad.keyIndex
+        key = if ( a.stage |> Tuple.first ) == Pass then
+                    draw_keyboard a.ipad.keyboard a.ipad.keyIndex
+              else
+                    []
 
+        pzz = 
+            if lion then
+                draw_frame a.frame
+                ++ draw_mirror a.mirrorSet
+                ++ draw_light a.lightSet
             else
                 []
+
+
     in
-    draw_mirror_back a.lightstate
-        ++ draw_frame a.frame
-        ++ draw_mirror a.mirrorSet
-        ++ draw_light a.lightSet
-        ++ draw_question a.stage a.ipad.answer
-        ++ key
+       draw_mirror_back a.lightstate
+    ++ pzz
+    ++ draw_question a.stage a.ipad.answer
+    ++ key
 
 
 draw_light_and_mirror : MirrorModel -> List (Svg Msg)
@@ -369,7 +375,23 @@ draw_question ( a, b ) answer =
         ]
 
     else
-        [ svg_text_2 500 300 100 100 (toString answer)
+        [
+            Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level2/padscreen.png"
+                ]
+                []
+            , Svg.image
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.xlinkHref "assets/level2/pia.png"
+                ]
+                []
         ]
 
 
@@ -488,7 +510,7 @@ draw_light lightSet =
         [ SvgAttr.id "light"
         , SvgAttr.d path_argument
         , SvgAttr.strokeWidth "2"
-        , SvgAttr.stroke "blue"
+        , SvgAttr.stroke "white"
         , SvgAttr.fill "none"
         , SvgAttr.transform "rotate(-90,520,150),scale(0.75),translate(30,45)"
         ]
@@ -516,7 +538,7 @@ draw_single_mirror mirror =
         , SvgAttr.x2 x2
         , SvgAttr.y1 y1
         , SvgAttr.y2 y2
-        , SvgAttr.stroke "blue"
+        , SvgAttr.stroke "black"
         , SvgAttr.strokeWidth "10"
         , SvgAttr.transform "rotate(-90,520,150),scale(0.75),translate(30,45)"
         , onClick (OnClickTriggers mirror.index)
@@ -541,7 +563,7 @@ draw_frame locationList =
             Svg.rect
                 [ SvgAttr.width (toString (frameWidth - 4))
                 , SvgAttr.height (toString (frameHeight - 4))
-                , SvgAttr.fill "Blue"
+                , SvgAttr.fill "white"
                 , SvgAttr.x (toString location.x)
                 , SvgAttr.y (toString location.y)
                 , SvgAttr.opacity "0.1"

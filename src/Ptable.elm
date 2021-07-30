@@ -45,6 +45,8 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events exposing (onClick)
+import Button exposing (trans_button_sq)
+
 
 
 {-| The block will be active if it is pressed in a legal way

@@ -10,7 +10,8 @@ module Pstair exposing (render_stair_level, stair_button_level_1l)
 -}
 
 import Button exposing (..)
-import Html exposing (Html)
+import Debug exposing (toString)
+import Html exposing (Html, button)
 import Messages exposing (GraMsg(..), Msg(..))
 
 

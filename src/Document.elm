@@ -81,7 +81,7 @@ render_document_detail index =
     case index of
         1 ->
             [ Html.img
-                        [ src "assets/level1/drawerclose.png"
+                        [ src "assets/level1/drawerclose.jpg"
                         , style "top" "0%"
                         , style "left" "0%"
                         , style "width" "100%"
@@ -102,7 +102,7 @@ render_document_detail index =
             ]
         2 ->
             [ Html.img
-                        [ src "assets/level1/drawerclose.png"
+                        [ src "assets/level1/drawerclose.jpg"
                         , style "top" "0%"
                         , style "left" "0%"
                         , style "width" "100%"

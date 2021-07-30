@@ -82,21 +82,31 @@ get_low_12 cab =
         ( [ svg_rect_button 400 590 600 125 (OnClickTriggers 1) ], False )
 
 
-get_high_12 : CabinetModel -> List (Svg msg)
+get_high_12 : CabinetModel -> List (Svg Msg)
 get_high_12 cab =
     if cab.upper == Open then
-        [ Svg.image
-            [ SvgAttr.x "0"
-            , SvgAttr.y "0"
-            , SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level1/drawerup.png"
+            [
+                Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/drawerup.png"
+                    ]
+                    []
+                ,Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.height "100%"
+                    , SvgAttr.xlinkHref "assets/level1/diary.png"
+                    , Svg.Events.onClick (StartChange (EndGame))
+                    ]
+                    []                           
             ]
-            []
-        ]
-
     else
-        []
+        [svg_rect_button 400 420 600 125 (OnClickTriggers 2)]
+                
 
 
 {-| Render the cabinet, the first parameter is the current scene , second one is current level.
@@ -129,23 +139,23 @@ render_cabinet cs cle cab =
                         ]
                         []
 
-                caf =
-                    [ svg_rect_button 580 340 100 50 (StartChange (OnClickDocu 2)) ]
+                test = 
+                    Svg.text_
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width "100%"
+                        , SvgAttr.height "100%"
+                        ]
+                        [
+                            Svg.text (toString cab.upper)
+                        ]
+
+                caf = [svg_rect_button 580 340 100 50 ( StartChange ( OnClickDocu 2))]
             in
-            if cab.lower == Open then
-                [ bk ] ++ lo ++ hi ++ [ dr ] ++ caf
-
-            else
-                [ bk, dr ] ++ lo ++ hi ++ caf
-
-        ( 13, 2 ) ->
-            [ svg_rect_button 300 100 1000 250 (OnClickTriggers 0)
-            , svg_rect_button 300 350 1000 250 (OnClickTriggers 1)
-            , svg_rect_button 300 50 500 25 (OnClickTriggers 2)
-            , svg_text_1 100 200 100 100 (toString cab.upper)
-            , svg_text_1 100 300 100 100 (toString cab.lower)
-            , svg_text_1 100 400 100 100 (toString cab.aboveThing.break)
-            ]
+                if cab.lower == Open then
+                    [bk, test]  ++lo++hi++[dr]++caf
+                else
+                    [bk, test, dr]++lo++hi++caf
 
         _ ->
             []

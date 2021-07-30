@@ -8,28 +8,33 @@ module Update exposing (update)
 @docs update
 
 -}
-
 import Browser.Dom exposing (getViewport)
-import Draggable
 import Geometry exposing (Line, Location, refresh_lightSet, rotate_mirror)
 import Gradient exposing (ColorState(..), Gcontent(..), GradientState(..), ProcessState(..), Screen, default_process, default_word_change)
 import Intro exposing (get_new_intro, update_intropage)
 import Messages exposing (..)
 import Model exposing (..)
-import Object exposing (ClockModel, Object(..), get_computer_state, get_doll_number, get_fragment_state, get_pig_state, get_time, test_table)
-import Pbookshelf_trophy exposing (get_bookshelf_order, rotate_trophy, update_bookshelf)
-import Pbulb exposing (Color(..), checkoutwin, update_bulb_inside)
-import Pcabinet exposing (CabinetModel, switch_cabState)
+import Object exposing (ClockModel, Object(..), get_time, test_table, get_doll_number, get_pig_state, get_computer_state, get_fragment_state)
+import Pbulb exposing (Color(..),  update_bulb_inside)
 import Pcomputer exposing (State(..))
-import Pdolls exposing (..)
-import Pfragment exposing (FragmentState(..))
-import Picture exposing (Picture, ShowState(..), list_index_picture, show_index_picture)
-import Pmirror exposing (LightState(..), refresh_keyboard, test_keyboard_win_inside)
+import Picture exposing (Picture, ShowState(..), show_index_picture)
 import Ppiano exposing (bounce_key, check_order, press_key)
 import Ppower exposing (PowerState(..))
 import Ptable exposing (BlockState(..))
+import Pfragment exposing(FragmentState(..))
+import Pdolls exposing (..)
+import Pbookshelf_trophy exposing (get_bookshelf_order, rotate_trophy, update_bookshelf)
 import Svg.Attributes exposing (color, speed)
 import Task
+import Pcabinet exposing (CabinetModel)
+import Pcabinet exposing (switch_cabState)
+import Pmirror exposing (refresh_keyboard)
+import Pmirror exposing (test_keyboard_win_inside, LightState(..))
+import Picture exposing (list_index_picture)
+import Pbulb exposing (checkoutwin)
+import Object exposing (get_pig_state)
+import Intro exposing (get_new_end)
+
 
 
 {-| Main update function
@@ -57,7 +62,6 @@ update msg model =
             , Cmd.none
             )
 
-        --cscene = 1代表 object 的index是0
         Reset ->
             --maybe gra
             ( initial, Task.perform GetViewport getViewport )
@@ -89,15 +93,6 @@ update msg model =
                 ( model, Cmd.none )
 
         --need improved
-        OnDragBy ( dx, dy ) ->
-            let
-                ( x, y ) =
-                    model.spcPosition
-            in
-            ( { model | spcPosition = ( x + dx, y + dy ) }, Cmd.none )
-
-        DragMsg dragMsg ->
-            Draggable.update dragConfig dragMsg model
 
         OnClickTriggers number ->
             ( update_onclicktrigger model number
@@ -135,7 +130,8 @@ update msg model =
             )
 
         Plus a ->
-            ( { model | intro = update_intropage model.intro }
+            ( { model | intro = update_intropage model.intro
+                      , end = update_intropage model.end }
             , Cmd.none
             )
 
@@ -238,8 +234,14 @@ animate model elapsed =
 
         new_intro =
             get_new_intro model.intro model.cscreen.cstate
+        
+        new_end = 
+            
+            get_new_end model.end model.cscreen.cstate
     in
-    { stage_1 | intro = new_intro }
+      { stage_1 | intro = new_intro 
+              , end = new_end
+    }
 
 
 test_keyboard_win : List Object -> List Object
@@ -305,7 +307,7 @@ get_new_choice submsg list =
 
 get_end : ChooseList -> ChooseList
 get_end old =
-    if old.m3c4 /= -1 then
+    if  old.m3c4 /= -1 && old.m0c0 /= -1 && old.m1c2 /= -1 && old.m2c3 /= -1 then
         let
             g1 =
                 case old.m0c0 of
@@ -375,7 +377,7 @@ get_end old =
                 else
                     2
 
-            --可以improve一些
+            --improve
         in
         { old | end = end }
 
@@ -409,19 +411,6 @@ get_cur_choice list index =
 --need
 
 
-replace : Int -> Int -> List Int -> List Int
-replace a b old =
-    let
-        former =
-            List.take a old
-
-        now =
-            [ b ]
-
-        latter =
-            List.drop (3 - a) old
-    in
-    former ++ now ++ latter
 
 
 get_gra_state : GraMsg -> GradientState
@@ -501,8 +490,7 @@ renew_screen_info submsg old choices =
             }
 
         Forward ->
-            { old
-                | cpage = change_page old choices
+            { old | cpage = change_page old choices
             }
 
         Choice a b ->
@@ -535,25 +523,23 @@ renew_screen_info submsg old choices =
 
                         ( 2, 2 ) ->
                             43
-
                         ( 3, 0 ) ->
                             7
-
+                        
                         ( 3, 1 ) ->
                             12
-
+                    
                         ( 3, 2 ) ->
                             18
-
+                        
                         ( 4, 0 ) ->
                             10
-
+                        
                         ( 4, 1 ) ->
                             25
-
+                    
                         ( 4, 2 ) ->
                             36
-
                         _ ->
                             22
             in
@@ -564,7 +550,10 @@ renew_screen_info submsg old choices =
                 | cdocu = a
                 , cstate = 11
             }
-
+        EndGame ->
+            {
+                old | cstate = 30
+            }
 
 change_page : Screen -> ChooseList -> Int
 change_page old choices =
@@ -597,22 +586,33 @@ change_page old choices =
 
 answer_pair : List ( ( Int, Int, Int ), Int )
 answer_pair =
-    [ ( ( 0, 4, -1 ), 5 )
-    , ( ( 0, 4, 0 ), 8 )
-    , ( ( 0, 4, 1 ), 13 )
-    , ( ( 0, 4, 2 ), 17 )
-    , ( ( 1, 4, -1 ), 5 )
-    , ( ( 1, 4, 0 ), 6 )
-    , ( ( 1, 4, 1 ), 13 )
-    , ( ( 1, 4, 2 ), 18 )
-    , ( ( 1, 11, 0 ), 23 )
-    , ( ( 1, 11, -1 ), 23 )
-    , ( ( 1, 16, 1 ), 23 )
-    , ( ( 1, 16, -1 ), 23 )
-    , ( ( 1, 25, -1 ), 26 )
-    , ( ( 1, 25, 0 ), 27 )
-    , ( ( 1, 25, 1 ), 31 )
-    , ( ( 1, 25, 2 ), 43 )
+    [ (( 0, 4, -1 ), 5)
+    , (( 0, 4, 0 ), 8)
+    , (( 0, 4, 1 ), 13)
+    , (( 0, 4, 2 ), 17)
+    , (( 1, 4, -1 ), 5)
+    , (( 1, 4, 0 ), 6)
+    , (( 1, 4, 1 ), 13)
+    , (( 1, 4, 2 ), 18)
+    , (( 1, 11, 0), 23)
+    , (( 1, 11, -1), 23)
+    , (( 1, 16, 1), 23)
+    , (( 1, 16, -1), 23)
+    , (( 1, 25, -1 ), 26)
+    , (( 1, 25, 0 ), 27)
+    , (( 1, 25, 1 ), 31)
+    , (( 1, 25, 2 ), 43)
+    , (( 2, 5, -1 ), 6)
+    , (( 2, 5, 0 ), 7)
+    , (( 2, 5, 1 ), 12)
+    , (( 2, 5, 2 ), 18)
+    , (( 3, 8, -1 ), 9)
+    , (( 3, 8, 0 ), 10)
+    , (( 3, 8, 1 ), 25)
+    , (( 3, 8, 2 ), 36)
+    , (( 3, 23, 0 ), 45)
+    , (( 3, 34, 1 ), 45)
+    , (( 3, 43, 2 ), 45)
     ]
 
 
@@ -667,7 +667,7 @@ test_clock_win model =
     if hour == 8 && min == 15 && pic1.state == NotShow && model.checklist.level1light == True then
         { model | pictures = show_index_picture 1 model.pictures }
 
-    else if modBy 12 hour == 0 && min == 0 && pic5.state == NotShow && model.checklist.level0piano == True then
+    else if hour == 11 && min == 55 && pic5.state == NotShow && model.checklist.level0piano == True then
         { model | pictures = show_index_picture 5 model.pictures }
 
     else
@@ -952,10 +952,6 @@ change_index_picture index udu list =
     List.map (fin index udu) list
 
 
-dragConfig : Draggable.Config () Msg
-dragConfig =
-    Draggable.basicConfig OnDragBy
-
 
 {-| change the game state currently.
 the meaning of cstate:
@@ -1073,7 +1069,12 @@ update_cab cs number model =
             case ( cse, num, obj ) of
                 ( 12, 1, Cabinet a ) ->
                     Cabinet { a | lower = switch_cabState a.lower }
-
+                
+                ( 12, 2, Cabinet a ) ->
+                    if model.checklist.level1cab == True then
+                        Cabinet {a | upper = switch_cabState a.upper}
+                    else
+                        obj
                 _ ->
                     obj
 
@@ -1081,6 +1082,17 @@ update_cab cs number model =
             List.map (fin cs number) model.objects
     in
     { model | objects = new_obj }
+        |> (\x -> let
+                        cklst = x.checklist
+                      in
+                        if x.underUse == 9 && cklst.level1cab == False then
+                            { x | underUse = 99
+                                , pictures = consume_picture model.pictures 9
+                                , checklist = {cklst | level1cab = True}
+                            }
+                        else
+                            x
+                )
 
 
 
@@ -1319,9 +1331,7 @@ try_to_update_sfbox model number =
 
 
 
---needupdate_lighton : Int -> Model -> Model
-
-
+update_lighton : Int -> Model -> Model
 update_lighton number model =
     case number of
         0 ->
@@ -1344,10 +1354,13 @@ lighton_mirror model =
 
                 _ ->
                     mirror
+        
+        cklst = model.checklist
+
     in
-    { model | objects = List.map toggle model.objects }
-
-
+    { model | objects = List.map toggle model.objects 
+            , checklist = { cklst | level2light = True }
+    }
 
 --need
 
@@ -1417,14 +1430,12 @@ try_to_unlock_picture model number =
     case number of
         0 ->
             if model.underUse == 0 then
-                --碎片的0
                 { model
                     | pictures = consume_picture model.pictures 0
                     , underUse = 99
                 }
 
             else if model.underUse == 1 then
-                --碎片的1
                 { model
                     | pictures = consume_picture model.pictures 1
                     , underUse = 99
@@ -1435,7 +1446,6 @@ try_to_unlock_picture model number =
 
         1 ->
             if model.underUse == 3 then
-                --碎片的8
                 { model
                     | pictures = consume_picture model.pictures 3
                     , underUse = 99
@@ -1443,10 +1453,22 @@ try_to_unlock_picture model number =
 
             else
                 model
+        2 ->
+                    if model.underUse == 4 then 
+                        {
+                            model | pictures = consume_picture model.pictures 4
+                                , underUse = 99
+                        }
+                    else if model.underUse == 5 then 
+                        {
+                            model | pictures = consume_picture model.pictures 5
+                                  , underUse = 99
+                        }
+                    else
+                        model     
 
         3 ->
             if model.underUse == 8 then
-                --碎片的8
                 { model
                     | pictures = consume_picture model.pictures 8
                     , underUse = 99

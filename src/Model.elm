@@ -25,6 +25,8 @@ import Memory exposing (Memory, initial_memory)
 import Object exposing (Object, default_object, initial_objects)
 import Picture exposing (Picture, initial_pictures)
 import Scene exposing (Scene, defaultScene, initial_scene)
+import Svg.Attributes exposing (x)
+import Intro exposing (initial_end)
 
 
 {-| Main model
@@ -37,16 +39,17 @@ type alias Model =
     , scenes : List Scene
     , size : ( Float, Float )
     , spcPosition : ( Float, Float )
-    , drag : Draggable.State ()
     , pictures : List Picture
     , underUse : Int
     , memory : List Memory
     , docu : List Document
     , move_timer : Float
     , opac : Float
-    , intro : IntroPage -- 可以做掉
+    , intro : IntroPage
     , checklist : CheckList
     , choice : ChooseList
+    , end : IntroPage
+
     }
 
 
@@ -62,7 +65,6 @@ initial =
         initial_scene
         ( 0, 0 )
         ( 0, 0 )
-        Draggable.init
         initial_pictures
         99
         initial_memory
@@ -72,6 +74,7 @@ initial =
         initial_intro
         initial_checklist
         initial_chooselist
+        initial_end
 
 
 {-| choose list
@@ -86,8 +89,9 @@ type alias ChooseList =
     }
 
 
+initial_chooselist : ChooseList
 initial_chooselist =
-    ChooseList -1 1 1 1 1 -1
+    ChooseList -1 -1 -1 -1 -1 -1
 
 
 initial_screen : Screen
@@ -117,18 +121,18 @@ type alias CheckList =
     , level0safebox : Bool
     , level0piano : Bool
     , level0light : Bool
+    , level1cab : Bool
+    , level2light : Bool
     }
 
 
 {-| initial\_checklist
 -}
 initial_checklist : CheckList
-initial_checklist =
-    CheckList False False False False False False False False
+initial_checklist = (CheckList False False False False False False False False False False) --临时改
 
 
 
---临时改
 
 
 {-| Object list with index
@@ -151,19 +155,4 @@ list_index_object index list =
                 default_object
 
 
-list_index_scene : Int -> List Scene -> Scene
-list_index_scene index list =
-    if index > List.length list then
-        defaultScene
 
-    else
-        case list of
-            x :: xs ->
-                if index == 0 then
-                    x
-
-                else
-                    list_index_scene (index - 1) xs
-
-            _ ->
-                defaultScene

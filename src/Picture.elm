@@ -166,25 +166,20 @@ list_index_picture index list =
 -}
 initial_pictures : List Picture
 initial_pictures =
-    [ Picture NotShow 0 300 2 --碎片0 for memory 1
-    , Picture NotShow 1 415 1 --碎片1 for memory 1
-    , Picture NotShow 2 530 14 --钥匙0 for basement
-    , Picture NotShow 3 645 9 --碎片2 for memory 2
-    , Picture NotShow 4 760 10 --碎片3 for memory 3
-    , Picture NotShow 5 875 1 --碎片4 for memory 3
-    , Picture NotShow 6 990 13 --镰刀 for 1楼 可能就没用了
-    , Picture NotShow 7 1105 14 --钥匙1 for 电箱
-    , Picture NotShow 8 1220 5 --碎片5 for memory 4
-    , Picture Show 9 1335 15 --钥匙2 for 1楼 柜子
-    , Picture NotShow 10 1450 13 --锤子 for 2楼 小猪罐子
+    [ Picture NotShow 0 300 2 
+    , Picture NotShow 1 415 1 
+    , Picture NotShow 2 530 14 
+    , Picture NotShow 3 645 9 
+    , Picture NotShow 4 760 10 
+    , Picture NotShow 5 875 1 
+    , Picture NotShow 6 990 13 
+    , Picture NotShow 7 1105 14 
+    , Picture NotShow 8 1220 5 
+    , Picture Show 9 1335 15 
+    , Picture NotShow 10 1450 13 
     ]
 
 
-
---attention: 6和10换了一下
---[ 300, 415, 530, 645, 760, 875, 990, 1105, 1220, 1335, 1450 ]
---制作一张查找表：
---所有的可能的render选项都从这个查找表里走
 
 
 default_picture : Picture
@@ -227,6 +222,21 @@ show_on_wall index =
                 , SvgAttr.width "18.8%"
                 , SvgAttr.xlinkHref "assets/picts/1.png"
                 ]
+                []
+        4 ->
+            Svg.image
+                [ SvgAttr.x "485"
+                , SvgAttr.y "120"
+                , SvgAttr.width "18.8%"
+                , SvgAttr.xlinkHref "assets/picts/4.png"]
+                []
+
+        5 ->
+            Svg.image
+                [ SvgAttr.x "485"
+                , SvgAttr.y "120"
+                , SvgAttr.width "18.8%"
+                , SvgAttr.xlinkHref "assets/picts/5.png"]
                 []
 
         3 ->
@@ -285,6 +295,13 @@ render_frame list =
                 , SvgAttr.xlinkHref "assets/picts/m1black.png"
                 ]
                 []
+            , Svg.image
+                [ SvgAttr.x "485"
+                , SvgAttr.y "120"
+                , SvgAttr.width "18.8%"
+                , SvgAttr.xlinkHref "assets/picts/m3black.png"
+            ]
+            []
             ]
 
         frames =
@@ -293,6 +310,7 @@ render_frame list =
         but =
             [ svg_rect_button 955 167 350 200 (OnClickTriggers 0)
             , svg_rect_button 785 430 305 305 (OnClickTriggers 1)
+            , svg_rect_button 400 130 350 300 (OnClickTriggers 2)
             , svg_rect_button 285 387 345 200 (OnClickTriggers 3)
             ]
 
@@ -354,7 +372,20 @@ read_complete_ones list =
 
             else
                 []
-
+        f3 =
+            (if pic3.state == Consumed && pic4.state == Consumed then
+                 [Svg.image
+                    [ SvgAttr.x "485"
+                    , SvgAttr.y "120"
+                    , SvgAttr.width "18.8%"
+                    , SvgAttr.xlinkHref "assets/picts/m3.png"
+                    ]
+                    []
+                , svg_rect_button 655 167 350 200 ( StartChange (BeginMemory 2))
+                ]
+              else
+                  []
+            )
         f4 =
             if pic5.state == Consumed then
                 [ Svg.image
@@ -370,4 +401,4 @@ read_complete_ones list =
             else
                 []
     in
-    f1 ++ f2 ++ f4
+    f1 ++ f2 ++ f3 ++ f4

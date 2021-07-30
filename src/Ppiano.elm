@@ -38,6 +38,8 @@ import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr exposing (y1)
 import Svg.Events
+import Button exposing (trans_button_sq)
+
 
 
 keyLength =
@@ -909,15 +911,15 @@ draw_single_key_down key =
 check_order : List Int -> Bool
 check_order list =
     case list of
-        x :: x1 :: x2 :: x3 :: x4 :: x5 :: lst ->
+        x :: x1 :: x2 :: x3 :: x4 :: x5 :: x6 :: x7 :: x8 :: x9 :: x10 :: lst ->
             let
                 target =
-                    [ 1, 1, 4, 5, 1, 4 ]
+                    [ 2, 3, 4, 6, 7, 8, 6, 7, 5, 6, 3 ]
 
                 newList =
                     List.drop 1 list
             in
-            if [ x, x1, x2, x3, x4, x5 ] == target then
+            if [ x, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10 ] == target then
                 True
 
             else
@@ -935,5 +937,5 @@ render_piano_button =
         but =
             Button.Button 16 60 21 10 "" (StartChange (ChangeScene 7)) ""
     in
-    test_button but
+    trans_button_sq but
         |> List.singleton
