@@ -14,40 +14,32 @@ import Debug exposing (toString)
 import Document exposing (Document, render_document_detail, render_newspaper_index)
 import Furnitures exposing (..)
 import Gradient exposing (Gcontent(..), GradientState(..), ProcessState(..), get_Gcontent)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, br, button, div, text)
 import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
-import Intro exposing (render_intro)
+import Intro exposing (render_end, render_intro)
 import Level0 exposing (..)
 import Memory exposing (MeState(..), Memory, render_memory)
 import Messages exposing (..)
 import Model exposing (..)
 import Object exposing (Object(..))
-import Pbulb exposing (render_bulb)
+import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
+import Pbulb exposing (Bulb, render_bulb)
+import Pcabinet exposing (render_cabinet)
 import Pclock exposing (drawbackbutton, drawclock, drawclockbutton, drawhourhand, drawminutehand)
 import Pcomputer exposing (draw_computer)
-import Picture exposing (Picture, ShowState(..), list_index_picture, render_picture_button)
-import Pmirror exposing (draw_frame, draw_light, draw_mirror)
-import Ppiano exposing (PianoModel, draw_key_set, play_audio)
-import Ppower exposing (drawpowersupply)
-import Pstair exposing (render_stair_level)
-import Ptable exposing (draw_block, drawpath, render_table_button)
-import Pfragment exposing (..)
-import Pbookshelf_trophy exposing (Direction(..), draw_bookshelf_index, draw_bookshelf_or_trophy, draw_trophy, render_trophy_button)
 import Pdolls exposing (drawdoll_ui)
+import Pfragment exposing (..)
+import Picture exposing (Picture, ShowState(..), list_index_picture, render_frame, render_inventory, render_picture_button)
+import Pmirror exposing (LightState(..), draw_frame, draw_light, draw_mirror, render_mirror)
+import Ppiano exposing (PianoModel, draw_key_set, play_audio, render_piano_button)
+import Ppower exposing (drawpowersupply)
+import Pstair exposing (render_stair_level, stair_button_level_1l)
+import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_button)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
-import Pcabinet exposing (render_cabinet)
-import Pmirror exposing (render_mirror, LightState(..))
-import Picture exposing (render_inventory)
-import Pbulb exposing (Bulb)
-import Button exposing (black_white_but)
-import Ptable exposing (draw_coffee_back)
-import Picture exposing (render_frame)
-import Pstair exposing (stair_button_level_1l)
-import Ppiano exposing (render_piano_button)
-import Intro exposing (render_end)
+
 
 style =
     Html.Attributes.style
@@ -94,6 +86,7 @@ view model =
         , style "top" "0"
         , style "background-color" "#000000"
         , style "overflow" "hidden"
+
         --, style ""
         ]
         [ div
@@ -131,37 +124,32 @@ view model =
                         ]
                         (if model.cscreen.cscene == 0 then
                             render_object model
-    
-                        :: render_button_level model.cscreen.clevel model
+                                :: render_button_level model.cscreen.clevel model
 
                          else
-                            [render_object model, drawbackbutton]
+                            [ render_object model, drawbackbutton ]
                                 ++ render_documents model.docu model.cscreen.cscene
                                 ++ play_piano_audio model.cscreen.cscene model.objects
                                 ++ render_picture model.pictures model.cscreen.cscene
                         )
-
-                    
-                           ] --test
+                    ]
+                        --test
                         ++ render_ui_button 0
 
                 1 ->
-                    [ (menu_back 1 1)
-                    , (menu_back 1 2)
-                    , (menu_back 1 3)
+                    [ menu_back 1 1
+                    , menu_back 1 2
+                    , menu_back 1 3
                     ]
-                    ++ render_ui_button 1
+                        ++ render_ui_button 1
 
                 2 ->
                     render_hint
-                    
                         ++ render_ui_button 2
 
                 10 ->
                     render_achieve
-
-                    ++ render_ui_button 10
-
+                        ++ render_ui_button 10
 
                 11 ->
                     render_ui_button 11
@@ -174,14 +162,16 @@ view model =
                 20 ->
                     render_ui_button 20
                         ++ render_memory model.cscreen.cmemory model.cscreen.cpage gcontent model.opac
-                        ++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
-                           ] --test
+                        ++ [ text (toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2)
+                           ]
 
+                --test
                 30 ->
                     render_end model.choice.end model.end
-                        ++ [ text ( toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2 )
-                    , text (toString model.choice.end)
-                    ]
+                        ++ [ text (toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2)
+                           , text (toString model.choice.end)
+                           ]
+
                 --test
                 _ ->
                     [ text (toString model.cscreen.cstate) ]
@@ -219,9 +209,6 @@ render_wall_1 =
         []
 
 
-
-
-
 get_trophy : List Object -> Bool
 get_trophy lst =
     let
@@ -235,6 +222,7 @@ get_trophy lst =
                     False
     in
     List.any get_trophy_face lst
+
 
 render_button_level : Int -> Model -> List (Html Msg)
 render_button_level level model =
@@ -290,7 +278,6 @@ render_mirror_button =
     in
     trans_button_sq but
         |> List.singleton
-
 
 
 
@@ -370,9 +357,6 @@ render_level_2 model =
         []
     ]
         ++ render_window model
-
-
-
 
 
 render_window : Model -> List (Svg Msg)
@@ -848,7 +832,6 @@ render_ui_button cstate =
         enterMemory =
             Button 40 20 20 10 "Hints" (StartChange RecallMemory) "block"
 
-
         achieve =
             Button 40 50 20 10 "Thanks" (StartChange Achievement) "block"
 
@@ -895,7 +878,7 @@ render_ui_button cstate =
             ]
 
         _ ->
-            [trans_button_sq back]
+            [ trans_button_sq back ]
 
 
 menu_back : Float -> Int -> Html Msg
@@ -929,67 +912,104 @@ play_piano_audio currentScene objectSet =
     in
     List.map (play_piano_audio_help currentScene) objectSet
 
-render_hint : List ( Html msg)
+
+render_hint : List (Html msg)
 render_hint =
     [ Html.img
-                [ src ("assets/intro/1.png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                ]
-                []
+        [ src "assets/intro/1.png"
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        ]
+        []
     , Html.img
-                [ src ("assets/intro/2.png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                ]
-                []
+        [ src "assets/intro/2.png"
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        ]
+        []
     , div
-            [ style "top" "20%"
-            , style "left" "20%"
-            , style "width" "60%"
-            , style "height" "60%"
-            , style "text-align" "left"
-            , style "position" "absolute"
-            , style "font-size" "40"
-            , style "font-family" "Times New Roman"
-            ]
-            [ text "test for hints"
-            ]
+        [ style "top" "20%"
+        , style "left" "20%"
+        , style "width" "60%"
+        , style "height" "60%"
+        , style "text-align" "left"
+        , style "position" "absolute"
+        , style "font-size" "40"
+        , style "font-family" "Times New Roman"
+        ]
+        [ text "1. The second floor seems so dim, and it needs more light."
+        , br [] []
+        , br [] []
+        , text "2. The word itself is useless, so combine it to more furnitures."
+        , br [] []
+        , br [] []
+        , text "3. Some clues are hidden in the memories."
+        , br [] []
+        , br [] []
+        , text "4. The coffee is so delicious! "
+        , br [] []
+        , br [] []
+        , text "5. Multiple answers, multiple possibilities."
+        , br [] []
+        , br [] []
+        , text "6. City of stars, are you shinning just for me?"
+        ]
     ]
 
-render_achieve : List ( Html msg)
+
+render_achieve : List (Html msg)
 render_achieve =
     [ Html.img
-                [ src ("assets/intro/1.png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                ]
-                []
+        [ src "assets/intro/1.png"
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        ]
+        []
     , Html.img
-                [ src ("assets/intro/2.png")
-                , style "top" "0%"
-                , style "left" "0%"
-                , style "width" "100%"
-                , style "position" "absolute"
-                ]
-                []
+        [ src "assets/intro/2.png"
+        , style "top" "0%"
+        , style "left" "0%"
+        , style "width" "100%"
+        , style "position" "absolute"
+        ]
+        []
     , div
-            [ style "top" "20%"
-            , style "left" "20%"
-            , style "width" "60%"
-            , style "height" "60%"
-            , style "text-align" "left"
-            , style "position" "absolute"
-            , style "font-size" "40"
-            , style "font-family" "Times New Roman"
-            ]
-            [ text "testfor thanks"
-            ]
+        [ style "top" "20%"
+        , style "left" "20%"
+        , style "width" "60%"
+        , style "height" "60%"
+        , style "text-align" "left"
+        , style "position" "absolute"
+        , style "font-size" "40"
+        , style "font-family" "Times New Roman"
+        ]
+        [ text "Hereby we present our thankfulness:"
+        , br [] []
+        , br [] []
+        , text "To our professors and teaching assistants, who provided us with valuable advice, and encourage us to imporve the game;"
+        , br [] []
+        , br [] []
+        , text "To all members of Ocean Cat Studio, who worked tirelessly till the last minute;"
+        , br [] []
+        , br [] []
+        , text "To Ghostfox and 鳗鱼饭, who offered precious assistance for illustration; "
+        , br [] []
+        , br [] []
+        , text "To 柳沅瑧, who engaged in the decision of main charactors' fate;"
+        , br [] []
+        , br [] []
+        , text "To ANthony, who helped in the perfection of storyline;"
+        , br [] []
+        , br [] []
+        , text "And, finally, to you, our faithful player."
+        , br [] []
+        , br [] []
+        , text "Have fun in our game."
+        ]
     ]
-
