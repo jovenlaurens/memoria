@@ -667,7 +667,7 @@ test_clock_win model =
     if hour == 8 && min == 15 && pic1.state == NotShow && model.checklist.level1light == True then
         { model | pictures = show_index_picture 1 model.pictures }
 
-    else if modBy hour 12 == 0 && min == 0 && pic5.state == NotShow && model.checklist.level0piano == True then
+    else if modBy 12 hour == 0 && min == 0 && pic5.state == NotShow && model.checklist.level0piano == True then
         { model | pictures = show_index_picture 5 model.pictures }
 
     else
