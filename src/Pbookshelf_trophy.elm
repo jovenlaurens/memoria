@@ -35,15 +35,13 @@ module Pbookshelf_trophy exposing
 
 -}
 
-import Button exposing (test_button)
+import Button exposing (test_button, trans_button_sq)
 import Geometry exposing (Location)
 import Html exposing (..)
 import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Button exposing (trans_button_sq)
-
 
 
 {-| Render the button to switch the scene from main to the trophy puzzle game scene
@@ -127,7 +125,7 @@ type alias TrophyModel =
 initial_book_model : BookletModel
 initial_book_model =
     BookletModel
-        initial_bookshelf
+        (initial_bookshelf (List.range 1 5 ++ [ 9, 7, 8, 6, 10 ] ++ List.range 11 20))
         (Trophy Right (Location 200 100))
 
 
@@ -146,21 +144,32 @@ initial_bookshelf_help number x =
         (Location x 160.0)
 
 
-initial_bookshelf : Bookshelf
-initial_bookshelf =
+initial_bookshelf : List Int -> Bookshelf
+initial_bookshelf lst =
     let
-        indexSet =
-            [ 5, 9, 8, 6, 15, 16, 11, 14, 10, 20, 19, 17, 3, 1, 2, 12, 4, 7, 13, 18 ]
-
         location =
             List.map (\x -> x * 50 + 200 |> Basics.toFloat) (List.range 1 20)
     in
     Bookshelf
-        (List.map2 initial_bookshelf_help indexSet location)
+        (List.map2 initial_bookshelf_help lst location)
         Invisible
         ( 1, 2 )
         Full
         (Trophy Right (Location 200 100))
+
+
+complete_cheat : Bookshelf
+complete_cheat =
+    let
+        location =
+            List.map (\x -> x * 50 + 200 |> Basics.toFloat) (List.range 1 20)
+    in
+    Bookshelf
+        (List.map2 initial_bookshelf_help (List.range 1 20) location)
+        Invisible
+        ( 1, 2 )
+        Full
+        (Trophy Front (Location 200 100))
 
 
 {-| Get the order of bookshelf
@@ -211,8 +220,13 @@ update_bookshelf num old =
                 One ->
                     ( x, num )
     in
-    { old | changeIndex = ( nx, ny ) }
-        |> change_book_order
+    case num of
+        99 ->
+            complete_cheat
+
+        _ ->
+            { old | changeIndex = ( nx, ny ) }
+                |> change_book_order
 
 
 change_choice_state : BookChoice -> BookChoice
@@ -417,3 +431,19 @@ draw_bookshelf_or_trophy bookshelf =
         []
     ]
         ++ mainTarget
+        ++ drawcheatingbutton_book
+
+
+drawcheatingbutton_book : List (Svg Msg)
+drawcheatingbutton_book =
+    [ Svg.rect
+        [ SvgAttr.x "90%"
+        , SvgAttr.y "60%"
+        , SvgAttr.width "5%"
+        , SvgAttr.height "5%"
+        , SvgAttr.opacity "0.0"
+        , SvgAttr.fill "red"
+        , Html.Events.onClick (OnClickTriggers 99)
+        ]
+        []
+    ]
