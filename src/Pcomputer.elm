@@ -260,7 +260,7 @@ drawcomputerback =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/computer.jpg"
+        , SvgAttr.xlinkHref "assets/level0/computer.png"
         ]
         []
     ]
@@ -524,7 +524,30 @@ drawword word =
 
         [] ->
             []
+drawsfword : List Int -> List (Svg Msg)
+drawsfword word =
+    let
+        lg =
+            List.length word
 
+        x1 =
+            String.fromInt (950 + 60 * (lg - 1))
+    in
+    case word of
+        x :: xs ->
+            [ Svg.circle
+                [ SvgAttr.cx x1
+                , SvgAttr.cy "340"
+                , SvgAttr.r "15"
+                , SvgAttr.fill "black"
+                , SvgAttr.fillOpacity "1.0"
+                ]
+                []
+            ]
+                ++ drawsfword xs
+
+        [] ->
+            []
 
 {-| initial\_safebox
 -}
@@ -542,7 +565,7 @@ render_safebox l0s commodel =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level0/safebox/blank.jpg"
+                , SvgAttr.xlinkHref "assets/level0/safebox/blank.png"
                 ]
                 []
             , Svg.image
@@ -562,7 +585,7 @@ render_safebox l0s commodel =
                     , SvgAttr.y "0"
                     , SvgAttr.width "100%"
                     , SvgAttr.height "100%"
-                    , SvgAttr.xlinkHref "assets/level0/safebox/face.jpg"
+                    , SvgAttr.xlinkHref "assets/level0/safebox/face.png"
                     ]
                     []
                 , Svg.image
@@ -586,8 +609,9 @@ render_safebox l0s commodel =
                     []
                 ]
                     ++ button_list
-                    ++ [ svg_rect_button 1057 535 78 78 (OnClickTriggers 12)
+                    ++ [ svg_rect_button 1057 615 78 78 (OnClickTriggers 12)
                        ]
+                    ++ drawsfword commodel.sfword
 
             else if l0s == False then
                 [ Svg.image
@@ -609,14 +633,14 @@ render_safebox l0s commodel =
 
 button_list : List (Svg Msg)
 button_list =
-    [ svg_rect_button 977 535 78 78 (OnClickTriggers 0)
-    , svg_rect_button 897 295 78 78 (OnClickTriggers 1)
-    , svg_rect_button 897 375 78 78 (OnClickTriggers 4)
-    , svg_rect_button 897 455 78 78 (OnClickTriggers 7)
-    , svg_rect_button 980 295 78 78 (OnClickTriggers 2)
-    , svg_rect_button 980 375 78 78 (OnClickTriggers 5)
-    , svg_rect_button 980 455 78 78 (OnClickTriggers 8)
-    , svg_rect_button 1063 295 78 78 (OnClickTriggers 3)
-    , svg_rect_button 1063 375 78 78 (OnClickTriggers 6)
-    , svg_rect_button 1063 455 78 78 (OnClickTriggers 9)
+    [ svg_rect_button 977 615 78 78 (OnClickTriggers 0)
+    , svg_rect_button 897 375 78 78 (OnClickTriggers 1)
+    , svg_rect_button 897 455 78 78 (OnClickTriggers 4)
+    , svg_rect_button 897 535 78 78 (OnClickTriggers 7)
+    , svg_rect_button 980 375 78 78 (OnClickTriggers 2)
+    , svg_rect_button 980 455 78 78 (OnClickTriggers 5)
+    , svg_rect_button 980 535 78 78 (OnClickTriggers 8)
+    , svg_rect_button 1063 375 78 78 (OnClickTriggers 3)
+    , svg_rect_button 1063 455 78 78 (OnClickTriggers 6)
+    , svg_rect_button 1063 535 78 78 (OnClickTriggers 9)
     ]

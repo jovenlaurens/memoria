@@ -125,19 +125,24 @@ update_intropage intro =
 
 {-| Render the intro part
 -}
-render_intro : IntroPage -> List (Html Msg)
-render_intro intro =
+render_intro : (Float, Float) -> IntroPage -> List (Html Msg)
+render_intro size intro =
+    let
+        ftsz1 = String.fromFloat ((Tuple.first size)/60) ++ "px"
+        ftsz2 = String.fromFloat ((Tuple.second size)/40) ++ "px"
+        ftsz = min ftsz1 ftsz2
+    in
     case intro.cp of
         1 ->
             [ back intro.imageOpa intro.cp
-            , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
+            , div (text_attr ftsz intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 1
             ]
 
         2 ->
             [ back 1 1
             , back intro.imageOpa intro.cp
-            , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
+            , div (text_attr ftsz intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 2
             ]
 
@@ -145,7 +150,7 @@ render_intro intro =
             [ back 1 1
             , back 1 2
             , back intro.imageOpa intro.cp
-            , div (text_attr intro.wordOpa) (intro_base (toString intro.state) intro.cp)
+            , div (text_attr ftsz intro.wordOpa) (intro_base (toString intro.state) intro.cp)
             , button 0
             ]
 
@@ -155,12 +160,17 @@ render_intro intro =
 
 {-| render end
 -}
-render_end : Int -> IntroPage -> List (Html Msg)
-render_end chse end =
+render_end : (Float, Float) -> Int -> IntroPage -> List (Html Msg)
+render_end size chse end =
+    let
+        ftsz1 = String.fromFloat ((Tuple.first size)/60) ++ "px"
+        ftsz2 = String.fromFloat ((Tuple.second size)/40) ++ "px"
+        ftsz = min ftsz1 ftsz2
+    in
     case chse of
         0 ->
             end_back
-                ++ [ div (text_attr end.wordOpa) (end_base_1 end.cp)
+                ++ [ div (text_attr ftsz end.wordOpa) (end_base_1 end.cp)
                    , button
                         (if end.cp == 10 then
                             100
@@ -174,7 +184,7 @@ render_end chse end =
 
         1 ->
             end_back
-                ++ [ div (text_attr end.wordOpa) (end_base_2 end.cp)
+                ++ [ div (text_attr ftsz end.wordOpa) (end_base_2 end.cp)
                    , button
                         (if end.cp == 10 then
                             100
@@ -186,7 +196,7 @@ render_end chse end =
 
         _ ->
             end_back
-                ++ [ div (text_attr end.wordOpa) (end_base_3 end.cp)
+                ++ [ div (text_attr ftsz end.wordOpa) (end_base_3 end.cp)
                    , button
                         (if end.cp == 10 then
                             100
@@ -743,15 +753,15 @@ end_base_3 ind =
             []
 
 
-text_attr : Float -> List (Html.Attribute msg)
-text_attr opa =
+text_attr : String -> Float -> List (Html.Attribute msg)
+text_attr ft opa =
     [ style "top" "20%"
     , style "left" "20%"
     , style "width" "60%"
     , style "height" "60%"
     , style "text-align" "center"
     , style "position" "absolute"
-    , style "font-size" "40"
+    , style "font-size" ft
     , style "font-family" "Times New Roman"
     , style "opacity" (toString opa)
     ]

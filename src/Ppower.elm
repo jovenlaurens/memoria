@@ -146,7 +146,7 @@ drawpowersupply_6_back =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/power/back.jpg"
+        , SvgAttr.xlinkHref "assets/level0/power/back.png"
         ]
         []
     ]

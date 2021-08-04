@@ -28,7 +28,7 @@ level_1_furniture sta =
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level1/level1.jpg"
+            , SvgAttr.xlinkHref "assets/level1/level1.png"
             ]
             []
         , Svg.image
@@ -47,7 +47,7 @@ level_1_furniture sta =
             , SvgAttr.y "0"
             , SvgAttr.width "100%"
             , SvgAttr.height "100%"
-            , SvgAttr.xlinkHref "assets/level1/level1.jpg"
+            , SvgAttr.xlinkHref "assets/level1/level1.png"
             ]
             []
         ]

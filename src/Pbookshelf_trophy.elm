@@ -411,7 +411,7 @@ draw_bookshelf_or_trophy bookshelf =
                     "assets/book/book_back.png"
 
                 _ ->
-                    "assets/trophy/trophy_bg.jpg"
+                    "assets/trophy/trophy_bg.png"
 
         mainTarget =
             case bookshelf.trophy.face of

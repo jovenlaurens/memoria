@@ -229,7 +229,7 @@ drawpassview =
         , SvgAttr.y "20"
         , SvgAttr.width "400"
         , SvgAttr.height "700"
-        , SvgAttr.xlinkHref "assets/f1.jpg"
+        , SvgAttr.xlinkHref "assets/f1.png"
         ]
         []
     ]
@@ -241,7 +241,7 @@ drawpictureframe =
         [ SvgAttr.x "0"
         , SvgAttr.y "0"
         , SvgAttr.width "100%"
-        , SvgAttr.xlinkHref "assets/level0/fragment/h_back.jpg"
+        , SvgAttr.xlinkHref "assets/level0/fragment/h_back.png"
         ]
         []
     ]
