@@ -438,6 +438,8 @@ renew_screen_info submsg old choices =
                     if old.cstate == 11 then
                         0
 
+                    else if old.cstate== 50 then
+                        0
                     else
                         old.cstate - 1
             in
@@ -451,6 +453,9 @@ renew_screen_info submsg old choices =
 
         BackfromAch ->
             { old | cstate = 1 }
+
+        Hint ->
+            { old | cstate = 50}
 
         EnterState ->
             --maybe
@@ -719,8 +724,11 @@ test_bookshelf_win model =
     let
         flag =
             List.any test_bookshelf_win_help model.objects
+        
+        pic4 =
+            list_index_picture 4 model.pictures
     in
-    if flag then
+    if flag && (pic4.state == NotShow) then
         { model | pictures = show_index_picture 4 model.pictures }
         --xiulebug
 
@@ -994,8 +1002,9 @@ update_onclicktrigger model number =
             try_to_update_computer model number
 
         --bug
-        6 ->
-            try_to_update_power model number
+        6 -> 
+            try_to_update_power_key model number
+            |> try_to_update_power number
 
         7 ->
             { model | objects = try_to_update_piano number model.move_timer model.objects }
@@ -1261,8 +1270,8 @@ try_to_update_piano_help index time object =
 --            object
 
 
-try_to_update_power : Model -> Int -> Model
-try_to_update_power model index =
+try_to_update_power : Int -> Model  -> Model
+try_to_update_power index model  =
     let
         toggle power =
             case power of
@@ -1271,9 +1280,28 @@ try_to_update_power model index =
 
                 _ ->
                     power
+            
     in
-    { model | objects = List.map toggle model.objects }
+     if model.checklist.level0power == True then
+        { model | objects = List.map toggle model.objects }
+     else
+         model
 
+
+try_to_update_power_key : Model -> Int -> Model
+try_to_update_power_key model number =
+    let
+        cklst =
+            model.checklist
+    in
+    if number == 0 && model.underUse == 7 then
+            { model
+                | underUse = 99
+                , pictures = consume_picture model.pictures 7
+                , checklist = { cklst | level0power = True }
+            }
+    else
+        model
 
 try_to_update_computer : Model -> Int -> Model
 try_to_update_computer model number =
@@ -1454,18 +1482,18 @@ try_to_unlock_picture model number =
             else
                 model
         2 ->
-                    if model.underUse == 4 then 
-                        {
-                            model | pictures = consume_picture model.pictures 4
-                                , underUse = 99
-                        }
-                    else if model.underUse == 5 then 
-                        {
-                            model | pictures = consume_picture model.pictures 5
-                                  , underUse = 99
-                        }
-                    else
-                        model     
+            if model.underUse == 4 then 
+                { model | pictures = consume_picture model.pictures 4
+                        , underUse = 99
+                }
+                    
+            else if model.underUse == 5 then 
+                { model | pictures = consume_picture model.pictures 5
+                        , underUse = 99
+                }
+            
+            else
+                model     
 
         3 ->
             if model.underUse == 8 then

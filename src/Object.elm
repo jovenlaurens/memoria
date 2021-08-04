@@ -172,21 +172,21 @@ test_table loca pre =
 initial_objects : List Object
 initial_objects =
 
-    [ Clock (ClockModel 7 30) --0    1        1
-    , Table initial_table --1    2        1
-    , Frame (FrameModel [ 0 ]) --2    3        1
-    , Mirror initialMirror --3    4        2
-    , Computer initial_computer --4    5        0
-    , Power initPowerModel --5    6        0
-    , Piano Ppiano.initial --6    7        0
-    , Bul initial_bulb --7    8        1
-    , Fra initfraModel -- 8   9  0
-    , Book Pbookshelf_trophy.initial_book_model -- 9  10 0
-    , Trophy Pbookshelf_trophy.initial_trophy_model --10 11 0
-    , Cabinet initial_cab -- 11 12 1
-    , Computer initial_safebox -- 12 13 0
-    , Doll initDollModel -- 13  14  2
-    , Scr -1 --14 15 0
+    [ Clock (ClockModel 7 30)                               --0    1        1
+    , Table initial_table                                   --1    2        1
+    , Frame (FrameModel [ 0 ])                              --2    3        1
+    , Mirror initialMirror                                  --3    4        2
+    , Computer initial_computer                             --4    5        0
+    , Power initPowerModel                                  --5    6        0
+    , Piano Ppiano.initial                                  --6    7        0
+    , Bul initial_bulb                                      --7    8        1
+    , Fra initfraModel                                      --8    9        0
+    , Book Pbookshelf_trophy.initial_book_model             --9    10       0
+    , Trophy Pbookshelf_trophy.initial_trophy_model         --10   11       0
+    , Cabinet initial_cab                                   --11   12       1
+    , Computer initial_safebox                              --12   13       0
+    , Doll initDollModel                                    --13   14       2
+    , Scr -1                                                --14   15       0
     ]
 
 

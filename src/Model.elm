@@ -123,13 +123,14 @@ type alias CheckList =
     , level0light : Bool
     , level1cab : Bool
     , level2light : Bool
+    , level0power : Bool
     }
 
 
 {-| initial\_checklist
 -}
 initial_checklist : CheckList
-initial_checklist = (CheckList False False False False False False False False False False) --临时改
+initial_checklist = (CheckList False False False False False False False False False False False) --临时改
 
 
 

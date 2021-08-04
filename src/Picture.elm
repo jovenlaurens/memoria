@@ -107,8 +107,14 @@ render_inventory_inside pict =
 render_inventory_inside_item : Picture -> Svg Msg
 render_inventory_inside_item pict =
     let
+        pictSr =
+            "assets/picts/" ++ toString pict.index
+        
         pictSrc =
-            "assets/picts/" ++ toString pict.index ++ ".png"
+            if List.any (\x -> x == pict.index) [0,1,4,5] then
+                pictSr ++ "c.png"
+            else
+                pictSr ++ ".png"
     in
     case pict.state of
         Picked ->
@@ -134,7 +140,7 @@ render_inventory_inside_item pict =
 
         _ ->
             Svg.rect
-                []
+                [SvgAttr.opacity "0.0"]
                 []
 
 
@@ -203,61 +209,35 @@ render_picture_button =
         []
 
 
-show_on_wall : Int -> Svg Msg
-show_on_wall index =
-    case index of
-        0 ->
-            Svg.image
-                [ SvgAttr.x "955"
-                , SvgAttr.y "167"
-                , SvgAttr.width "18.8%"
-                , SvgAttr.xlinkHref "assets/picts/0.png"
-                ]
-                []
+show_on_wall : Picture -> Svg Msg
+show_on_wall pict =
+    let
+        srcstring = case pict.index of
+            0 ->
+                "assets/picts/0.png"
 
-        1 ->
-            Svg.image
-                [ SvgAttr.x "955"
-                , SvgAttr.y "167"
-                , SvgAttr.width "18.8%"
-                , SvgAttr.xlinkHref "assets/picts/1.png"
-                ]
-                []
-        4 ->
-            Svg.image
-                [ SvgAttr.x "485"
-                , SvgAttr.y "120"
-                , SvgAttr.width "18.8%"
-                , SvgAttr.xlinkHref "assets/picts/4.png"]
-                []
+            1 ->
+                "assets/picts/1.png"
 
-        5 ->
-            Svg.image
-                [ SvgAttr.x "485"
-                , SvgAttr.y "120"
-                , SvgAttr.width "18.8%"
-                , SvgAttr.xlinkHref "assets/picts/5.png"]
-                []
+            4 ->
+                "assets/picts/4.png"
 
-        3 ->
-            Svg.image
-                [ SvgAttr.x "785"
-                , SvgAttr.y "430"
-                , SvgAttr.width "305"
-                , SvgAttr.xlinkHref "assets/picts/3.png"
-                ]
-                []
+            5 ->
+                "assets/picts/5.png"
 
-        8 ->
-            Svg.image
-                [ SvgAttr.x "285"
-                , SvgAttr.y "387"
-                , SvgAttr.width "18.8%"
-                , SvgAttr.xlinkHref "assets/picts/8.png"
-                ]
-                []
+            _ ->
+                "assets/blank.png"
 
-        _ ->
+    in
+        if pict.state == Consumed then
+            Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.xlinkHref srcstring
+                    ]
+                    []
+        else
             Svg.rect
                 []
                 []
@@ -266,7 +246,7 @@ show_on_wall index =
 render_picts : Picture -> Svg Msg
 render_picts pict =
     if pict.state == Consumed then
-        show_on_wall pict.index
+        show_on_wall pict
 
     else
         Svg.rect
@@ -285,20 +265,20 @@ render_frame list =
                 , SvgAttr.y "0"
                 , SvgAttr.width "100%"
                 , SvgAttr.height "100%"
-                , SvgAttr.xlinkHref "assets/level1/frames.jpg"
+                , SvgAttr.xlinkHref "assets/level1/frames.png"
                 ]
                 []
             , Svg.image
-                [ SvgAttr.x "955"
-                , SvgAttr.y "167"
-                , SvgAttr.width "18.8%"
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
                 , SvgAttr.xlinkHref "assets/picts/m1black.png"
                 ]
                 []
             , Svg.image
-                [ SvgAttr.x "485"
-                , SvgAttr.y "120"
-                , SvgAttr.width "18.8%"
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width "100%"
                 , SvgAttr.xlinkHref "assets/picts/m3black.png"
             ]
             []
@@ -317,7 +297,7 @@ render_frame list =
         pictures =
             read_complete_ones list
     in
-    bk ++ frames ++ but ++ pictures
+    bk ++ frames ++ pictures
 
 
 {-| render complete pictures
@@ -325,6 +305,14 @@ render_frame list =
 read_complete_ones : List Picture -> List (Svg Msg)
 read_complete_ones list =
     let
+        have_image str= 
+            Svg.image
+                    [ SvgAttr.x "0"
+                    , SvgAttr.y "0"
+                    , SvgAttr.width "100%"
+                    , SvgAttr.xlinkHref str
+                    ]
+                    []
         pic0 =
             list_index_picture 0 list
 
@@ -343,62 +331,38 @@ read_complete_ones list =
         pic5 =
             list_index_picture 8 list
 
-        f1 =
+        (f1, b1) =
             if pic0.state == Consumed && pic1.state == Consumed then
-                [ Svg.image
-                    [ SvgAttr.x "970"
-                    , SvgAttr.y "167"
-                    , SvgAttr.width "18.8%"
-                    , SvgAttr.xlinkHref "assets/picts/m1.png"
-                    ]
-                    []
+                ( have_image "assets/picts/m1.png"
                 , svg_rect_button 955 167 350 200 (StartChange (BeginMemory 0))
-                ]
+                )
 
             else
-                []
+             (Svg.rect[][], svg_rect_button 955 167 350 200 (OnClickTriggers 0))
 
-        f2 =
+        (f2, b2) =
             if pic2.state == Consumed then
-                [ Svg.image
-                    [ SvgAttr.x "785"
-                    , SvgAttr.y "430"
-                    , SvgAttr.width "305"
-                    , SvgAttr.xlinkHref "assets/picts/3.png"
-                    ]
-                    []
+                ( have_image "assets/picts/m2.png"
                 , svg_rect_button 785 430 305 305 (StartChange (BeginMemory 1))
-                ]
+                )
 
             else
-                []
-        f3 =
+             (Svg.rect[][], svg_rect_button 785 430 305 305 (OnClickTriggers 1))
+        (f3, b3) =
             (if pic3.state == Consumed && pic4.state == Consumed then
-                 [Svg.image
-                    [ SvgAttr.x "485"
-                    , SvgAttr.y "120"
-                    , SvgAttr.width "18.8%"
-                    , SvgAttr.xlinkHref "assets/picts/m3.png"
-                    ]
-                    []
+                ( have_image "assets/picts/m3.png"
                 , svg_rect_button 655 167 350 200 ( StartChange (BeginMemory 2))
-                ]
+                )
               else
-                  []
+             (Svg.rect[][], svg_rect_button 400 130 350 300 (OnClickTriggers 2))
             )
-        f4 =
+        (f4, b4) =
             if pic5.state == Consumed then
-                [ Svg.image
-                    [ SvgAttr.x "285"
-                    , SvgAttr.y "389"
-                    , SvgAttr.width "21.5%"
-                    , SvgAttr.xlinkHref "assets/picts/8.png"
-                    ]
-                    []
+                ( have_image "assets/picts/m4.png"
                 , svg_rect_button 285 387 345 200 (StartChange (BeginMemory 3))
-                ]
+                )
 
             else
-                []
+             (Svg.rect[][], svg_rect_button 285 387 345 200 (OnClickTriggers 3))
     in
-    f1 ++ f2 ++ f3 ++ f4
+    [ f1, f2, f3, f4, b1, b2, b3, b4 ]

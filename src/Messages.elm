@@ -58,7 +58,8 @@ type GraMsg
     | Back --back one stage
     | Achievement
     | BackfromAch
-      --Memory part are below
+    | Hint
+     --Memory part are below
     | BeginMemory Int --state = 20, a is the order of memory
     | Forward --continue to play the memory
     | Choice Int Int --Choice a b : a: the order of the question; b: the order of the answer

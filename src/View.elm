@@ -39,6 +39,7 @@ import Ptable exposing (draw_block, draw_coffee_back, drawpath, render_table_but
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Svg.Events
+import Html exposing (q)
 
 
 style =
@@ -114,7 +115,7 @@ view model =
 
                 --use % to arrange the position
                 99 ->
-                    render_intro model.intro
+                    render_intro model.size model.intro
 
                 0 ->
                     [ div
@@ -144,11 +145,11 @@ view model =
                         ++ render_ui_button 1
 
                 2 ->
-                    render_hint
+                    render_hint model.size
                         ++ render_ui_button 2
 
                 10 ->
-                    render_achieve
+                    render_achieve model.size
                         ++ render_ui_button 10
 
                 11 ->
@@ -167,10 +168,19 @@ view model =
 
                 --test
                 30 ->
-                    render_end model.choice.end model.end
+                    render_end model.size model.choice.end model.end
                         ++ [ text (toString model.choice.m0c0 ++ toString model.choice.m1c1 ++ toString model.choice.m1c2)
                            , text (toString model.choice.end)
                            ]
+                50 ->
+                    
+                    [menu_back 1 1
+                    , menu_back 1 2
+                    , menu_back 1 3
+                    ] ++
+                        render_ui_button 50
+                     ++ 
+                         render_allhints model.size model.cscreen.cscene model.cscreen.clevel
 
                 --test
                 _ ->
@@ -480,7 +490,7 @@ render_picture_index index =
     case index of
         0 ->
             Html.img
-                [ src ("assets/picts/" ++ toString index ++ ".png")
+                [ src ("assets/picts/" ++ toString index ++ "c.png")
                 , style "top" "54%"
                 , style "left" "32%"
                 , style "width" "16%"
@@ -491,7 +501,7 @@ render_picture_index index =
 
         1 ->
             Html.img
-                [ src ("assets/picts/" ++ toString index ++ ".png")
+                [ src ("assets/picts/" ++ toString index ++ "c.png")
                 , style "top" "50%"
                 , style "left" "60%"
                 , style "width" "20%"
@@ -524,7 +534,7 @@ render_picture_index index =
 
         4 ->
             Html.img
-                [ src ("assets/picts/" ++ toString index ++ ".png")
+                [ src ("assets/picts/" ++ toString index ++ "c.png")
                 , style "top" "65%"
                 , style "left" "55%"
                 , style "width" "17%"
@@ -535,7 +545,7 @@ render_picture_index index =
 
         5 ->
             Html.img
-                [ src ("assets/picts/" ++ toString index ++ ".png")
+                [ src ("assets/picts/" ++ toString index ++ "c.png")
                 , style "top" "30%"
                 , style "left" "35%"
                 , style "width" "36%"
@@ -727,7 +737,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc1.jpg"
+                        , SvgAttr.xlinkHref "assets/level0/sc1.png"
                         ]
                         []
 
@@ -737,7 +747,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc2.jpg"
+                        , SvgAttr.xlinkHref "assets/level0/sc2.png"
                         ]
                         []
 
@@ -747,7 +757,7 @@ draw_screen end =
                         , SvgAttr.y "0"
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
-                        , SvgAttr.xlinkHref "assets/level0/sc3.jpg"
+                        , SvgAttr.xlinkHref "assets/level0/sc3.png"
                         ]
                         []
 
@@ -840,10 +850,15 @@ render_ui_button cstate =
 
         testBack =
             Button 14 2 4 4 "main" (StartChange EndMemory) "block"
+
+        hint =  
+           Button 96 0.5 3.66 6.5 "?" (StartChange Hint) "block"
+
     in
     case cstate of
         0 ->
             [ test_button pause
+            , test_button hint
             ]
 
         1 ->
@@ -875,6 +890,11 @@ render_ui_button cstate =
             [ test_button pause
             , test_button reset
             , test_button testBack
+            ]
+
+        50 ->
+            [ test_button back
+            
             ]
 
         _ ->
@@ -913,8 +933,13 @@ play_piano_audio currentScene objectSet =
     List.map (play_piano_audio_help currentScene) objectSet
 
 
-render_hint : List (Html msg)
-render_hint =
+render_hint : (Float, Float) -> List (Html Msg)
+render_hint size =
+    let
+        ftsz1 = String.fromFloat ((Tuple.first size)/60) ++ "px"
+        ftsz2 = String.fromFloat ((Tuple.second size)/40) ++ "px"
+        ftsz = min ftsz1 ftsz2
+    in
     [ Html.img
         [ src "assets/intro/1.png"
         , style "top" "0%"
@@ -938,31 +963,24 @@ render_hint =
         , style "height" "60%"
         , style "text-align" "left"
         , style "position" "absolute"
-        , style "font-size" "40"
+        , style "font-size" ftsz
         , style "font-family" "Times New Roman"
         ]
-        [ text "1. The second floor seems so dim, and it needs more light."
+        [ text "You can click the ? button on the right-up corner to ask for some hints"
         , br [] []
         , br [] []
-        , text "2. The word itself is useless, so combine it to more furnitures."
-        , br [] []
-        , br [] []
-        , text "3. Some clues are hidden in the memories."
-        , br [] []
-        , br [] []
-        , text "4. The coffee is so delicious! "
-        , br [] []
-        , br [] []
-        , text "5. Multiple answers, multiple possibilities."
-        , br [] []
-        , br [] []
-        , text "6. City of stars, are you shinning just for me?"
+        , text "(We don't encourage you to do so  : ))" 
         ]
     ]
 
 
-render_achieve : List (Html msg)
-render_achieve =
+render_achieve : (Float, Float) ->  List (Html Msg)
+render_achieve size=
+    let
+        ftsz1 = String.fromFloat ((Tuple.first size)/50) ++ "px"
+        ftsz2 = String.fromFloat ((Tuple.second size)/40) ++ "px"
+        ftsz = min ftsz1 ftsz2
+    in
     [ Html.img
         [ src "assets/intro/1.png"
         , style "top" "0%"
@@ -984,9 +1002,9 @@ render_achieve =
         , style "left" "20%"
         , style "width" "60%"
         , style "height" "60%"
-        , style "text-align" "left"
+        , style "text-align" "center"
         , style "position" "absolute"
-        , style "font-size" "40"
+        , style "font-size" ftsz
         , style "font-family" "Times New Roman"
         ]
         [ text "Hereby we present our thankfulness:"
@@ -1013,3 +1031,231 @@ render_achieve =
         , text "Have fun in our game."
         ]
     ]
+
+
+render_allhints : (Float, Float) -> Int -> Int -> List(Html Msg)
+render_allhints size cscene clevel = 
+     let
+        fontsize = String.fromFloat ((Tuple.first size)/50) ++ "px"
+
+        sample = [ style "top" "30%"
+                , style "left" "20%"
+                , style "width" "60%"
+                , style "height" "60%"
+                , style "text-align" "center"
+                , style "position" "absolute"
+                , style "font-size" fontsize
+                , style "font-family" "Times New Roman"
+                ]
+     in
+        if clevel == 0 then
+            case cscene of
+                0 ->
+                    [div sample
+                        [ text "1. The second floor seems so dim, and it needs more light."
+                        , br [] []
+                        , br [] []
+                        , text "2. The word itself is useless, so combine it to more furnitures."
+                        , br [] []
+                        , br [] []
+                        , text "3. Some clues are hidden in the memories."
+                        , br [] []
+                        , br [] []
+                        , text "4. The coffee is so delicious! "
+                        , br [] []
+                        , br [] []
+                        , text "5. Multiple answers, multiple possibilities."
+                        , br [] []
+                        , br [] []
+                        , text "6. City of stars, are you shinning just for me?"
+                        ]
+                    ]
+
+                5 ->
+                    [div sample
+                        [ text "The computer have no power, you may turn on the power supply"
+                        , br [] []
+                        , br [] []
+                        , text  "You need a correct password to unclock the computer"
+                        ]
+                    ]
+
+                6 ->
+                    [div sample
+                        [ text "You may need a key to open the power supply"
+                        ]
+                    ]
+
+                7 ->
+                    [div sample
+                        [ text "You should follow a specific order to play the piano "
+                        , br [] []
+                        , br [] []
+                        , text  "(like 114514)"
+                        , br [] []
+                        , br [] []
+                        , text  "Don't worry if you play a wrong order, just go on and play the correct order"
+                        ]
+                    ]
+
+                9 ->
+                    [div sample
+                        [ text "You should move all fragments to make it like a whole picture "
+                        , br [] []
+                        , br [] []
+                        , text  "(If it's so hard for you, try to click on the margin)"
+                        ]
+                    ]
+
+                10 ->
+                    [div sample
+                        [ text "The trophy looks strange."
+                        , br [] []
+                        , br [] []
+                        , text  "Try to rotate the trophy to specific angle"
+                        ]
+                    ]
+
+                11 ->
+                    [div sample
+                        [ text "The are some patterns on each books. "
+                        , br [] []
+                        , br [] []
+                        , text  "Try to change the order of each books."
+                        , br [] []
+                        , br [] []
+                        , text  "The patterns looks like a fish."
+                        , br [] []
+                        , br [] []
+                        , text  "(If it's so hard for you, try to click on the margin)"
+                        ]
+                    ]
+
+                _ ->
+                    []
+
+        else if clevel == 1 then   
+            case cscene of
+                0 ->
+                    [div sample
+                        [ text "1. The second floor seems so dim, and it needs more light."
+                        , br [] []
+                        , br [] []
+                        , text "2. The word itself is useless, so combine it to more furnitures."
+                        , br [] []
+                        , br [] []
+                        , text "3. Some clues are hidden in the memories."
+                        , br [] []
+                        , br [] []
+                        , text "4. The coffee is so delicious! "
+                        , br [] []
+                        , br [] []
+                        , text "5. Multiple answers, multiple possibilities."
+                        , br [] []
+                        , br [] []
+                        , text "6. City of stars, are you shinning just for me?"
+                        ]
+                    ]
+
+                1 ->    
+                    [div sample
+                        [ text "Click on the clock to change the current time "
+                        , br [] []
+                        , br [] []
+                        , text  "Just randomly click can't work."
+                        , br [] []
+                        , br [] []
+                        , text  "Try to find other clues to get the specific time."
+                        ]
+                    ]
+
+                2 ->
+                    [div sample
+                        [ text "The coffee looks strange try to drink it. "
+                        , br [] []
+                        , br [] []
+                        , text  "You should follow the one-stroke drawing."
+                        ]
+                    ]
+
+                3 ->
+                    [div sample
+                        [ text "It seems there are some pics need to put. "
+                        , br [] []
+                        , br [] []
+                        , text  "Try to collect all the pics!"
+                        ]
+                    ]
+
+                8 ->
+                    [div sample
+                        [ text "Try to turn on all the bulbs by clicking. "
+                        , br [] []
+                        , br [] []
+                        , text  "I believe you can find the rules between the bulbs"
+                        ]
+                    ]
+
+                12 ->
+                    [div sample
+                        [ text " It seems that two drawers can both be opened "
+                        , br [] []
+                        , br [] []
+                        , text  "You need to find the key for the upper drawer."
+                        ]
+                    ]
+
+                _ ->
+                    []
+
+        else if clevel ==2 then
+            case cscene of
+                0 ->
+                    [div sample
+                        [ text "1. The second floor seems so dim, and it needs more light."
+                        , br [] []
+                        , br [] []
+                        , text "2. The word itself is useless, so combine it to more furnitures."
+                        , br [] []
+                        , br [] []
+                        , text "3. Some clues are hidden in the memories."
+                        , br [] []
+                        , br [] []
+                        , text "4. The coffee is so delicious! "
+                        , br [] []
+                        , br [] []
+                        , text "5. Multiple answers, multiple possibilities."
+                        , br [] []
+                        , br [] []
+                        , text "6. City of stars, are you shinning just for me?"
+                        ]
+                    ]
+
+                4 ->
+                    [div sample
+                        [ text "Click the paddle to change the direction of the lights. "
+                        , br [] []
+                        , br [] []
+                        , text  "Make the light pass the charge."
+                        , br [] []
+                        , br [] []
+                        , text  "For the letters happen more than once in the name,"
+                        , br [] []
+                        , br [] []
+                        , text  "you need only press for one time."
+                        ]
+                    ]
+                14 ->
+                    [div sample
+                        [ text "The doll and piggy bank seems strange. "
+                        , br [] []
+                        , br [] []
+                        , text  "You need a hammer to smash the piggy bank."
+                        ]
+                    ]
+                _ ->
+                    []
+        else
+            []    
+         
+        

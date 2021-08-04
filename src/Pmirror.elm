@@ -169,34 +169,12 @@ correct_answer_1 =
     ]
 
 
+--Scarlett O 'Hara", "Not very clear.
 correct_answer_2 : List Int
 correct_answer_2 =
-    [ 0
-    , 0
-    , 1
-    , 1
-    , 1
-    , 0
-    , 0
-    , 0
-    , 1
-    , 0
-    , 1
-    , 1
-    , 0
-    , 0
-    , 0
-    , 1
-    , 0
-    , 0
-    , 1
-    , 0
-    , 0
-    , 1
-    , 0
-    , 0
-    , 1
-    , 0
+    [ 0, 0, 1, 1, 1, 0, 0, 0, 1, 0
+    , 1, 1, 0, 0, 0, 1, 0, 0, 1
+    , 0, 0, 1, 0, 0, 1, 0
     ]
 
 
@@ -212,7 +190,7 @@ correct_answer_3 =
     , 0
     , 1
     , 0
-    , 0
+    , 1
     , 0
     , 0
     , 0
@@ -291,29 +269,38 @@ render_mirror lion a =
     let
         key = if ( a.stage |> Tuple.first ) == Pass then
                     draw_keyboard a.ipad.keyboard a.ipad.keyIndex
+
               else
                     []
 
-        pzz = 
+        (pzz, lit) = 
             if lion then
-                draw_frame a.frame
+                (draw_frame a.frame
                 ++ draw_mirror a.mirrorSet
                 ++ draw_light a.lightSet
+                , draw_light_and_mirror)
             else
-                []
+                ([],[])
 
 
     in
        draw_mirror_back a.lightstate
+           ++ lit
     ++ pzz
     ++ draw_question a.stage a.ipad.answer
+
     ++ key
 
 
-draw_light_and_mirror : MirrorModel -> List (Svg Msg)
-draw_light_and_mirror a =
-    [ Svg.svg
-        []
+draw_light_and_mirror : List (Svg Msg)
+draw_light_and_mirror =
+    [ Svg.image
+        [ SvgAttr.x "0"
+        , SvgAttr.y "0"
+        , SvgAttr.width "100%"
+        , SvgAttr.height "100%"
+        , SvgAttr.xlinkHref "assets/level2/softlight.png"
+        ]
         []
     ]
 
