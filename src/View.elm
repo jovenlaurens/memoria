@@ -102,7 +102,7 @@ view model =
             (case model.cscreen.cstate of
                 98 ->
                     [ Html.img
-                        [ src "assets/98small.jpg"
+                        [ src "assets/98small.png"
                         , style "top" "0%"
                         , style "left" "0%"
                         , style "width" "100%"
