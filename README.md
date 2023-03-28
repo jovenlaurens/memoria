@@ -11,7 +11,7 @@ You can get a glimpse of the eerie atmosphere of the game and the memories that 
 
 To give you a taste of what the game is all about, check out our trailer video below.
 
-[Click here to watch the trailer](doc/trailer.mp4)
+[Click here to watch the trailer](https://youtu.be/6ojXLjcEr0s)
 
 ## How to play the game
 
