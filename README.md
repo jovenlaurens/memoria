@@ -38,7 +38,7 @@ elm make src/main.elm
 ## Awards
 
 - **Best Presentation** - [JI 2021 Summer Design Expo](https://www.ji.sjtu.edu.cn/news/campus-life/2021-08-05/126975/)
-- **Best Artwork Design** - [SIlverFOCS](https://focs.ji.sjtu.edu.cn/silverfocs/famewall/)
+- **Best Artwork Design** - [SilverFOCS](https://focs.ji.sjtu.edu.cn/silverfocs/famewall/)
 
 ## Contributors
 
